@@ -55,4 +55,18 @@ void petrov::Queue<T>::push(T&& a)
   dat.push_back(std::move(a));
 }
 
+template<class T>
+void petrov::Queue<T>::pop()
+{
+  dat.pop_back();
+}
+
+template<class T>
+T& petrov::Queue<T>::front()
+{
+  petrov::LIter<T> i = dat.begin();
+  dat.pop_first();
+  return &i;
+}
+
 #endif
