@@ -266,7 +266,7 @@ namespace petrov
   template<class T>
   LIter<T> List<T>::end()
   {
-    return LIter<T>(nullptr);
+    return LIter<T>(t);
   }
 
   template<class T>

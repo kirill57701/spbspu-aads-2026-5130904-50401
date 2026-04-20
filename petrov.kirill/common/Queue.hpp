@@ -1,6 +1,7 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 #include "queue.hpp"
+#include <cstddef>
 
 namespace petrov {
   template<class T>
@@ -64,9 +65,21 @@ void petrov::Queue<T>::pop()
 template<class T>
 T& petrov::Queue<T>::front()
 {
-  petrov::LIter<T> i = dat.begin();
-  dat.pop_first();
-  return &i;
+  if (dat.IsEmpty())
+  {
+    thorw std::logic_error("err");
+  }
+  return *dat.begin();
+}
+
+template<class T>
+T& petrov::Queue<T>::back()
+{
+  if (dat.IsEmpty())
+  {
+    throw std::logic_error("err");
+  }
+  return *dat.end();
 }
 
 #endif
