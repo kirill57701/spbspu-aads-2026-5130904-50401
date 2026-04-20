@@ -3,6 +3,10 @@ namespace petrov {
   class Queue
   {
     public:
+      Queue();
+      Queue(Queue&& a);
+      Queue(const Queue& a);
+      ~Queue();
       void push(T rhs);
       push(const T& val);
       push(T&& value);
