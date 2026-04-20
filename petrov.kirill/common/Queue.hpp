@@ -6,9 +6,11 @@ class Queue
     push(const T& val);
     push(T&& value);
     void pop();
-    T* front();
-    T* back();
+    T& front();
+    T& back();
     bool empty();
     size_t size();
     T drop();
+  private:
+    petrov::List<T> dat;
 }
