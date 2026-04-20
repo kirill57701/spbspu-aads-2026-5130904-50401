@@ -127,9 +127,13 @@ bool Queue<T>::operator==(const Queue& a) const
   }
   petrov::LIter<T> i1 = dat.begin();
   petrov::LIter<T> i2 = a.dat.begin();
-  while (it1 != dat.end()) {
-    if (*it1 != *it2) return 0;
-    ++it1; ++it2;
+  while (i1 != dat.end())
+  {
+    if (*i1 != *i2)
+    {
+      return 0;
+    }
+    ++i1; ++i2;
   }
   return 1;
 }
