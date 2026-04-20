@@ -47,7 +47,7 @@ namespace petrov
   template<class T>
   void Stack<T>::pop() {
     if (dat.IsEmpty()) {
-      throw std::logic_error("Stack underflow");
+      throw std::logic_error("err");
     }
     dat.pop_front();
   }
