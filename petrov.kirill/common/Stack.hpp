@@ -12,3 +12,6 @@ namespace petrov
       T drop();
   };
 }
+
+#endif
+
