@@ -34,7 +34,7 @@ namespace petrov {
       void swap(Queue& a) noexcept;
     private:
       petrov::List<T> dat;
-  }
+  };
 }
 
 template<class T>
