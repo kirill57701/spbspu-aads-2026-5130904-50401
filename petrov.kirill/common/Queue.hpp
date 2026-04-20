@@ -7,13 +7,15 @@ namespace petrov {
   class Queue
   {
     public:
-      Queue();
-      Queue(Queue&& a);
-      Queue(const Queue& a);
-      ~Queue();
+      Queue() = default;
+      Queue(Queue&& a) = default;
+      Queue(const Queue& a) = default;
+      ~Queue() = default;
+
       void push(T rhs);
-      push(const T& val);
-      push(T&& value);
+      void push(const T& a);
+      void push(T&& a);
+
       void pop();
       T& front();
       T& back();
@@ -33,6 +35,24 @@ namespace petrov {
     private:
       petrov::List<T> dat;
   }
+}
+
+template<class T>
+void petrov::Queue<T>::push(T rhs)
+{
+  dat.push_back(rhs);
+}
+
+template<class T>
+void petrov::Queue<T>::push(const T& a)
+{
+  dat.push_back(a);
+}
+
+template<class T>
+void petrov::Queue<T>::push(T&& a)
+{
+  dat.push_back(std::move(a));
 }
 
 #endif
