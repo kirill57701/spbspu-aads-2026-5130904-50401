@@ -32,7 +32,6 @@ namespace petrov {
       void clear();
       bool operator==(const Queue& a) const;
       bool operator!=(const Queue& a) const;
-      void swap(Queue& a) noexcept;
     private:
       petrov::List<T> dat;
   };
@@ -59,7 +58,7 @@ void petrov::Queue<T>::push(T&& a)
 template<class T>
 void petrov::Queue<T>::pop()
 {
-  dat.pop_back();
+  dat.pop_front();
 }
 
 template<class T>
@@ -80,6 +79,64 @@ T& petrov::Queue<T>::back()
     throw std::logic_error("err");
   }
   return *dat.end();
+}
+
+template<class T>
+const T& petrov::Queue<T>::back() const
+{
+  if (dat.IsEmpty())
+  {
+    throw std::logic_error("err");
+  }
+  petrov::LIter<T> i = dat.end();
+  return *i;
+}
+
+template<class T>
+T petrov::Queue<T>::drop()
+{
+  T c = std::move(front());
+  pop();
+  return c;
+}
+
+template<class T>
+bool petrov::Queue<T>::empty() const
+{
+  return dat.IsEmpty();
+}
+
+template<class T>
+size_t petrov::Queue<T>::size() const
+{
+  return dat.getSize();
+}
+
+template<class T>
+void petrov::Queue<T>::clear()
+{
+  dat.clear();
+}
+
+template<class T>
+bool Queue<T>::operator==(const Queue& a) const
+{
+  if (size() != a.size())
+  {
+    return 0;
+  }
+  petrov::LIter<T> i1 = dat.begin();
+  petrov::LIter<T> i2 = a.dat.begin();
+  while (it1 != dat.end()) {
+    if (*it1 != *it2) return 0;
+    ++it1; ++it2;
+  }
+  return 1;
+}
+
+template<class T>
+bool Queue<T>::operator!=(const Queue& a) const
+  return !(*this == a);
 }
 
 #endif
