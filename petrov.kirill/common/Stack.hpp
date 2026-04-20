@@ -33,9 +33,26 @@ namespace petrov
     private:
       petrov::List<T> dat;
   };
+
+  template<class T>
+  void Stack<T>::push(const T& val) {
+    dat.push_front(val);
+  }
+
+  template<class T>
+  void Stack<T>::push(T&& val) {
+    dat.push_front(std::move(val));
+  }
+
+  template<class T>
+  void Stack<T>::pop() {
+    if (dat.IsEmpty()) {
+      throw std::logic_error("Stack underflow");
+    }
+    dat.pop_front();
+  }
 }
 
 
 
 #endif
-
