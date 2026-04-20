@@ -1,3 +1,7 @@
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
+#include "queue.hpp"
+
 namespace petrov {
   template<class T>
   class Queue
@@ -30,3 +34,5 @@ namespace petrov {
       petrov::List<T> dat;
   }
 }
+
+#endif
