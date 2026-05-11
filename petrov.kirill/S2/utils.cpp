@@ -3,6 +3,7 @@
 #include "Queue.hpp"
 #include <limits>
 #include <stdexcept>
+#include <string>
 
 namespace petrov
 {
@@ -51,5 +52,26 @@ namespace petrov
   size_t isOp(char s)
   {
     return s == '+' || s == '-' || s == '*' || s == '%' || s == '/' || s == '&';
+  }
+
+  petrov::Stack<long long int> calcStream(std::istream& in)
+  {
+    petrov::Stack<long long int> res;
+    std::string s;
+    while (std::getline(in, s))
+    {
+      if (!s.empty())
+      {
+        petrov::Queue<std::string> post;
+        petrov::Stack<char> c;
+        for (size_t i = 0; i < s.size(); ++i)
+        {
+          if (s[i] != ' ')
+          {
+	    if 
+          }
+        }
+      }
+    }
   }
 }
