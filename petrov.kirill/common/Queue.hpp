@@ -1,6 +1,6 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
-#include "queue.hpp"
+#include "Queue.hpp"
 #include <cstddef>
 
 namespace petrov {
