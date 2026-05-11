@@ -68,7 +68,29 @@ namespace petrov
         {
           if (s[i] != ' ')
           {
-	    if 
+	    if (std::isdigit(s[i]))
+	    {
+	      std::string n = "";
+	      while (i < s.size() && std::isdigit(s[i]))
+    	      {
+		n += s[i++];
+	      }
+	      post.push(n);
+  	      --i;
+ 	    }
+  	    else if (s[i] == '(')
+  	    {
+	      c.push(s[i]);
+	    }
+ 	    else if (s[i] == ')')
+	    {
+	      while (!c.empty() && c.top() != '(')
+	      {
+		std::string q = "";
+ 		q += c.drop();
+		post.push(q);
+	      }
+	    }
           }
         }
       }
