@@ -11,14 +11,14 @@ namespace petrov
       Stack() = default;
       Stack(Stack&& a) = default;
       Stack(const Stack& a) = default;
-      ~Stack();
+      ~Stack() = default;
 
-      void push(T rhs);
+      void push(const T& rhs);
       void push(T&& rhs);
       void pop();
       T drop();
 
-      T top();
+      T& top();
       const T& top() const;
 
       bool empty() const;
@@ -35,9 +35,9 @@ namespace petrov
   };
 
   template<class T>
-  void Stack<T>::push(const T& val)
+  void Stack<T>::push(const T& rhs)
   {
-    dat.push_front(val);
+    dat.push_front(rhs);
   }
 
   template<class T>
@@ -94,7 +94,7 @@ namespace petrov
   size_t Stack<T>::size() const
   {
     size_t c = 0;
-    for (petrov::LIter<T> i = dat.begin(); i != dat.end(); ++i)
+    for (petrov::LCIter<T> i = dat.begin(); i != dat.end(); ++i)
     {
       c++;
     }

@@ -1,9 +1,10 @@
 #include "utils.hpp"
-#include "Stack.hpp"
-#include "Queue.hpp"
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include "../common/Stack.hpp"
+#include "../common/Queue.hpp"
+
 
 namespace petrov
 {
@@ -34,7 +35,7 @@ namespace petrov
     {
       if (b == 0)
       {
-	throw std::logic_error("err\n");
+	      throw std::logic_error("err\n");
       }
       return a/b;
     }
@@ -68,81 +69,81 @@ namespace petrov
         {
           if (s[i] != ' ')
           {
-	    if (std::isdigit(s[i]))
-	    {
-	      std::string n = "";
-	      while (i < s.size() && std::isdigit(s[i]))
-    	      {
-		n += s[i++];
-	      }
-	      post.push(n);
-  	      --i;
- 	    }
-  	    else if (s[i] == '(')
-  	    {
-	      c.push(s[i]);
-	    }
- 	    else if (s[i] == ')')
-	    {
-	      while (!c.empty() && c.top() != '(')
-	      {
-		std::string q = "";
- 		q += c.drop();
-		post.push(q);
-	      }
-	      if (c.empty())
-	      {
-		throw std::logic_error("err\n");
-	      }
-	      c.pop();
-	    }
-	    else if (isOp(s[i]))
-	    {
-	      while (!c.empty() && prior(c.top()) >= prior(s[i]))
-	      {
-		std::string q = "";
-		q += c.drop();
-		post.push(q);
-	      }
-	      c.push(s[i]);
-	    }
+          if (std::isdigit(s[i]))
+          {
+            std::string n = "";
+            while (i < s.size() && std::isdigit(s[i]))
+            {
+              n += s[i++];
+            }
+            post.push(n);
+            --i;
           }
-        }
-	while (!c.empty())
-        {
-          if (c.top() == '(')
-	  {
-	    throw std::logic_error("err\n");
+  	      else if (s[i] == '(')
+  	      {
+	          c.push(s[i]);
+	        }
+ 	        else if (s[i] == ')')
+	        {
+          while (!c.empty() && c.top() != '(')
+          {
+            std::string q = "";
+            q += c.drop();
+            post.push(q);
           }
-	  std::string q = "";
-          q += c.drop();
-          post.push(q);
+          if (c.empty())
+          {
+            throw std::logic_error("err\n");
+          }
+            c.pop();
+          }
+          else if (isOp(s[i]))
+          {
+            while (!c.empty() && prior(c.top()) >= prior(s[i]))
+            {
+              std::string q = "";
+              q += c.drop();
+              post.push(q);
+            }
+            c.push(s[i]);
+	        }
         }
+      }
+	    while (!c.empty())
+      {
+        if (c.top() == '(')
+	      {
+	        throw std::logic_error("err\n");
+        }
+	      std::string q = "";
+        q += c.drop();
+        post.push(q);
+      }
 
-	petrov::Stack<long long int> b;
-        while (!post.empty())
+	    petrov::Stack<long long int> b;
+      while (!post.empty())
+      {
+        std::string t = post.drop();
+        if (std::isdigit(t[0]))
         {
-          std::string t = post.drop();
-          if (std::isdigit(t[0]))
-          {
-            b.push(std::stoll(t));
+          b.push(std::stoll(t));
+        }
+        else
+        {
+          if (b.size() < 2)
+	        {
+	          throw std::logic_error("err\n");
           }
-          else
-          {
-            if (b.size() < 2)
+          long long int b1 = b.drop();
+          long long int a = b.drop();
+          b.push(oper(a, b1, t[0]));
+        }
+      }
+      if (b.size() != 1)
 	    {
 	      throw std::logic_error("err\n");
-            }
-	    long long int b1 = b.drop();
-            long long int a = b.drop();
-            b.push(oper(a, b1, t[0]));
-          }
-        }
-        if (b.size() != 1)
-	{
-	  throw std::logic_error("err\n");
-        }
-	res.push(b.drop());
+      }
+	    res.push(b.drop());
       }
     }
     return res;

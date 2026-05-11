@@ -2,7 +2,7 @@
 #include <fstream>
 #include <exception>
 #include "utils.hpp"
-#include "Stack.hpp"
+#include "../common/Stack.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     std::ifstream ifs;
     if (argc > 1)
     {
-      file.open(argv[1]);
+      ifs.open(argv[1]);
       if (!ifs.is_open())
       {
         std::cerr << "err\n";

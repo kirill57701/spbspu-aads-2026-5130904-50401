@@ -1,11 +1,11 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 #include <iostream>
-#include "Stack.hpp"
+#include "../common/Stack.hpp"
 
 namespace petrov
 {
-  petrov::Stack<long long int> count(std::istream& in);
+  petrov::Stack<long long int> calcStream(std::istream& in);
 }
 
 #endif

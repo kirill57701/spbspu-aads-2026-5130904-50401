@@ -1,6 +1,6 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
-#include "Queue.hpp"
+#include "list.hpp"
 #include <cstddef>
 
 namespace petrov {
@@ -13,14 +13,12 @@ namespace petrov {
       Queue(const Queue& a) = default;
       ~Queue() = default;
 
-      void push(T rhs);
       void push(const T& a);
       void push(T&& a);
 
       void pop();
       T& front();
       T& back();
-      bool empty();
       size_t size();
       T drop();
       Queue& operator=(const Queue& a);
@@ -35,12 +33,6 @@ namespace petrov {
     private:
       petrov::List<T> dat;
   };
-}
-
-template<class T>
-void petrov::Queue<T>::push(T rhs)
-{
-  dat.push_back(rhs);
 }
 
 template<class T>
@@ -66,7 +58,7 @@ T& petrov::Queue<T>::front()
 {
   if (dat.IsEmpty())
   {
-    thorw std::logic_error("err");
+    throw std::logic_error("err");
   }
   return *dat.begin();
 }
@@ -119,7 +111,7 @@ void petrov::Queue<T>::clear()
 }
 
 template<class T>
-bool Queue<T>::operator==(const Queue& a) const
+bool petrov::Queue<T>::operator==(const Queue& a) const
 {
   if (size() != a.size())
   {
@@ -139,7 +131,8 @@ bool Queue<T>::operator==(const Queue& a) const
 }
 
 template<class T>
-bool Queue<T>::operator!=(const Queue& a) const
+bool petrov::Queue<T>::operator!=(const Queue& a) const
+{
   return !(*this == a);
 }
 
