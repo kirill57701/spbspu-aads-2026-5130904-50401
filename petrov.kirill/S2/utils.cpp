@@ -90,10 +90,61 @@ namespace petrov
  		q += c.drop();
 		post.push(q);
 	      }
+	      if (c.empty())
+	      {
+		throw std::logic_error("err\n");
+	      }
+	      c.pop();
+	    }
+	    else if (isOp(s[i]))
+	    {
+	      while (!c.empty() && prior(c.top()) >= prior(s[i]))
+	      {
+		std::string q = "";
+		q += c.drop();
+		post.push(q);
+	      }
+	      c.push(s[i]);
 	    }
           }
         }
+	while (!c.empty())
+        {
+          if (c.top() == '(')
+	  {
+	    throw std::logic_error("err\n");
+          }
+	  std::string q = "";
+          q += c.drop();
+          post.push(q);
+        }
+
+	petrov::Stack<long long int> b;
+        while (!post.empty())
+        {
+          std::string t = post.drop();
+          if (std::isdigit(t[0]))
+          {
+            b.push(std::stoll(t));
+          }
+          else
+          {
+            if (b.size() < 2)
+	    {
+	      throw std::logic_error("err\n");
+            }
+	    long long int b1 = b.drop();
+            long long int a = b.drop();
+            b.push(oper(a, b1, t[0]));
+          }
+        }
+        if (b.size() != 1)
+	{
+	  throw std::logic_error("err\n");
+        }
+	res.push(b.drop());
       }
     }
+    return res;
   }
 }
