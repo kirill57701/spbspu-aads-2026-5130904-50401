@@ -16,14 +16,18 @@ namespace petrov
     {
       return 3;
     }
-    return 1;
+    if (s == '&')
+    {
+      return 1;
+    }
+    return 0;
   }
 
   long long int oper(long long int a, long long int b, char s)
   {
     if (s != '/' && s != '%')
     {
-      return (s == '+' ? a + b : (s == '-' ? a - b : a*b);
+      return (s == '+' ? a + b : (s == '-' ? a - b : (s == '*' ? a*b : a & b)));
     }
     if (s == '/')
     {
@@ -46,6 +50,6 @@ namespace petrov
 
   size_t isOp(char s)
   {
-    return s == '+' || s == '-' || s == '*' || s == '%' || s == '/';
+    return s == '+' || s == '-' || s == '*' || s == '%' || s == '/' || s == '&';
   }
 }
