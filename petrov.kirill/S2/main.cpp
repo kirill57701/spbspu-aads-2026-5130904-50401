@@ -2,7 +2,7 @@
 #include <fstream>
 #include <exception>
 #include "utils.hpp"
-#include "../common/Queue.hpp"
+#include "../common/Stack.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -26,12 +26,7 @@ int main(int argc, char* argv[])
     }
 
     std::istream& in = (argc == 2) ? ifs : std::cin;
-    petrov::Queue<long long int> results = petrov::calcStream(in);
-
-    if (results.empty())
-    {
-      return 0;
-    }
+    petrov::Stack<long long int> results = petrov::calcStream(in);
 
     while (!results.empty())
     {
@@ -41,7 +36,10 @@ int main(int argc, char* argv[])
         std::cout << " ";
       }
     }
-    std::cout << "\n";
+    if (argc == 1 || (argc == 2 && ifs.is_open()))
+    {
+       std::cout << "\n";
+    }
   }
   catch (...)
   {
@@ -51,4 +49,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-

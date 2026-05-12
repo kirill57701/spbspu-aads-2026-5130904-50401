@@ -134,15 +134,16 @@ namespace petrov
     {
       return 0;
     }
-    petrov::LIter<T> i1 = dat.begin();
-    petrov::LIter<T> i2 = a.dat.begin();
+    petrov::LCIter<T> i1 = dat.begin();
+    petrov::LCIter<T> i2 = a.dat.begin();
     while (i1 != dat.end())
     {
       if (*i1 != *i2)
       {
         return 0;
       }
-      ++i1; ++i2;
+      ++i1;
+      ++i2;
     }
     return 1;
   }
