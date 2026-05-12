@@ -5,7 +5,7 @@
 
 namespace petrov
 {
-  petrov::Stack<long long int> calcStream(std::istream& in);
+  petrov::Queue<long long int> calcStream(std::istream& in);
 }
 
 #endif
