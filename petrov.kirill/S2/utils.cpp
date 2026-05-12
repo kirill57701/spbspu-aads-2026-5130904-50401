@@ -35,7 +35,7 @@ namespace petrov
     {
       if (b == 0)
       {
-	      throw std::logic_error("err\n");
+        throw std::logic_error("err\n");
       }
       return a/b;
     }
@@ -79,12 +79,12 @@ namespace petrov
             post.push(n);
             --i;
           }
-  	      else if (s[i] == '(')
-  	      {
-	          c.push(s[i]);
-	        }
- 	        else if (s[i] == ')')
-	        {
+          else if (s[i] == '(')
+          {
+            c.push(s[i]);
+          }
+           else if (s[i] == ')')
+          {
           while (!c.empty() && c.top() != '(')
           {
             std::string q = "";
@@ -106,21 +106,21 @@ namespace petrov
               post.push(q);
             }
             c.push(s[i]);
-	        }
+          }
         }
       }
-	    while (!c.empty())
+      while (!c.empty())
       {
         if (c.top() == '(')
-	      {
-	        throw std::logic_error("err\n");
+        {
+          throw std::logic_error("err\n");
         }
-	      std::string q = "";
+        std::string q = "";
         q += c.drop();
         post.push(q);
       }
 
-	    petrov::Stack<long long int> b;
+      petrov::Stack<long long int> b;
       while (!post.empty())
       {
         std::string t = post.drop();
@@ -131,8 +131,8 @@ namespace petrov
         else
         {
           if (b.size() < 2)
-	        {
-	          throw std::logic_error("err\n");
+          {
+            throw std::logic_error("err\n");
           }
           long long int b1 = b.drop();
           long long int a = b.drop();
@@ -140,10 +140,10 @@ namespace petrov
         }
       }
       if (b.size() != 1)
-	    {
-	      throw std::logic_error("err\n");
+      {
+        throw std::logic_error("err\n");
       }
-	    res.push(b.drop());
+      res.push(b.drop());
       }
     }
     return res;
