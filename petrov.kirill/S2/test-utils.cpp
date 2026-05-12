@@ -7,23 +7,21 @@ BOOST_AUTO_TEST_SUITE(UtilsTests)
 
 BOOST_AUTO_TEST_CASE(prior_check)
 {
-  using namespace petrov;
-  BOOST_CHECK_EQUAL(prior('+'), 2);
-  BOOST_CHECK_EQUAL(prior('-'), 2);
-  BOOST_CHECK_EQUAL(prior('*'), 3);
-  BOOST_CHECK_EQUAL(prior('/'), 3);
-  BOOST_CHECK_EQUAL(prior('%'), 3);
-  BOOST_CHECK_EQUAL(prior('('), 0);
+  BOOST_CHECK_EQUAL(petrov::prior('+'), 2);
+  BOOST_CHECK_EQUAL(petrov::prior('-'), 2);
+  BOOST_CHECK_EQUAL(petrov::prior('*'), 3);
+  BOOST_CHECK_EQUAL(petrov::prior('/'), 3);
+  BOOST_CHECK_EQUAL(petrov::prior('%'), 3);
+  BOOST_CHECK_EQUAL(petrov::prior('('), 0);
 }
 
 BOOST_AUTO_TEST_CASE(oper_base)
 {
-  using namespace petrov;
-  BOOST_CHECK_EQUAL(oper(10, 5, '+'), 15);
-  BOOST_CHECK_EQUAL(oper(10, 5, '-'), 5);
-  BOOST_CHECK_EQUAL(oper(10, 5, '*'), 50);
-  BOOST_CHECK_EQUAL(oper(10, 5, '/'), 2);
-  BOOST_CHECK_EQUAL(oper(10, 3, '%'), 1);
+  BOOST_CHECK_EQUAL(petrov::oper(10, 5, '+'), 15);
+  BOOST_CHECK_EQUAL(petrov::oper(10, 5, '-'), 5);
+  BOOST_CHECK_EQUAL(petrov::oper(10, 5, '*'), 50);
+  BOOST_CHECK_EQUAL(petrov::oper(10, 5, '/'), 2);
+  BOOST_CHECK_EQUAL(petrov::oper(10, 3, '%'), 1);
 }
 
 BOOST_AUTO_TEST_CASE(calc_simple_line)
