@@ -2,6 +2,7 @@
 #define QUEUE_HPP
 #include "list.hpp"
 #include <cstddef>
+#include <stdexcept>
 
 namespace petrov {
   template<class T>
