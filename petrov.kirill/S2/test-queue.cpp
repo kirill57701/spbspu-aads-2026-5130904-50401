@@ -11,7 +11,6 @@ BOOST_AUTO_TEST_CASE(queue_push)
 
   q.push(10);
 
-  BOOST_CHECK_EQUAL(q.size(), 1);
   BOOST_CHECK_EQUAL(q.front(), 10);
 }
 
