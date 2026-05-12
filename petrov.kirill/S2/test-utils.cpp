@@ -7,6 +7,7 @@ BOOST_AUTO_TEST_SUITE(UtilsTests)
 
 BOOST_AUTO_TEST_CASE(prior_check)
 {
+  using namespace petrov;
   BOOST_CHECK_EQUAL(prior('+'), 2);
   BOOST_CHECK_EQUAL(prior('-'), 2);
   BOOST_CHECK_EQUAL(prior('*'), 3);
@@ -17,6 +18,7 @@ BOOST_AUTO_TEST_CASE(prior_check)
 
 BOOST_AUTO_TEST_CASE(oper_base)
 {
+  using namespace petrov;
   BOOST_CHECK_EQUAL(oper(10, 5, '+'), 15);
   BOOST_CHECK_EQUAL(oper(10, 5, '-'), 5);
   BOOST_CHECK_EQUAL(oper(10, 5, '*'), 50);
