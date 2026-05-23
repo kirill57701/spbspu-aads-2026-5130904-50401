@@ -43,7 +43,11 @@ namespace petrov
     LCIter<T> end() const;
 
     void push_back(const T& d);
+    void push_back(T&& d);
+
     void push_front(const T& d);
+    void push_front(T&& d);
+
     void pop_back();
     void pop_front();
     void clear();
@@ -259,6 +263,44 @@ namespace petrov
       return;
     }
     h->prev = new detail::Node<T>(d);
+    h->prev->next = h;
+    h = h->prev;
+    h->prev = nullptr;
+    s++;
+  }
+
+  template< class T >
+  void List<T>::push_back(T&& d)
+  {
+    if (IsEmpty())
+    {
+      h = new detail::Node<T>(std::move(d));
+      h->next = nullptr;
+      h->prev = nullptr;
+      t = h;
+      s = 1;
+      return;
+    }
+    t->next = new detail::Node<T>(std::move(d));
+    t->next->prev = t;
+    t = t->next;
+    t->next = nullptr;
+    s++;
+  }
+
+  template< class T >
+  void List<T>::push_front(T&& d)
+  {
+    if (IsEmpty())
+    {
+      h = new detail::Node<T>(std::move(d));
+      h->next = nullptr;
+      h->prev = nullptr;
+      t = h;
+      s = 1;
+      return;
+    }
+    h->prev = new detail::Node<T>(std::move(d));
     h->prev->next = h;
     h = h->prev;
     h->prev = nullptr;
