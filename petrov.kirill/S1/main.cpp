@@ -2,7 +2,7 @@
 #include <string>
 #include <limits>
 #include <utility>
-#include "../common/list.hpp"
+#include "list.hpp"
 
 int main()
 {
