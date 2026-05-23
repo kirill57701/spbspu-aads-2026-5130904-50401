@@ -5,13 +5,12 @@
 namespace detail
 {
   template< class T >
-  struct node
+  struct Node
   {
     T val;
-    node<T>* next;
-    node<T>* prev;
-    node(const T& v, node<T>* n = nullptr, node<T>* p = nullptr) : val(v), next(n), prev(p)
-    {}
+    Node<T>* next;
+    Node<T>* prev;
+    Node(const T& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
   };
 };
 
@@ -26,8 +25,8 @@ namespace petrov
   template<class T>
   class List
   {
-    detail::node<T>* h;
-    detail::node<T>* t;
+    detail::Node<T>* h;
+    detail::Node<T>* t;
     size_t s;
   public:
     ~List();
@@ -57,10 +56,10 @@ namespace petrov
   class LIter
   {
     friend class List<T>;
-    detail::node<T>* cur;
+    detail::Node<T>* cur;
   public:
     LIter() : cur(nullptr) {}
-    LIter(detail::node<T>* n) : cur(n) {}
+    LIter(detail::Node<T>* n) : cur(n) {}
     bool operator==(const LIter<T>& i) const;
     bool operator!=(const LIter<T>& i) const;
     T& operator*() const;
@@ -73,10 +72,10 @@ namespace petrov
   class LCIter
   {
     friend class List<T>;
-    const detail::node<T>* cur;
+    const detail::Node<T>* cur;
   public:
     LCIter() : cur(nullptr) {}
-    LCIter(detail::node<T>* n) : cur(n) {}
+    LCIter(detail::Node<T>* n) : cur(n) {}
     bool operator==(const LCIter<T>& i) const;
     bool operator!=(const LCIter<T>& i) const;
     const T& operator*() const;
@@ -84,6 +83,9 @@ namespace petrov
     LCIter<T>& operator--();
     const T* operator->() const;
   };
+
+  template<class T>
+  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) = default;
 
   template<class T>
   List<T>::List():
@@ -155,7 +157,7 @@ namespace petrov
     {
       while (h->next != nullptr)
       {
-        detail::node<T>* promej = h->next;
+        detail::Node<T>* promej = h->next;
         delete h;
         h = promej;
       }
@@ -177,7 +179,7 @@ namespace petrov
   {
     if (!IsEmpty())
     {
-      detail::node<T>* new_h = h->next;
+      detail::Node<T>* new_h = h->next;
       delete h;
       h = new_h;
       if (h == nullptr)
@@ -196,7 +198,7 @@ namespace petrov
   {
     if (!IsEmpty())
     {
-      detail::node<T>* new_t = t->prev;
+      detail::Node<T>* new_t = t->prev;
       delete t;
       t = new_t;
       if (t == nullptr)
@@ -227,14 +229,14 @@ namespace petrov
   {
     if (IsEmpty())
     {
-      h = new detail::node<T>(d);
+      h = new detail::Node<T>(d);
       h->next = nullptr;
       h->prev = nullptr;
       t = h;
       s = 1;
       return;
     }
-    t->next = new detail::node<T>(d);
+    t->next = new detail::Node<T>(d);
     t->next->prev = t;
     t = t->next;
     t->next = nullptr;
@@ -246,14 +248,14 @@ namespace petrov
   {
     if (IsEmpty())
     {
-      h = new detail::node<T>(d);
+      h = new detail::Node<T>(d);
       h->next = nullptr;
       h->prev = nullptr;
       t = h;
       s = 1;
       return;
     }
-    h->prev = new detail::node<T>(d);
+    h->prev = new detail::Node<T>(d);
     h->prev->next = h;
     h = h->prev;
     h->prev = nullptr;
@@ -310,7 +312,7 @@ namespace petrov
     t(nullptr),
     s(0)
   {
-    detail::node<T>* nod = l.h;
+    detail::Node<T>* nod = l.h;
     while (nod != nullptr)
     {
       push_back(nod->val);
@@ -324,7 +326,7 @@ namespace petrov
     if (this != &l)
     {
       clear();
-      detail::node<T>* now = l.h;
+      detail::Node<T>* now = l.h;
       while (now != nullptr)
       {
         push_back(now->val);
