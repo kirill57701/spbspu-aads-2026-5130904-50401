@@ -11,7 +11,21 @@ namespace detail
     Node<T>* next;
     Node<T>* prev;
     Node(const T& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
+    Node(T&& v, Node<T>* n = nullptr, Node<T>* p = nullptr);
   };
+  template< class T >
+  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) :
+    val(v),
+    next(n),
+    prev(p)
+  {}
+
+  template< class T >
+  Node<T>::Node(T&& v, Node<T>* n, Node<T>* p) :
+    val(std::move(v)),
+    next(n),
+    prev(p)
+  {}
 };
 
 namespace petrov
@@ -90,10 +104,6 @@ namespace petrov
     friend class List<T>;
     const detail::Node<T>* cur;
 };
-
-  template<class T>
-  detail::Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) = default;
-
   template<class T>
   List<T>::List():
     h(nullptr),
