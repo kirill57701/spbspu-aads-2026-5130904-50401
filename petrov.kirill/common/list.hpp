@@ -85,7 +85,7 @@ namespace petrov
   };
 
   template<class T>
-  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) = default;
+  detail::Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) = default;
 
   template<class T>
   List<T>::List():
