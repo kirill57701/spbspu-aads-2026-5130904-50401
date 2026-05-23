@@ -2,7 +2,7 @@
 #define LIST_HPP
 #include <cstddef>
 
-namespace petrov
+namespace detail
 {
   template< class T >
   struct node
@@ -13,7 +13,10 @@ namespace petrov
     node(const T& v, node<T>* n = nullptr, node<T>* p = nullptr) : val(v), next(n), prev(p)
     {}
   };
+};
 
+namespace petrov
+{
   template<class T>
   class LIter;
 
@@ -23,8 +26,8 @@ namespace petrov
   template<class T>
   class List
   {
-    node<T>* h;
-    node<T>* t;
+    detail::node<T>* h;
+    detail::node<T>* t;
     size_t s;
   public:
     ~List();
@@ -54,10 +57,10 @@ namespace petrov
   class LIter
   {
     friend class List<T>;
-    node<T>* cur;
+    detail::node<T>* cur;
   public:
     LIter() : cur(nullptr) {}
-    LIter(node<T>* n) : cur(n) {}
+    LIter(detail::node<T>* n) : cur(n) {}
     bool operator==(const LIter<T>& i) const;
     bool operator!=(const LIter<T>& i) const;
     T& operator*() const;
@@ -70,10 +73,10 @@ namespace petrov
   class LCIter
   {
     friend class List<T>;
-    const node<T>* cur;
+    const detail::node<T>* cur;
   public:
     LCIter() : cur(nullptr) {}
-    LCIter(node<T>* n) : cur(n) {}
+    LCIter(detail::node<T>* n) : cur(n) {}
     bool operator==(const LCIter<T>& i) const;
     bool operator!=(const LCIter<T>& i) const;
     const T& operator*() const;
@@ -152,7 +155,7 @@ namespace petrov
     {
       while (h->next != nullptr)
       {
-        node<T>* promej = h->next;
+        detail::node<T>* promej = h->next;
         delete h;
         h = promej;
       }
@@ -174,7 +177,7 @@ namespace petrov
   {
     if (!IsEmpty())
     {
-      node<T>* new_h = h->next;
+      detail::node<T>* new_h = h->next;
       delete h;
       h = new_h;
       if (h == nullptr)
@@ -193,7 +196,7 @@ namespace petrov
   {
     if (!IsEmpty())
     {
-      node<T>* new_t = t->prev;
+      detail::node<T>* new_t = t->prev;
       delete t;
       t = new_t;
       if (t == nullptr)
@@ -224,14 +227,14 @@ namespace petrov
   {
     if (IsEmpty())
     {
-      h = new petrov::node<T>(d);
+      h = new detail::node<T>(d);
       h->next = nullptr;
       h->prev = nullptr;
       t = h;
       s = 1;
       return;
     }
-    t->next = new node<T>(d);
+    t->next = new detail::node<T>(d);
     t->next->prev = t;
     t = t->next;
     t->next = nullptr;
@@ -243,14 +246,14 @@ namespace petrov
   {
     if (IsEmpty())
     {
-      h = new node<T>(d);
+      h = new detail::node<T>(d);
       h->next = nullptr;
       h->prev = nullptr;
       t = h;
       s = 1;
       return;
     }
-    h->prev = new node<T>(d);
+    h->prev = new detail::node<T>(d);
     h->prev->next = h;
     h = h->prev;
     h->prev = nullptr;
@@ -307,7 +310,7 @@ namespace petrov
     t(nullptr),
     s(0)
   {
-    node<T>* nod = l.h;
+    detail::node<T>* nod = l.h;
     while (nod != nullptr)
     {
       push_back(nod->val);
@@ -321,7 +324,7 @@ namespace petrov
     if (this != &l)
     {
       clear();
-      node<T>* now = l.h;
+      detail::node<T>* now = l.h;
       while (now != nullptr)
       {
         push_back(now->val);
