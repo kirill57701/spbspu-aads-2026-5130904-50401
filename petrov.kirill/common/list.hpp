@@ -25,15 +25,12 @@ namespace petrov
   template<class T>
   class List
   {
-    detail::Node<T>* h;
-    detail::Node<T>* t;
-    size_t s;
   public:
-    ~List();
     List();
     List(const List<T>& l);
     List(List<T>&& l) noexcept;
     List(size_t s, const T& init);
+    ~List();
 
     List<T>& operator=(List<T>&& l) noexcept;
     List<T>& operator=(const List<T>& l);
@@ -50,13 +47,15 @@ namespace petrov
     void pop_back();
     void pop_front();
     void clear();
+  private:
+    detail::Node<T>* h;
+    detail::Node<T>* t;
+    size_t s;
   };
 
   template<class T>
   class LIter
   {
-    friend class List<T>;
-    detail::Node<T>* cur;
   public:
     LIter() : cur(nullptr) {}
     LIter(detail::Node<T>* n) : cur(n) {}
@@ -66,13 +65,14 @@ namespace petrov
     LIter<T>& operator++();
     LIter<T>& operator--();
     T* operator->() const;
+  private:
+    friend class List<T>;
+    detail::Node<T>* cur;
   };
 
   template<class T>
   class LCIter
   {
-    friend class List<T>;
-    const detail::Node<T>* cur;
   public:
     LCIter() : cur(nullptr) {}
     LCIter(detail::Node<T>* n) : cur(n) {}
@@ -82,7 +82,10 @@ namespace petrov
     LCIter<T>& operator++();
     LCIter<T>& operator--();
     const T* operator->() const;
-  };
+  private:
+    friend class List<T>;
+    const detail::Node<T>* cur;
+};
 
   template<class T>
   detail::Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) = default;
