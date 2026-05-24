@@ -43,6 +43,7 @@ int main()
     while (q_names != list_for_sol.end())
     {
       std::cout << ' ' << q_names->first;
+      ++q_names;
     }
   }
   std::cout << '\n';
