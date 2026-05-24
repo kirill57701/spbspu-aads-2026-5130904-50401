@@ -321,13 +321,13 @@ namespace petrov
   }
 
   template<class T>
-  LIter<T> List<T>::begin()
+  LIter<T> List<T>::begin() noexcept
   {
     return LIter<T>(h);
   }
 
   template<class T>
-  LIter<T> List<T>::end()
+  LIter<T> List<T>::end() noexcept
   {
     return LIter<T>(nullptr);
   }
@@ -450,13 +450,13 @@ namespace petrov
   }
 
   template<class T>
-  LCIter<T> List<T>::begin() const
+  LCIter<T> List<T>::begin() const noexcept
   {
     return LCIter<T>(h);
   }
 
   template<class T>
-  LCIter<T> List<T>::end() const
+  LCIter<T> List<T>::end() const noexcept
   {
     return LCIter<T>(nullptr);
   }
