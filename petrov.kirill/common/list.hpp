@@ -133,7 +133,7 @@ namespace petrov
   template<class T>
   const T* LCIter<T>::operator->() const
   {
-    return &(cur->val);
+    return std::addressof(cur->val);
   }
 
   template<class T>
@@ -351,13 +351,13 @@ namespace petrov
   }
 
   template<class T>
-  T& LIter<T>::operator*() const
+  T& LIter<T>::operator*()
   {
     return cur->val;
   }
 
   template<class T>
-  T* LIter<T>::operator->() const
+  T* LIter<T>::operator->()
   {
     return &(cur->val);
   }
