@@ -281,15 +281,13 @@ namespace petrov
   template<class T>
   List<T>& List<T>::operator=(const List<T>& l)
   {
-    if (this != &l)
+    assert(this != &l);
+    clear();
+    detail::Node<T>* now = l.h;
+    while (now != nullptr)
     {
-      clear();
-      detail::Node<T>* now = l.h;
-      while (now != nullptr)
-      {
-        push_back(now->val);
-        now = now->next;
-      }
+      push_back(now->val);
+      now = now->next;
     }
     return *this;
   }
