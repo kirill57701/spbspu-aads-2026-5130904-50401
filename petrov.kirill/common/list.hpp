@@ -52,10 +52,10 @@ namespace petrov
 
     bool IsEmpty() const noexcept;
     size_t getSize() const noexcept;
-    LIter<T> begin();
-    LIter<T> end();
-    LCIter<T> begin() const;
-    LCIter<T> end() const;
+    LIter<T> begin() noexcept;
+    LIter<T> end() noexcept;
+    LCIter<T> begin() const noexcept;
+    LCIter<T> end() const noexcept;
 
     void push_back(const T& d);
     void push_back(T&& d);
