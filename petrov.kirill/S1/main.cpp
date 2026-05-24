@@ -2,7 +2,7 @@
 #include <string>
 #include <limits>
 #include <utility>
-#include "../common/list.hpp"
+#include "list.hpp"
 
 int main()
 {
@@ -40,9 +40,9 @@ int main()
   {
     std::cout << q_names->first;
     ++q_names;
-    if (q_names != list_for_sol.end())
+    while (q_names != list_for_sol.end())
     {
-      std::cout << ' ';
+      std::cout << ' ' << q_names->first;
     }
   }
   std::cout << '\n';
@@ -124,9 +124,10 @@ int main()
   {
     std::cout << *s_it;
     ++s_it;
-    if (s_it != sums.end())
+    while (s_it != sums.end())
     {
-      std::cout << ' ';
+      std::cout << ' ' << *s_it;
+      ++s_it;
     }
   }
   std::cout << '\n';
