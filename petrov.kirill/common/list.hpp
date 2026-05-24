@@ -296,28 +296,15 @@
 
     template<class T>
     List<T>::List(List<T>&& l) noexcept:
-      h(l.h),
-      t(l.t),
-      s(l.s)
-    {
-      l.h = nullptr;
-      l.t = nullptr;
-      l.s = 0;
-    }
+      h(std::exchange(l.h, nullptr)),
+      t(std::exchange(l.t, nullptr)),
+      s(std::exchange(l.s, 0))
+    {}
 
     template<class T>
     List<T>& List<T>::operator=(List<T>&& l) noexcept
     {
-      if (this != &l)
-      {
-        clear();
-        h = l.h;
-        s = l.s;
-        t = l.t;
-        l.h = nullptr;
-        l.t = nullptr;
-        l.s = 0;
-      }
+      swap(l);
       return *this;
     }
 
