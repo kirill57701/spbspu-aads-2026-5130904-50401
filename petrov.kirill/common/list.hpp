@@ -82,7 +82,9 @@ namespace petrov
     bool operator!=(const LIter<T>& i) const;
     T& operator*();
     LIter<T>& operator++();
+    LIter<T>& operator++(int);
     LIter<T>& operator--();
+    LIter<T>& operator--(int);
     T* operator->();
   private:
     friend class List<T>;
@@ -338,6 +340,22 @@ namespace petrov
       cur = cur->next;
     }
     return *this;
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator++(int)
+  {
+    LIter<T> d = *this;
+    ++(*this);
+    return d;
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator--(int)
+  {
+    LIter<T> d = *this;
+    --(*this);
+    return d;
   }
 
   template<class T>
