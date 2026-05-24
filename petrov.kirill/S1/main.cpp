@@ -2,7 +2,7 @@
 #include <string>
 #include <limits>
 #include <utility>
-#include "list.hpp"
+#include "../common/list.hpp"
 
 int main()
 {
@@ -74,10 +74,10 @@ int main()
   }
 
   petrov::List<unsigned long long> sums;
-  while (1)
+  bool isleft = 0;
+  while (!isleft)
   {
     unsigned long long current_row_sum = 0;
-    bool isleft = 0;
     bool first_in_row = 1;
     petrov::LIter<petrov::LIter<unsigned long long>> its_it = iters.begin();
     petrov::LIter<std::pair<std::string, petrov::List<unsigned long long>>> data_it = list_for_sol.begin();
@@ -107,11 +107,6 @@ int main()
       }
       ++its_it;
       ++data_it;
-    }
-
-    if (!isleft)
-    {
-      break;
     }
 
     std::cout << '\n';
