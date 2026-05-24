@@ -80,10 +80,10 @@ namespace petrov
     LIter(detail::Node<T>* n) : cur(n) {}
     bool operator==(const LIter<T>& i) const;
     bool operator!=(const LIter<T>& i) const;
-    T& operator*() const;
+    T& operator*();
     LIter<T>& operator++();
     LIter<T>& operator--();
-    T* operator->() const;
+    T* operator->();
   private:
     friend class List<T>;
     detail::Node<T>* cur;
