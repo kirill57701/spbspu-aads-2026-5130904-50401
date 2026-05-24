@@ -74,11 +74,12 @@ int main()
   }
 
   petrov::List<unsigned long long> sums;
-  bool isleft = 0;
-  while (!isleft)
+  bool isleft = 1;
+  while (isleft)
   {
     unsigned long long current_row_sum = 0;
     bool first_in_row = 1;
+    isleft = 0;
     petrov::LIter<petrov::LIter<unsigned long long>> its_it = iters.begin();
     petrov::LIter<std::pair<std::string, petrov::List<unsigned long long>>> data_it = list_for_sol.begin();
 
@@ -107,6 +108,11 @@ int main()
       }
       ++its_it;
       ++data_it;
+    }
+
+    if (!isleft)
+    {
+      break;
     }
 
     std::cout << '\n';
