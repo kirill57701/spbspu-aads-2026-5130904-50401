@@ -115,62 +115,6 @@ namespace petrov
   {}
 
   template<class T>
-  bool LCIter<T>::operator==(const LCIter<T>& i) const
-  {
-    return !(cur != i.cur);
-  }
-
-  template<class T>
-  bool LCIter<T>::operator!=(const LCIter<T>& i) const
-  {
-    return cur != i.cur;
-  }
-
-  template<class T>
-  const T& LCIter<T>::operator*() const
-  {
-    return cur->val;
-  }
-
-  template<class T>
-  const T* LCIter<T>::operator->() const
-  {
-    return std::addressof(cur->val);
-  }
-
-  template<class T>
-  LCIter<T>& LCIter<T>::operator++()
-  {
-    if (cur != nullptr)
-    {
-      cur = cur->next;
-    }
-    return *this;
-  }
-
-  template<class T>
-  LCIter<T>& LCIter<T>::operator--()
-  {
-    if (cur != nullptr)
-    {
-      cur = cur->prev;
-    }
-    return *this;
-  }
-
-  template<class T>
-  bool LIter<T>::operator==(const LIter<T>& i) const
-  {
-    return !(cur != i.cur);
-  }
-
-  template<class T>
-  bool LIter<T>::operator!=(const LIter<T>& i) const
-  {
-    return cur != i.cur;
-  }
-
-  template<class T>
   void List<T>::clear()
   {
     if (h != nullptr)
@@ -321,66 +265,6 @@ namespace petrov
   }
 
   template<class T>
-  LIter<T> List<T>::begin() noexcept
-  {
-    return LIter<T>(h);
-  }
-
-  template<class T>
-  LIter<T> List<T>::end() noexcept
-  {
-    return LIter<T>(nullptr);
-  }
-
-  template<class T>
-  LIter<T>& LIter<T>::operator++()
-  {
-    if (cur != nullptr)
-    {
-      cur = cur->next;
-    }
-    return *this;
-  }
-
-  template<class T>
-  LIter<T>& LIter<T>::operator++(int)
-  {
-    LIter<T> d = *this;
-    ++(*this);
-    return d;
-  }
-
-  template<class T>
-  LIter<T>& LIter<T>::operator--(int)
-  {
-    LIter<T> d = *this;
-    --(*this);
-    return d;
-  }
-
-  template<class T>
-  LIter<T>& LIter<T>::operator--()
-  {
-    if (cur != nullptr)
-    {
-      cur = cur->prev;
-    }
-    return *this;
-  }
-
-  template<class T>
-  T& LIter<T>::operator*()
-  {
-    return cur->val;
-  }
-
-  template<class T>
-  T* LIter<T>::operator->()
-  {
-    return &(cur->val);
-  }
-
-  template<class T>
   List<T>::List(const List<T>& l):
     h(nullptr),
     t(nullptr),
@@ -447,6 +331,166 @@ namespace petrov
     {
       push_back(init);
     }
+  }
+
+  template<class T>
+  LIter<T> List<T>::begin() noexcept
+  {
+    return LIter<T>(h);
+  }
+
+  template<class T>
+  LIter<T> List<T>::end() noexcept
+  {
+    return LIter<T>(nullptr);
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator++()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->next;
+    }
+    return *this;
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator++(int)
+  {
+    LIter<T> d = *this;
+    ++(*this);
+    return d;
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator--(int)
+  {
+    LIter<T> d = *this;
+    --(*this);
+    return d;
+  }
+
+  template<class T>
+  LIter<T>& LIter<T>::operator--()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->prev;
+    }
+    return *this;
+  }
+
+  template<class T>
+  T& LIter<T>::operator*()
+  {
+    return cur->val;
+  }
+
+  template<class T>
+  T* LIter<T>::operator->()
+  {
+    return &(cur->val);
+  }
+
+  template<class T>
+  bool LIter<T>::operator==(const LIter<T>& i) const
+  {
+    return !(cur != i.cur);
+  }
+
+  template<class T>
+  bool LIter<T>::operator!=(const LIter<T>& i) const
+  {
+    return cur != i.cur;
+  }
+
+  template<class T>
+  bool LCIter<T>::operator==(const LCIter<T>& i) const
+  {
+    return !(cur != i.cur);
+  }
+
+  template<class T>
+  bool LCIter<T>::operator!=(const LCIter<T>& i) const
+  {
+    return cur != i.cur;
+  }
+
+  template<class T>
+  const T& LCIter<T>::operator*() const
+  {
+    return cur->val;
+  }
+
+  template<class T>
+  const T* LCIter<T>::operator->() const
+  {
+    return std::addressof(cur->val);
+  }
+
+  template<class T>
+  LCIter<T>& LCIter<T>::operator++()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->next;
+    }
+    return *this;
+  }
+
+  template<class T>
+  LCIter<T>& LCIter<T>::operator--()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->prev;
+    }
+    return *this;
+  }
+
+  template<class T>
+  bool LCIter<T>::operator==(const LCIter<T>& i) const
+  {
+    return !(cur != i.cur);
+  }
+
+  template<class T>
+  bool LCIter<T>::operator!=(const LCIter<T>& i) const
+  {
+    return cur != i.cur;
+  }
+
+  template<class T>
+  const T& LCIter<T>::operator*() const
+  {
+    return cur->val;
+  }
+
+  template<class T>
+  const T* LCIter<T>::operator->() const
+  {
+    return std::addressof(cur->val);
+  }
+
+  template<class T>
+  LCIter<T>& LCIter<T>::operator++()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->next;
+    }
+    return *this;
+  }
+
+  template<class T>
+  LCIter<T>& LCIter<T>::operator--()
+  {
+    if (cur != nullptr)
+    {
+      cur = cur->prev;
+    }
+    return *this;
   }
 
   template<class T>
