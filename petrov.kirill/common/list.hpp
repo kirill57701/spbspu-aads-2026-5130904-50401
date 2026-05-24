@@ -63,6 +63,7 @@ namespace petrov
     void push_front(const T& d);
     void push_front(T&& d);
 
+    void swap(List<T>& d) noexcept;
     void pop_back();
     void pop_front();
     void clear();
@@ -155,6 +156,14 @@ namespace petrov
       h->prev = nullptr;
       s--;
     }
+  }
+
+  template<class T>
+  void List<T>::swap(List<T>& d) noexcept
+  {
+    std::swap(h, d.h);
+    std::swap(t, d.t);
+    std::swap(s, d.s);
   }
 
   template<class T>
@@ -281,14 +290,7 @@ namespace petrov
   template<class T>
   List<T>& List<T>::operator=(const List<T>& l)
   {
-    assert(this != &l);
-    clear();
-    detail::Node<T>* now = l.h;
-    while (now != nullptr)
-    {
-      push_back(now->val);
-      now = now->next;
-    }
+    swap(l);
     return *this;
   }
 
