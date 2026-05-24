@@ -29,7 +29,7 @@ int main()
     std::cin.clear();
   }
 
-  if (list_for_sol.IsEmpty())
+  if (list_for_sol.empty())
   {
     std::cout << "0\n";
     return 0;
@@ -51,7 +51,7 @@ int main()
   petrov::LIter<std::pair<std::string, petrov::List<unsigned long long>>> check_empty = list_for_sol.begin();
   while (check_empty != list_for_sol.end())
   {
-    if (!check_empty->second.IsEmpty())
+    if (!check_empty->second.empty())
     {
       all_empty = 0;
       break;

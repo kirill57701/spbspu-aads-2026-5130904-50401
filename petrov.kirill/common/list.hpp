@@ -50,8 +50,8 @@ namespace petrov
     List<T>& operator=(List<T>&& l) noexcept;
     List<T>& operator=(const List<T>& l);
 
-    bool IsEmpty() const noexcept;
-    size_t getSize() const noexcept;
+    bool empty() const noexcept;
+    size_t size() const noexcept;
     LIter<T> begin() noexcept;
     LIter<T> end() noexcept;
     LCIter<T> begin() const noexcept;
@@ -197,7 +197,7 @@ namespace petrov
   template<class T>
   void List<T>::pop_front()
   {
-    if (!IsEmpty())
+    if (!empty())
     {
       detail::Node<T>* new_h = h->next;
       delete h;
@@ -216,7 +216,7 @@ namespace petrov
   template<class T>
   void List<T>::pop_back()
   {
-    if (!IsEmpty())
+    if (!empty())
     {
       detail::Node<T>* new_t = t->prev;
       delete t;
@@ -233,13 +233,13 @@ namespace petrov
   }
 
   template<class T>
-  bool List<T>::IsEmpty() const noexcept
+  bool List<T>::empty() const noexcept
   {
     return (!s || h == nullptr);
   }
 
   template<class T>
-  size_t List<T>::getSize() const noexcept
+  size_t List<T>::size() const noexcept
   {
     return s;
   }
@@ -247,7 +247,7 @@ namespace petrov
   template<class T>
   void List<T>::push_back(const T& d)
   {
-    if (IsEmpty())
+    if (empty())
     {
       h = new detail::Node<T>(d);
       h->next = nullptr;
@@ -266,7 +266,7 @@ namespace petrov
   template<class T>
   void List<T>::push_front(const T& d)
   {
-    if (IsEmpty())
+    if (empty())
     {
       h = new detail::Node<T>(d);
       h->next = nullptr;
@@ -285,7 +285,7 @@ namespace petrov
   template< class T >
   void List<T>::push_back(T&& d)
   {
-    if (IsEmpty())
+    if (empty())
     {
       h = new detail::Node<T>(std::move(d));
       h->next = nullptr;
@@ -304,7 +304,7 @@ namespace petrov
   template< class T >
   void List<T>::push_front(T&& d)
   {
-    if (IsEmpty())
+    if (empty())
     {
       h = new detail::Node<T>(std::move(d));
       h->next = nullptr;

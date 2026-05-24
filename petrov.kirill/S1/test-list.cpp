@@ -13,11 +13,11 @@ BOOST_AUTO_TEST_CASE(test_iter)
   BOOST_CHECK_EQUAL(*i, 1);
 }
 
-BOOST_AUTO_TEST_CASE(test_isempty)
+BOOST_AUTO_TEST_CASE(test_empty)
 {
   petrov::List<int> c;
 
-  BOOST_CHECK_EQUAL(1, c.IsEmpty());
+  BOOST_CHECK_EQUAL(1, c.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_empty_plus_elems)
@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(test_empty_plus_elems)
   petrov::List<int> c;
   c.push_back(5);
 
-  BOOST_CHECK(!c.IsEmpty());
+  BOOST_CHECK(!c.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_push_front)
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(test_copy_constructor)
   i1.push_back(20);
 
   petrov::List<int> i2(i1);
-  BOOST_CHECK_EQUAL(i1.IsEmpty(), i2.IsEmpty());
+  BOOST_CHECK_EQUAL(i1.empty(), i2.empty());
 
   petrov::LIter<int> l1 = i1.begin();
   petrov::LIter<int> l2 = i2.begin();
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(test_copy_assignment)
   BOOST_CHECK_EQUAL(*l2.begin(), 1);
 
   l1.clear();
-  BOOST_CHECK(!l2.IsEmpty());
+  BOOST_CHECK(!l2.empty());
   BOOST_CHECK_EQUAL(*l2.begin(), 1);
 }
 
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(test_move_semantics)
   l1.push_back(200);
 
   petrov::List<int> l2(std::move(l1));
-  BOOST_CHECK(l1.IsEmpty());
+  BOOST_CHECK(l1.empty());
   BOOST_CHECK_EQUAL(*l2.begin(), 100);
 
   petrov::LIter<int> i = l2.begin();
@@ -155,9 +155,9 @@ BOOST_AUTO_TEST_CASE(test_pop_front)
   l.pop_front();
 
   BOOST_CHECK_EQUAL(*l.begin(), 20);
-  BOOST_CHECK(!l.IsEmpty());
+  BOOST_CHECK(!l.empty());
   l.pop_front();
-  BOOST_CHECK(l.IsEmpty());
+  BOOST_CHECK(l.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_clear_logic)
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_clear_logic)
   l.push_back(3);
   l.clear();
 
-  BOOST_CHECK(l.IsEmpty());
+  BOOST_CHECK(l.empty());
   BOOST_CHECK(l.begin() == l.end());
 }
 
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(test_self_assignment)
   l = l;
 
   BOOST_CHECK_EQUAL(*l.begin(), 42);
-  BOOST_CHECK(!l.IsEmpty());
+  BOOST_CHECK(!l.empty());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
