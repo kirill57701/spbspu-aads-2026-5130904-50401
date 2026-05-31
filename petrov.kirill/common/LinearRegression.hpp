@@ -8,6 +8,8 @@ namespace petrov
   {
     List<double> W1;
     double predict(List<double> inp);
+    List<double> Adamar(List<double> a, List<double> b);
+    double sum_vec(List<double> a);
   };
 }
 
