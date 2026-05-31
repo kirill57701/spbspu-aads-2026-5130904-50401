@@ -1,11 +1,11 @@
-#include <../common/LinearRegression.hpp>
+#include "../common/LinearRegression.hpp"
 
-double predict(petrov::List<double> inp)
+double petrov::LinearRegression::predict(petrov::List<double> inp)
 {
   double c = 0;
-  for (size_t i = 0; i < inp.size(); ++i)
+  for (petrov::LIter<double> i = inp.begin(), j = W1.begin(); i != inp.end(); ++i, ++j)
   {
-    c += inp[i]*W1[i];
+    c += (*i)*(*j);
   }
   return c;
 }

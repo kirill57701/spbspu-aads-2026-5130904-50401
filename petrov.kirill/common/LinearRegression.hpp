@@ -1,6 +1,6 @@
 #ifndef LINEARREGRESSION_HPP
 #define LINEARREGRESSION_HPP
-#include <list.hpp>
+#include "list.hpp"
 
 namespace petrov
 {
@@ -8,7 +8,7 @@ namespace petrov
   {
     List<double> W1;
     double predict(List<double> inp);
-  }
+  };
 }
 
 #endif
