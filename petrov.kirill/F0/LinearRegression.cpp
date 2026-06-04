@@ -25,7 +25,27 @@ double petrov::LinearRegression::sum_vec(petrov::List<double> a)
   return c;
 }
 
-double petrov::mse(double pred, double goal)
+double petrov::LinearRegression::mse(double pred, double goal)
 {
   return (goal - pred) * (goal - pred);
+}
+
+void petrov::fit(double& mse, List<double> inp, LinearRegression& d, double g)
+{
+  *d.W1.begin() += d.lr;
+  double err1 = d.mse(d.predict(inp), g);
+  *d.W1.begin() -= 2*d.lr;
+  double err2 = d.mse(d.predict(inp), g);
+  *d.W1.begin() += d.lr;
+  if (err1 < mse || err2 < mse)
+  {
+    if (err1 < err2)
+    {
+      *d.W1.begin() += d.lr;
+      mse = err1;
+      return;
+    }
+    mse = err2;
+    *d.W1.begin() -= d.lr;
+  }
 }

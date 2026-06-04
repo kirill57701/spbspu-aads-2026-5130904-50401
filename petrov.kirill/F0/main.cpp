@@ -5,19 +5,18 @@
 int main()
 {
   petrov::LinearRegression model;
-  size_t a;
+  model.W1.push_back(0.1);
   double q;
-  petrov::List<double> inp;
-  std::cin >> a;
-  for (size_t i = 0; i < a; ++i)
+  model.lr = 0.01;
+  petrov::List<double> g;
+  g.push_back(1);
+  double mse = model.mse(model.predict(g), *g.begin());
+  petrov::fit(mse, g, model, *g.begin());
+  std::cout << "\n" << model.predict(g);
+
+  for (size_t i = 0; i < 100; ++i)
   {
-    std::cin >> q;
-    model.W1.push_back(q);
+    petrov::fit(mse, g, model, *g.begin());
   }
-  for (size_t i = 0; i < a; ++i)
-  {
-    std::cin >> q;
-    inp.push_back(q);
-  }
-  std::cout << model.predict(inp);
+  std::cout << "\n" << model.predict(g);
 }
