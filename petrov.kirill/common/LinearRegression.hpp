@@ -11,6 +11,7 @@ namespace petrov
     List<double> Adamar(List<double> a, List<double> b);
     double sum_vec(List<double> a);
   };
+  double mse(double pred, double goal);
 }
 
 #endif
