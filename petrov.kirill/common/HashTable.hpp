@@ -20,7 +20,20 @@ namespace petrov {
     Equal equal_;
   public:
     HashTable() : buckets_(new Node*[16]()), bucketCount_(16), size_(0) {}
-  };
+    ~HashTable() { clear(); delete[] buckets_; }
+    void clear() {
+      for (size_t i = 0; i < bucketCount_; ++i) {
+        Node *curr = buckets_[i];
+        while (curr) {
+        Node *next = curr->next;
+        delete curr;
+        curr = next;
+      }
+      buckets_[i] = nullptr;
+    }
+    size_ = 0;
+  }
+};
 }
 
 
