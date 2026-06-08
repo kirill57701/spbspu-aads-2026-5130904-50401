@@ -6,26 +6,26 @@
 
 namespace detail
 {
-  template< class T >
+  template<class T>
   struct Node
   {
     T val_;
-    Node< T >* next_;
-    Node< T >* prev_;
-    Node(const T& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
-    Node(T&& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
+    Node<T>* next_;
+    Node<T>* prev_;
+    Node(const T& v, Node<T>* n = nullptr, Node<T>* p = nullptr);
+    Node(T&& v, Node<T>* n = nullptr, Node<T>* p = nullptr);
   };
 
-  template< class T >
-  Node< T >::Node(const T& v, Node< T >* n, Node< T >* p):
+  template<class T>
+  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) :
     val_(v),
     next_(n),
     prev_(p)
   {}
 
-  template< class T >
-  Node< T >::Node(T&& v, Node< T >* n, Node< T >* p):
-    val_(std::forward< T >(v)),
+  template<class T>
+  Node<T>::Node(T&& v, Node<T>* n, Node<T>* p) :
+    val_(std::forward<T>(v)),
     next_(n),
     prev_(p)
   {}
@@ -33,31 +33,31 @@ namespace detail
 
 namespace petrov
 {
-  template< class T >
+  template<class T>
   class LIter;
 
-  template< class T >
+  template<class T>
   class LCIter;
 
-  template< class T >
+  template<class T>
   class List
   {
   public:
     List();
-    List(const List< T >& l);
-    List(List< T >&& l) noexcept;
+    List(const List<T>& l);
+    List(List<T>&& l) noexcept;
     List(size_t s, const T& init);
     ~List();
 
-    List< T >& operator=(List< T >&& l) noexcept;
-    List< T >& operator=(const List< T >& l);
+    List<T>& operator=(List<T>&& l) noexcept;
+    List<T>& operator=(const List<T>& l);
 
     bool empty() const noexcept;
     size_t size() const noexcept;
-    LIter< T > begin() noexcept;
-    LIter< T > end() noexcept;
-    LCIter< T > begin() const noexcept;
-    LCIter< T > end() const noexcept;
+    LIter<T> begin() noexcept;
+    LIter<T> end() noexcept;
+    LCIter<T> begin() const noexcept;
+    LCIter<T> end() const noexcept;
 
     void push_back(const T& d);
     void push_back(T&& d);
@@ -65,415 +65,399 @@ namespace petrov
     void push_front(const T& d);
     void push_front(T&& d);
 
-    void swap(List< T >& d) noexcept;
+    void swap(List<T>& d) noexcept;
     void pop_back();
     void pop_front();
     void clear();
   private:
-    detail::Node< T >* h_;
-    detail::Node< T >* t_;
-    size_t s_;
+    detail::Node<T>* m_h;
+    detail::Node<T>* m_t;
+    size_t m_s;
   };
 
-  template< class T >
+  template<class T>
   class LIter
   {
   public:
     LIter();
-    LIter(detail::Node< T >* n);
-    bool operator==(const LIter< T >& i) const;
-    bool operator!=(const LIter< T >& i) const;
+    LIter(detail::Node<T>* n);
+    bool operator==(const LIter<T>& i) const;
+    bool operator!=(const LIter<T>& i) const;
     T& operator*();
-    LIter< T >& operator++();
-    LIter< T > operator++(int);
-    LIter< T >& operator--();
-    LIter< T > operator--(int);
+    LIter<T>& operator++();
+    LIter<T> operator++(int);
+    LIter<T>& operator--();
+    LIter<T> operator--(int);
     T* operator->();
   private:
-    friend class List< T >;
-    detail::Node< T >* cur_;
+    friend class List<T>;
+    detail::Node<T>* m_cur;
   };
 
-  template< class T >
-  LIter< T >::LIter():
-    cur_(nullptr)
+  template<class T>
+  LIter<T>::LIter() :
+    m_cur(nullptr)
   {}
 
-  template< class T >
-  LIter< T >::LIter(detail::Node< T >* n):
-    cur_(n)
+  template<class T>
+  LIter<T>::LIter(detail::Node<T>* n) :
+    m_cur(n)
   {}
 
-  template< class T >
+  template<class T>
   class LCIter
   {
   public:
     LCIter();
-    LCIter(const detail::Node< T >* n);
-    bool operator==(const LCIter< T >& i) const;
-    bool operator!=(const LCIter< T >& i) const;
+    LCIter(const detail::Node<T>* n);
+    bool operator==(const LCIter<T>& i) const;
+    bool operator!=(const LCIter<T>& i) const;
     const T& operator*() const;
-    LCIter< T >& operator++();
-    LCIter< T >& operator--();
+    LCIter<T>& operator++();
+    LCIter<T>& operator--();
     const T* operator->() const;
   private:
-    friend class List< T >;
-    const detail::Node< T >* cur_;
+    friend class List<T>;
+    const detail::Node<T>* m_cur;
   };
 
-  template< class T >
-  LCIter< T >::LCIter():
-    cur_(nullptr)
+  template<class T>
+  LCIter<T>::LCIter() :
+    m_cur(nullptr)
   {}
 
-  template< class T >
-  LCIter< T >::LCIter(const detail::Node< T >* n):
-    cur_(n)
+  template<class T>
+  LCIter<T>::LCIter(const detail::Node<T>* n) :
+    m_cur(n)
   {}
 
-  template< class T >
-  List< T >::List():
-    h_(nullptr),
-    t_(nullptr),
-    s_(0)
+  template<class T>
+  List<T>::List() :
+    m_h(nullptr),
+    m_t(nullptr),
+    m_s(0)
   {}
 
-  template< class T >
-  void List< T >::clear()
+  template<class T>
+  void List<T>::clear()
   {
-    while (h_ != nullptr)
+    while (m_h != nullptr)
     {
-      detail::Node< T >* next_ = h_->next_;
-      delete h_;
-      h_ = next_;
+      detail::Node<T>* next_ = m_h->next_;
+      delete m_h;
+      m_h = next_;
     }
-    t_ = nullptr;
-    s_ = 0;
+    m_t = nullptr;
+    m_s = 0;
   }
 
-  template< class T >
-  List< T >::~List()
+  template<class T>
+  List<T>::~List()
   {
     clear();
   }
 
-  template< class T >
-  void List< T >::pop_front()
+  template<class T>
+  void List<T>::pop_front()
   {
     if (!empty())
     {
-      detail::Node< T >* new_h_ = h_->next_;
-      delete h_;
-      h_ = new_h_;
-      if (h_ == nullptr)
+      detail::Node<T>* new_h_ = m_h->next_;
+      delete m_h;
+      m_h = new_h_;
+      if (m_h == nullptr)
       {
-        t_ = nullptr;
+        m_t = nullptr;
       }
       else
       {
-        h_->prev_ = nullptr;
+        m_h->prev_ = nullptr;
       }
-      s_--;
+      m_s--;
     }
   }
 
-  template< class T >
-  void List< T >::swap(List< T >& d) noexcept
+  template<class T>
+  void List<T>::swap(List<T>& d) noexcept
   {
-    std::swap(h_, d.h_);
-    std::swap(t_, d.t_);
-    std::swap(s_, d.s_);
+    std::swap(m_h, d.m_h);
+    std::swap(m_t, d.m_t);
+    std::swap(m_s, d.m_s);
   }
 
-  template< class T >
-  void List< T >::pop_back()
+  template<class T>
+  void List<T>::pop_back()
   {
     if (!empty())
     {
-      detail::Node< T >* new_t_ = t_->prev_;
-      delete t_;
-      t_ = new_t_;
-      if (t_ == nullptr)
+      detail::Node<T>* new_t_ = m_t->prev_;
+      delete m_t;
+      m_t = new_t_;
+      if (m_t == nullptr)
       {
-        h_ = nullptr;
+        m_h = nullptr;
       }
       else
       {
-        t_->next_ = nullptr;
+        m_t->next_ = nullptr;
       }
-      s_--;
+      m_s--;
     }
   }
 
-  template< class T >
-  bool List< T >::empty() const noexcept
+  template<class T>
+  bool List<T>::empty() const noexcept
   {
-    return s_ == 0;
+    return m_s == 0;
   }
 
-  template< class T >
-  size_t List< T >::size() const noexcept
+  template<class T>
+  size_t List<T>::size() const noexcept
   {
-    return s_;
+    return m_s;
   }
 
-  template< class T >
-  void List< T >::push_back(const T& d)
+  template<class T>
+  void List<T>::push_back(const T& d)
   {
-    detail::Node< T >* new_node = new detail::Node< T >(d, nullptr, t_);
+    detail::Node<T>* new_node = new detail::Node<T>(d, nullptr, m_t);
     if (empty())
     {
-      h_ = new_node;
+      m_h = new_node;
     }
     else
     {
-      t_->next_ = new_node;
+      m_t->next_ = new_node;
     }
-    t_ = new_node;
-    s_++;
+    m_t = new_node;
+    m_s++;
   }
 
-  template< class T >
-  void List< T >::push_front(const T& d)
+  template<class T>
+  void List<T>::push_front(const T& d)
   {
-    detail::Node< T >* new_node = new detail::Node< T >(d, h_, nullptr);
+    detail::Node<T>* new_node = new detail::Node<T>(d, m_h, nullptr);
     if (empty())
     {
-      t_ = new_node;
+      m_t = new_node;
     }
     else
     {
-      h_->prev_ = new_node;
+      m_h->prev_ = new_node;
     }
-    h_ = new_node;
-    s_++;
+    m_h = new_node;
+    m_s++;
   }
 
-  template< class T >
-  void List< T >::push_back(T&& d)
+  template<class T>
+  void List<T>::push_back(T&& d)
   {
-    detail::Node< T >* new_node = new detail::Node< T >(std::forward< T >(d), nullptr, t_);
+    detail::Node<T>* new_node = new detail::Node<T>(std::forward<T>(d), nullptr, m_t);
     if (empty())
     {
-      h_ = new_node;
+      m_h = new_node;
     }
     else
     {
-      t_->next_ = new_node;
+      m_t->next_ = new_node;
     }
-    t_ = new_node;
-    s_++;
+    m_t = new_node;
+    m_s++;
   }
 
-  template< class T >
-  void List< T >::push_front(T&& d)
+  template<class T>
+  void List<T>::push_front(T&& d)
   {
-    detail::Node< T >* new_node = new detail::Node< T >(std::forward< T >(d), h_, nullptr);
+    detail::Node<T>* new_node = new detail::Node<T>(std::forward<T>(d), m_h, nullptr);
     if (empty())
     {
-      t_ = new_node;
+      m_t = new_node;
     }
     else
     {
-      h_->prev_ = new_node;
+      m_h->prev_ = new_node;
     }
-    h_ = new_node;
-    s_++;
+    m_h = new_node;
+    m_s++;
   }
 
-  template< class T >
-  List< T >::List(const List< T >& l):
-    h_(nullptr),
-    t_(nullptr),
-    s_(0)
+  template<class T>
+  List<T>::List(const List<T>& l) :
+    m_h(nullptr),
+    m_t(nullptr),
+    m_s(0)
   {
-    try
+    detail::Node<T>* nod_ = l.m_h;
+    while (nod_ != nullptr)
     {
-      detail::Node< T >* nod_ = l.h_;
-      while (nod_ != nullptr)
-      {
-        push_back(nod_->val_);
-        nod_ = nod_->next_;
-      }
-    }
-    catch (...)
-    {
-      clear();
-      throw;
+      push_back(nod_->val_);
+      nod_ = nod_->next_;
     }
   }
 
-  template< class T >
-  List< T >& List< T >::operator=(const List< T >& l)
+  template<class T>
+  List<T>& List<T>::operator=(const List<T>& l)
   {
     if (this != &l)
     {
-      List< T > temp(l);
+      List<T> temp(l);
       swap(temp);
     }
     return *this;
   }
 
-  template< class T >
-  List< T >::List(List< T >&& l) noexcept:
-    h_(std::exchange(l.h_, nullptr)),
-    t_(std::exchange(l.t_, nullptr)),
-    s_(std::exchange(l.s_, 0))
+  template<class T>
+  List<T>::List(List<T>&& l) noexcept :
+    m_h(std::exchange(l.m_h, nullptr)),
+    m_t(std::exchange(l.m_t, nullptr)),
+    m_s(std::exchange(l.m_s, 0))
   {}
 
-  template< class T >
-  List< T >& List< T >::operator=(List< T >&& l) noexcept
+  template<class T>
+  List<T>& List<T>::operator=(List<T>&& l) noexcept
   {
     swap(l);
     return *this;
   }
 
-  template< class T >
-  List< T >::List(size_t s, const T& init):
-    h_(nullptr),
-    t_(nullptr),
-    s_(0)
+  template<class T>
+  List<T>::List(size_t s, const T& init) :
+    m_h(nullptr),
+    m_t(nullptr),
+    m_s(0)
   {
-    try
+    for (size_t i_ = 0; i_ < s; ++i_)
     {
-      for (size_t i_ = 0; i_ < s; ++i_)
-      {
-        push_back(init);
-      }
-    }
-    catch (...)
-    {
-      clear();
-      throw;
+      push_back(init);
     }
   }
 
-  template< class T >
-  LIter< T > List< T >::begin() noexcept
+  template<class T>
+  LIter<T> List<T>::begin() noexcept
   {
-    return LIter< T >(h_);
+    return LIter<T>(m_h);
   }
 
-  template< class T >
-  LIter< T > List< T >::end() noexcept
+  template<class T>
+  LIter<T> List<T>::end() noexcept
   {
-    return LIter< T >(nullptr);
+    return LIter<T>(nullptr);
   }
 
-  template< class T >
-  LIter< T >& LIter< T >::operator++()
+  template<class T>
+  LIter<T>& LIter<T>::operator++()
   {
-    if (cur_)
+    if (m_cur)
     {
-      cur_ = cur_->next_;
+      m_cur = m_cur->next_;
     }
     return *this;
   }
 
-  template< class T >
-  LIter< T > LIter< T >::operator++(int)
+  template<class T>
+  LIter<T> LIter<T>::operator++(int)
   {
-    LIter< T > d_ = *this;
+    LIter<T> d_ = *this;
     ++(*this);
     return d_;
   }
 
-  template< class T >
-  LIter< T > LIter< T >::operator--(int)
+  template<class T>
+  LIter<T> LIter<T>::operator--(int)
   {
-    LIter< T > d_ = *this;
+    LIter<T> d_ = *this;
     --(*this);
     return d_;
   }
 
-  template< class T >
-  LIter< T >& LIter< T >::operator--()
+  template<class T>
+  LIter<T>& LIter<T>::operator--()
   {
-    if (cur_)
+    if (m_cur)
     {
-      cur_ = cur_->prev_;
+      m_cur = m_cur->prev_;
     }
     return *this;
   }
 
-  template< class T >
-  T& LIter< T >::operator*()
+  template<class T>
+  T& LIter<T>::operator*()
   {
-    return cur_->val_;
+    return m_cur->val_;
   }
 
-  template< class T >
-  T* LIter< T >::operator->()
+  template<class T>
+  T* LIter<T>::operator->()
   {
-    return &(cur_->val_);
+    return &(m_cur->val_);
   }
 
-  template< class T >
-  bool LIter< T >::operator==(const LIter< T >& i) const
+  template<class T>
+  bool LIter<T>::operator==(const LIter<T>& i) const
   {
-    return cur_ == i.cur_;
+    return m_cur == i.m_cur;
   }
 
-  template< class T >
-  bool LIter< T >::operator!=(const LIter< T >& i) const
+  template<class T>
+  bool LIter<T>::operator!=(const LIter<T>& i) const
   {
-    return cur_ != i.cur_;
+    return m_cur != i.m_cur;
   }
 
-  template< class T >
-  bool LCIter< T >::operator==(const LCIter< T >& i) const
+  template<class T>
+  bool LCIter<T>::operator==(const LCIter<T>& i) const
   {
-    return cur_ == i.cur_;
+    return m_cur == i.m_cur;
   }
 
-  template< class T >
-  bool LCIter< T >::operator!=(const LCIter< T >& i) const
+  template<class T>
+  bool LCIter<T>::operator!=(const LCIter<T>& i) const
   {
-    return cur_ != i.cur_;
+    return m_cur != i.m_cur;
   }
 
-  template< class T >
-  const T& LCIter< T >::operator*() const
+  template<class T>
+  const T& LCIter<T>::operator*() const
   {
-    return cur_->val_;
+    return m_cur->val_;
   }
 
-  template< class T >
-  const T* LCIter< T >::operator->() const
+  template<class T>
+  const T* LCIter<T>::operator->() const
   {
-    return std::addressof(cur_->val_);
+    return std::addressof(m_cur->val_);
   }
 
-  template< class T >
-  LCIter< T >& LCIter< T >::operator++()
+  template<class T>
+  LCIter<T>& LCIter<T>::operator++()
   {
-    if (cur_)
+    if (m_cur)
     {
-      cur_ = cur_->next_;
+      m_cur = m_cur->next_;
     }
     return *this;
   }
 
-  template< class T >
-  LCIter< T >& LCIter< T >::operator--()
+  template<class T>
+  LCIter<T>& LCIter<T>::operator--()
   {
-    if (cur_)
+    if (m_cur)
     {
-      cur_ = cur_->prev_;
+      m_cur = m_cur->prev_;
     }
     return *this;
   }
 
-  template< class T >
-  LCIter< T > List< T >::begin() const noexcept
+  template<class T>
+  LCIter<T> List<T>::begin() const noexcept
   {
-    return LCIter< T >(h_);
+    return LCIter<T>(m_h);
   }
 
-  template< class T >
-  LCIter< T > List< T >::end() const noexcept
+  template<class T>
+  LCIter<T> List<T>::end() const noexcept
   {
-    return LCIter< T >(nullptr);
+    return LCIter<T>(nullptr);
   }
 };
 
