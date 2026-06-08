@@ -15,14 +15,14 @@ namespace detail
     Node(T&& v, Node<T>* n = nullptr, Node<T>* p = nullptr);
   };
   template< class T >
-  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p) :
+  Node<T>::Node(const T& v, Node<T>* n, Node<T>* p):
     val(v),
     next(n),
     prev(p)
   {}
 
   template< class T >
-  Node<T>::Node(T&& v, Node<T>* n, Node<T>* p) :
+  Node<T>::Node(T&& v, Node<T>* n, Node<T>* p):
     val(std::move(v)),
     next(n),
     prev(p)
