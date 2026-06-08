@@ -14,6 +14,7 @@ namespace detail
     Node(const T& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
     Node(T&& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
   };
+
   template< class T >
   Node< T >::Node(const T& v, Node< T >* n, Node< T >* p):
     val_(v),
@@ -77,8 +78,8 @@ namespace petrov
   class LIter
   {
   public:
-    LIter(): cur_(nullptr) {}
-    LIter(detail::Node< T >* n): cur_(n) {}
+    LIter();
+    LIter(detail::Node< T >* n);
     bool operator==(const LIter< T >& i) const;
     bool operator!=(const LIter< T >& i) const;
     T& operator*();
@@ -93,11 +94,21 @@ namespace petrov
   };
 
   template< class T >
+  LIter< T >::LIter():
+    cur_(nullptr)
+  {}
+
+  template< class T >
+  LIter< T >::LIter(detail::Node< T >* n):
+    cur_(n)
+  {}
+
+  template< class T >
   class LCIter
   {
   public:
-    LCIter(): cur_(nullptr) {}
-    LCIter(detail::Node< T >* n): cur_(n) {}
+    LCIter();
+    LCIter(detail::Node< T >* n);
     bool operator==(const LCIter< T >& i) const;
     bool operator!=(const LCIter< T >& i) const;
     const T& operator*() const;
@@ -107,7 +118,18 @@ namespace petrov
   private:
     friend class List< T >;
     const detail::Node< T >* cur_;
-};
+  };
+
+  template< class T >
+  LCIter< T >::LCIter():
+    cur_(nullptr)
+  {}
+
+  template< class T >
+  LCIter< T >::LCIter(detail::Node< T >* n):
+    cur_(n)
+  {}
+
   template< class T >
   List< T >::List():
     h_(nullptr),
@@ -266,7 +288,7 @@ namespace petrov
       s_ = 1;
       return;
     }
-    h_->prev_ = new detail::Node< T >(std::move(d));
+    h_->prev_ = new detail::Node< T >(std::forward< T >(d));
     h_->prev_->next_ = h_;
     h_ = h_->prev_;
     h_->prev_ = nullptr;
