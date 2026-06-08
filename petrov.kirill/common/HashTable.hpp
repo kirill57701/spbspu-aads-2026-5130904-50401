@@ -24,6 +24,7 @@ namespace petrov
     size_t size_;
     HashFunc hasher_;
     Equal equal_;
+    double maxLoadFactor_;
 
   public:
     class Iterator;
@@ -32,7 +33,8 @@ namespace petrov
     HashTable(size_t slots = 16) :
       buckets_(new Node*[slots]()),
       bucketCount_(slots),
-      size_(0)
+      size_(0),
+      maxLoadFactor_(0.75)
     {}
 
     ~HashTable()
@@ -46,7 +48,8 @@ namespace petrov
       bucketCount_(other.bucketCount_),
       size_(0),
       hasher_(other.hasher_),
-      equal_(other.equal_)
+      equal_(other.equal_),
+      maxLoadFactor_(other.maxLoadFactor_)
     {
       for (size_t i = 0; i < bucketCount_; ++i)
       {
@@ -69,13 +72,20 @@ namespace petrov
         std::swap(size_, temp.size_);
         std::swap(hasher_, temp.hasher_);
         std::swap(equal_, temp.equal_);
+        std::swap(maxLoadFactor_, temp.maxLoadFactor_);
       }
       return *this;
+    }
+
+    void setMaxLoadFactor(double maxLoad)
+    {
+      maxLoadFactor_ = maxLoad;
     }
 
     void add(const Key &k, const Value &v)
     {
       if (has(k)) return;
+      checkRehash();
       size_t idx = hasher_(k) % bucketCount_;
       buckets_[idx] = new Node(k, v, buckets_[idx]);
       ++size_;
@@ -132,6 +142,16 @@ namespace petrov
 
     size_t getSize() const { return size_; }
 
+  private:
+    void checkRehash()
+    {
+      if (static_cast<double>(size_ + 1) / bucketCount_ > maxLoadFactor_)
+      {
+        rehash(bucketCount_ * 2);
+      }
+    }
+
+  public:
     class Iterator
     {
       friend class HashTable;
