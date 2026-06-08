@@ -8,24 +8,24 @@ namespace detail
   template< class T >
   struct Node
   {
-    T val;
-    Node< T >* next;
-    Node< T >* prev;
+    T val_;
+    Node< T >* next_;
+    Node< T >* prev_;
     Node(const T& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
     Node(T&& v, Node< T >* n = nullptr, Node< T >* p = nullptr);
   };
   template< class T >
   Node< T >::Node(const T& v, Node< T >* n, Node< T >* p):
-    val(v),
-    next(n),
-    prev(p)
+    val_(v),
+    next_(n),
+    prev_(p)
   {}
 
   template< class T >
   Node< T >::Node(T&& v, Node< T >* n, Node< T >* p):
-    val(std::forward< T >(v)),
-    next(n),
-    prev(p)
+    val_(std::forward< T >(v)),
+    next_(n),
+    prev_(p)
   {}
 };
 
@@ -68,17 +68,17 @@ namespace petrov
     void pop_front();
     void clear();
   private:
-    detail::Node< T >* h;
-    detail::Node< T >* t;
-    size_t s;
+    detail::Node< T >* h_;
+    detail::Node< T >* t_;
+    size_t s_;
   };
 
   template< class T >
   class LIter
   {
   public:
-    LIter(): cur(nullptr) {}
-    LIter(detail::Node< T >* n): cur(n) {}
+    LIter(): cur_(nullptr) {}
+    LIter(detail::Node< T >* n): cur_(n) {}
     bool operator==(const LIter< T >& i) const;
     bool operator!=(const LIter< T >& i) const;
     T& operator*();
@@ -89,15 +89,15 @@ namespace petrov
     T* operator->();
   private:
     friend class List< T >;
-    detail::Node< T >* cur;
+    detail::Node< T >* cur_;
   };
 
   template< class T >
   class LCIter
   {
   public:
-    LCIter(): cur(nullptr) {}
-    LCIter(detail::Node< T >* n): cur(n) {}
+    LCIter(): cur_(nullptr) {}
+    LCIter(detail::Node< T >* n): cur_(n) {}
     bool operator==(const LCIter< T >& i) const;
     bool operator!=(const LCIter< T >& i) const;
     const T& operator*() const;
@@ -106,31 +106,31 @@ namespace petrov
     const T* operator->() const;
   private:
     friend class List< T >;
-    const detail::Node< T >* cur;
+    const detail::Node< T >* cur_;
 };
   template< class T >
   List< T >::List():
-    h(nullptr),
-    t(nullptr),
-    s(0)
+    h_(nullptr),
+    t_(nullptr),
+    s_(0)
   {}
 
   template< class T >
   void List< T >::clear()
   {
-    if (h != nullptr)
+    if (h_ != nullptr)
     {
-      while (h->next != nullptr)
+      while (h_->next_ != nullptr)
       {
-        detail::Node< T >* promej = h->next;
-        delete h;
-        h = promej;
+        detail::Node< T >* promej_ = h_->next_;
+        delete h_;
+        h_ = promej_;
       }
-      delete h;
+      delete h_;
     }
-    h = nullptr;
-    t = nullptr;
-    s = 0;
+    h_ = nullptr;
+    t_ = nullptr;
+    s_ = 0;
   }
 
   template< class T >
@@ -144,26 +144,26 @@ namespace petrov
   {
     if (!empty())
     {
-      detail::Node< T >* new_h = h->next;
-      delete h;
-      h = new_h;
-      if (h == nullptr)
+      detail::Node< T >* new_h_ = h_->next_;
+      delete h_;
+      h_ = new_h_;
+      if (h_ == nullptr)
       {
-        t = nullptr;
-        s = 0;
+        t_ = nullptr;
+        s_ = 0;
         return;
       }
-      h->prev = nullptr;
-      s--;
+      h_->prev_ = nullptr;
+      s_--;
     }
   }
 
   template< class T >
   void List< T >::swap(List< T >& d) noexcept
   {
-    std::swap(h, d.h);
-    std::swap(t, d.t);
-    std::swap(s, d.s);
+    std::swap(h_, d.h_);
+    std::swap(t_, d.t_);
+    std::swap(s_, d.s_);
   }
 
   template< class T >
@@ -171,30 +171,30 @@ namespace petrov
   {
     if (!empty())
     {
-      detail::Node< T >* new_t = t->prev;
-      delete t;
-      t = new_t;
-      if (t == nullptr)
+      detail::Node< T >* new_t_ = t_->prev_;
+      delete t_;
+      t_ = new_t_;
+      if (t_ == nullptr)
       {
-        h = nullptr;
-        s = 0;
+        h_ = nullptr;
+        s_ = 0;
         return;
       }
-      t->next = nullptr;
-      s--;
+      t_->next_ = nullptr;
+      s_--;
     }
   }
 
   template< class T >
   bool List< T >::empty() const noexcept
   {
-    return (!s || h == nullptr);
+    return (!s_ || h_ == nullptr);
   }
 
   template< class T >
   size_t List< T >::size() const noexcept
   {
-    return s;
+    return s_;
   }
 
   template< class T >
@@ -202,18 +202,18 @@ namespace petrov
   {
     if (empty())
     {
-      h = new detail::Node< T >(d);
-      h->next = nullptr;
-      h->prev = nullptr;
-      t = h;
-      s = 1;
+      h_ = new detail::Node< T >(d);
+      h_->next_ = nullptr;
+      h_->prev_ = nullptr;
+      t_ = h_;
+      s_ = 1;
       return;
     }
-    t->next = new detail::Node< T >(d);
-    t->next->prev = t;
-    t = t->next;
-    t->next = nullptr;
-    s++;
+    t_->next_ = new detail::Node< T >(d);
+    t_->next_->prev_ = t_;
+    t_ = t_->next_;
+    t_->next_ = nullptr;
+    s_++;
   }
 
   template< class T >
@@ -221,18 +221,18 @@ namespace petrov
   {
     if (empty())
     {
-      h = new detail::Node< T >(d);
-      h->next = nullptr;
-      h->prev = nullptr;
-      t = h;
-      s = 1;
+      h_ = new detail::Node< T >(d);
+      h_->next_ = nullptr;
+      h_->prev_ = nullptr;
+      t_ = h_;
+      s_ = 1;
       return;
     }
-    h->prev = new detail::Node< T >(d);
-    h->prev->next = h;
-    h = h->prev;
-    h->prev = nullptr;
-    s++;
+    h_->prev_ = new detail::Node< T >(d);
+    h_->prev_->next_ = h_;
+    h_ = h_->prev_;
+    h_->prev_ = nullptr;
+    s_++;
   }
 
   template< class T >
@@ -240,18 +240,18 @@ namespace petrov
   {
     if (empty())
     {
-      h = new detail::Node< T >(std::forward< T >(d));
-      h->next = nullptr;
-      h->prev = nullptr;
-      t = h;
-      s = 1;
+      h_ = new detail::Node< T >(std::forward< T >(d));
+      h_->next_ = nullptr;
+      h_->prev_ = nullptr;
+      t_ = h_;
+      s_ = 1;
       return;
     }
-    t->next = new detail::Node< T >(std::forward< T >(d));
-    t->next->prev = t;
-    t = t->next;
-    t->next = nullptr;
-    s++;
+    t_->next_ = new detail::Node< T >(std::forward< T >(d));
+    t_->next_->prev_ = t_;
+    t_ = t_->next_;
+    t_->next_ = nullptr;
+    s_++;
   }
 
   template< class T >
@@ -259,31 +259,31 @@ namespace petrov
   {
     if (empty())
     {
-      h = new detail::Node< T >(std::forward< T >(d));
-      h->next = nullptr;
-      h->prev = nullptr;
-      t = h;
-      s = 1;
+      h_ = new detail::Node< T >(std::forward< T >(d));
+      h_->next_ = nullptr;
+      h_->prev_ = nullptr;
+      t_ = h_;
+      s_ = 1;
       return;
     }
-    h->prev = new detail::Node< T >(std::move(d));
-    h->prev->next = h;
-    h = h->prev;
-    h->prev = nullptr;
-    s++;
+    h_->prev_ = new detail::Node< T >(std::move(d));
+    h_->prev_->next_ = h_;
+    h_ = h_->prev_;
+    h_->prev_ = nullptr;
+    s_++;
   }
 
   template< class T >
   List< T >::List(const List< T >& l):
-    h(nullptr),
-    t(nullptr),
-    s(0)
+    h_(nullptr),
+    t_(nullptr),
+    s_(0)
   {
-    detail::Node< T >* nod = l.h;
-    while (nod != nullptr)
+    detail::Node< T >* nod_ = l.h_;
+    while (nod_ != nullptr)
     {
-      push_back(nod->val);
-      nod = nod->next;
+      push_back(nod_->val_);
+      nod_ = nod_->next_;
     }
   }
 
@@ -296,9 +296,9 @@ namespace petrov
 
   template< class T >
   List< T >::List(List< T >&& l) noexcept:
-    h(std::exchange(l.h, nullptr)),
-    t(std::exchange(l.t, nullptr)),
-    s(std::exchange(l.s, 0))
+    h_(std::exchange(l.h_, nullptr)),
+    t_(std::exchange(l.t_, nullptr)),
+    s_(std::exchange(l.s_, 0))
   {}
 
   template< class T >
@@ -310,11 +310,11 @@ namespace petrov
 
   template< class T >
   List< T >::List(size_t s, const T& init):
-    h(nullptr),
-    t(nullptr),
-    s(0)
+    h_(nullptr),
+    t_(nullptr),
+    s_(0)
   {
-    for (size_t i = 0; i < s; ++i)
+    for (size_t i_ = 0; i_ < s; ++i_)
     {
       push_back(init);
     }
@@ -323,7 +323,7 @@ namespace petrov
   template< class T >
   LIter< T > List< T >::begin() noexcept
   {
-    return LIter< T >(h);
+    return LIter< T >(h_);
   }
 
   template< class T >
@@ -335,9 +335,9 @@ namespace petrov
   template< class T >
   LIter< T >& LIter< T >::operator++()
   {
-    if (cur != nullptr)
+    if (cur_ != nullptr)
     {
-      cur = cur->next;
+      cur_ = cur_->next_;
     }
     return *this;
   }
@@ -345,25 +345,25 @@ namespace petrov
   template< class T >
   LIter< T >& LIter< T >::operator++(int)
   {
-    LIter< T > d = *this;
+    LIter< T > d_ = *this;
     ++(*this);
-    return d;
+    return d_;
   }
 
   template< class T >
   LIter< T >& LIter< T >::operator--(int)
   {
-    LIter< T > d = *this;
+    LIter< T > d_ = *this;
     --(*this);
-    return d;
+    return d_;
   }
 
   template< class T >
   LIter< T >& LIter< T >::operator--()
   {
-    if (cur != nullptr)
+    if (cur_ != nullptr)
     {
-      cur = cur->prev;
+      cur_ = cur_->prev_;
     }
     return *this;
   }
@@ -371,57 +371,57 @@ namespace petrov
   template< class T >
   T& LIter< T >::operator*()
   {
-    return cur->val;
+    return cur_->val_;
   }
 
   template< class T >
   T* LIter< T >::operator->()
   {
-    return &(cur->val);
+    return &(cur_->val_);
   }
 
   template< class T >
   bool LIter< T >::operator==(const LIter< T >& i) const
   {
-    return !(cur != i.cur);
+    return !(cur_ != i.cur_);
   }
 
   template< class T >
   bool LIter< T >::operator!=(const LIter< T >& i) const
   {
-    return cur != i.cur;
+    return cur_ != i.cur_;
   }
 
   template< class T >
   bool LCIter< T >::operator==(const LCIter< T >& i) const
   {
-    return !(cur != i.cur);
+    return !(cur_ != i.cur_);
   }
 
   template< class T >
   bool LCIter< T >::operator!=(const LCIter< T >& i) const
   {
-    return cur != i.cur;
+    return cur_ != i.cur_;
   }
 
   template< class T >
   const T& LCIter< T >::operator*() const
   {
-    return cur->val;
+    return cur_->val_;
   }
 
   template< class T >
   const T* LCIter< T >::operator->() const
   {
-    return std::addressof(cur->val);
+    return std::addressof(cur_->val_);
   }
 
   template< class T >
   LCIter< T >& LCIter< T >::operator++()
   {
-    if (cur != nullptr)
+    if (cur_ != nullptr)
     {
-      cur = cur->next;
+      cur_ = cur_->next_;
     }
     return *this;
   }
@@ -429,9 +429,9 @@ namespace petrov
   template< class T >
   LCIter< T >& LCIter< T >::operator--()
   {
-    if (cur != nullptr)
+    if (cur_ != nullptr)
     {
-      cur = cur->prev;
+      cur_ = cur_->prev_;
     }
     return *this;
   }
@@ -439,7 +439,7 @@ namespace petrov
   template< class T >
   LCIter< T > List< T >::begin() const noexcept
   {
-    return LCIter< T >(h);
+    return LCIter< T >(h_);
   }
 
   template< class T >
