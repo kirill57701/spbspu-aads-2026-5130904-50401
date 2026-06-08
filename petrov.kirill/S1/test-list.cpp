@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE ListDeepTest
 #include <boost/test/included/unit_test.hpp>
-#include "../common/list.hpp"
+#include "list.hpp"
 
 BOOST_AUTO_TEST_SUITE(ListTestForLab)
 
