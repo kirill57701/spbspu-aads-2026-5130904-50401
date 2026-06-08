@@ -287,11 +287,19 @@ namespace petrov
     m_t(nullptr),
     m_s(0)
   {
-    detail::Node<T>* nod_ = l.m_h;
-    while (nod_ != nullptr)
+    try
     {
-      push_back(nod_->val_);
-      nod_ = nod_->next_;
+      detail::Node<T>* nod_ = l.m_h;
+      while (nod_ != nullptr)
+      {
+        push_back(nod_->val_);
+        nod_ = nod_->next_;
+      }
+    }
+    catch (...)
+    {
+      clear();
+      throw;
     }
   }
 
@@ -326,9 +334,17 @@ namespace petrov
     m_t(nullptr),
     m_s(0)
   {
-    for (size_t i_ = 0; i_ < s; ++i_)
+    try
     {
-      push_back(init);
+      for (size_t i_ = 0; i_ < s; ++i_)
+      {
+        push_back(init);
+      }
+    }
+    catch (...)
+    {
+      clear();
+      throw;
     }
   }
 
