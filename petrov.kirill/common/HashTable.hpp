@@ -91,16 +91,58 @@ namespace petrov
       ++size_;
     }
 
+    bool drop(const Key &key)
+    {
+      size_t idx = hasher_(key) % bucketCount_;
+      Node *curr = buckets_[idx];
+      Node *prev = nullptr;
+
+      while (curr)
+      {
+        if (equal_(curr->kv.first, key))
+        {
+          if (prev) prev->next = curr->next;
+          else buckets_[idx] = curr->next;
+          delete curr;
+          --size_;
+          return 1;
+        }
+        prev = curr;
+        curr = curr->next;
+      }
+      return 0;
+    }
+
     bool has(const Key &k) const
     {
       size_t idx = hasher_(k) % bucketCount_;
       Node *curr = buckets_[idx];
       while (curr)
       {
-        if (equal_(curr->kv.first, k)) return true;
+        if (equal_(curr->kv.first, k)) return 1;
         curr = curr->next;
       }
-      return false;
+      return 0;
+    }
+
+    bool isEmpty() const
+    {
+      return size_ == 0;
+    }
+
+    size_t getCapacity() const
+    {
+      return bucketCount_;
+    }
+
+    void swap(HashTable &rhs) noexcept
+    {
+      std::swap(buckets_, rhs.buckets_);
+      std::swap(bucketCount_, rhs.bucketCount_);
+      std::swap(size_, rhs.size_);
+      std::swap(hasher_, rhs.hasher_);
+      std::swap(equal_, rhs.equal_);
+      std::swap(maxLoadFactor_, rhs.maxLoadFactor_);
     }
 
     void clear()
