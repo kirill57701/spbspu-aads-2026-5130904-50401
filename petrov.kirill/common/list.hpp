@@ -301,11 +301,19 @@ namespace petrov
     t_(nullptr),
     s_(0)
   {
-    detail::Node< T >* nod_ = l.h_;
-    while (nod_ != nullptr)
+    try
     {
-      push_back(nod_->val_);
-      nod_ = nod_->next_;
+      detail::Node< T >* nod_ = l.h_;
+      while (nod_ != nullptr)
+      {
+        push_back(nod_->val_);
+        nod_ = nod_->next_;
+      }
+    }
+    catch (...)
+    {
+      clear();
+      throw;
     }
   }
 
