@@ -62,7 +62,25 @@ namespace petrov
       if (equal_(curr->kv.first, k)) return 1;
       curr = curr->next;
     }
-  return 0;
+    return 0;
+  }
+  void rehash(size_t slots)
+  {
+    Node **newBuckets = new Node*[slots]();
+    for (size_t i = 0; i < bucketCount_; ++i)
+    {
+      Node *curr = buckets_[i];
+      while (curr) {
+        Node *next = curr->next;
+        size_t newIdx = hasher_(curr->kv.first) % slots;
+        curr->next = newBuckets[newIdx];
+        newBuckets[newIdx] = curr;
+        curr = next;
+      }
+    }
+    delete[] buckets_;
+    buckets_ = newBuckets;
+    bucketCount_ = slots;
   }
 };
 }
