@@ -105,12 +105,12 @@ namespace petrov
           else buckets_[idx] = curr->next;
           delete curr;
           --size_;
-          return 1;
+          return true;
         }
         prev = curr;
         curr = curr->next;
       }
-      return 0;
+      return false;
     }
 
     bool has(const Key &k) const
@@ -119,10 +119,10 @@ namespace petrov
       Node *curr = buckets_[idx];
       while (curr)
       {
-        if (equal_(curr->kv.first, k)) return 1;
+        if (equal_(curr->kv.first, k)) return true;
         curr = curr->next;
       }
-      return 0;
+      return false;
     }
 
     bool isEmpty() const
