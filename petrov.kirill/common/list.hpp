@@ -23,7 +23,7 @@ namespace detail
 
   template< class T >
   Node<T>::Node(T&& v, Node<T>* n, Node<T>* p):
-    val(std::move(v)),
+    val(std::forward<T>(v)),
     next(n),
     prev(p)
   {}
