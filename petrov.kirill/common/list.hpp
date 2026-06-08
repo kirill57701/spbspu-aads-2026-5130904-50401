@@ -114,7 +114,9 @@ namespace petrov
     bool operator!=(const LCIter<T>& i) const;
     const T& operator*() const;
     LCIter<T>& operator++();
+    LCIter<T> operator++(int);
     LCIter<T>& operator--();
+    LCIter<T> operator--(int);
     const T* operator->() const;
   private:
     friend class List<T>;
@@ -455,6 +457,14 @@ namespace petrov
   }
 
   template<class T>
+  LCIter<T> LCIter<T>::operator++(int)
+  {
+    LCIter<T> d_ = *this;
+    ++(*this);
+    return d_;
+  }
+
+  template<class T>
   LCIter<T>& LCIter<T>::operator--()
   {
     if (m_cur)
@@ -462,6 +472,14 @@ namespace petrov
       m_cur = m_cur->prev_;
     }
     return *this;
+  }
+
+  template<class T>
+  LCIter<T> LCIter<T>::operator--(int)
+  {
+    LCIter<T> d_ = *this;
+    --(*this);
+    return d_;
   }
 
   template<class T>
