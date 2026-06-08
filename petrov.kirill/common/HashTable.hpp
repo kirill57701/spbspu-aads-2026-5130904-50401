@@ -41,6 +41,38 @@ namespace petrov
       delete[] buckets_;
     }
 
+    HashTable(const HashTable &other) :
+      buckets_(new Node*[other.bucketCount_]()),
+      bucketCount_(other.bucketCount_),
+      size_(0),
+      hasher_(other.hasher_),
+      equal_(other.equal_)
+    {
+      for (size_t i = 0; i < bucketCount_; ++i)
+      {
+        Node *curr = other.buckets_[i];
+        while (curr)
+        {
+          add(curr->kv.first, curr->kv.second);
+          curr = curr->next;
+        }
+      }
+    }
+
+    HashTable &operator=(const HashTable &other)
+    {
+      if (this != &other)
+      {
+        HashTable temp(other);
+        std::swap(buckets_, temp.buckets_);
+        std::swap(bucketCount_, temp.bucketCount_);
+        std::swap(size_, temp.size_);
+        std::swap(hasher_, temp.hasher_);
+        std::swap(equal_, temp.equal_);
+      }
+      return *this;
+    }
+
     void add(const Key &k, const Value &v)
     {
       if (has(k)) return;
@@ -137,8 +169,47 @@ namespace petrov
       }
     };
 
+    class ConstIterator
+    {
+      friend class HashTable;
+      const HashTable *table_;
+      size_t bucketIdx_;
+      const Node *node_;
+
+      ConstIterator(const HashTable *t, size_t b, const Node *n) : table_(t), bucketIdx_(b), node_(n)
+      {
+        if (!node_ && table_) advance();
+      }
+
+    public:
+      ConstIterator() : table_(nullptr), bucketIdx_(0), node_(nullptr) {}
+      const std::pair<Key, Value> &operator*() const { return node_->kv; }
+      const std::pair<Key, Value> *operator->() const { return &node_->kv; }
+      bool operator!=(const ConstIterator &rhs) const { return node_ != rhs.node_; }
+      ConstIterator &operator++()
+      {
+        if (node_->next) node_ = node_->next;
+        else
+        {
+          bucketIdx_++;
+          advance();
+        }
+        return *this;
+      }
+
+    private:
+      void advance()
+      {
+        while (bucketIdx_ < table_->bucketCount_ && !table_->buckets_[bucketIdx_])
+          bucketIdx_++;
+        node_ = (bucketIdx_ < table_->bucketCount_) ? table_->buckets_[bucketIdx_] : nullptr;
+      }
+    };
+
     Iterator begin() { return Iterator(this, 0, buckets_[0]); }
     Iterator end() { return Iterator(this, bucketCount_, nullptr); }
+    ConstIterator begin() const { return ConstIterator(this, 0, buckets_[0]); }
+    ConstIterator end() const { return ConstIterator(this, bucketCount_, nullptr); }
   };
 }
 
