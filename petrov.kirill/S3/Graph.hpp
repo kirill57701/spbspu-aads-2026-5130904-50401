@@ -206,6 +206,41 @@ namespace petrov
       auto& neighborsV = adjList_.get(v);
       neighborsV.push_back(u);
     }
+
+    std::vector<int> getOutbound(int v) const
+    {
+      return getNeighbors(v);
+    }
+
+    std::vector<int> getInbound(int v) const
+    {
+      std::vector<int> inbound;
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        for (int neighbor : it->second)
+        {
+          if (neighbor == v)
+          {
+            inbound.push_back(it->first);
+          }
+        }
+      }
+      return inbound;
+    }
+
+    Graph merge(const Graph& other) const
+    {
+      Graph result = *this;
+      for (auto it = other.adjList_.begin(); it != other.adjList_.end(); ++it)
+      {
+        result.addVertex(it->first);
+        for (int neighbor : it->second)
+        {
+          result.addEdge(it->first, neighbor);
+        }
+      }
+      return result;
+    }
   };
 }
 
