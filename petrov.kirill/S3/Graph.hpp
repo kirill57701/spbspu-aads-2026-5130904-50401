@@ -128,6 +128,84 @@ namespace petrov
       }
       return 0;
     }
+
+    struct EdgeTarget
+    {
+      int vertex;
+      std::vector<int> weights;
+    };
+
+    std::vector<int> getNeighbors(int v) const
+    {
+      if (adjList_.has(v))
+      {
+        return adjList_.get(v);
+      }
+      return std::vector<int>();
+    }
+
+    std::vector<int> getAllVertices() const
+    {
+      std::vector<int> vertices;
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        vertices.push_back(it->first);
+      }
+      return vertices;
+    }
+
+    bool isConnected(int u, int v) const
+    {
+      return hasEdge(u, v);
+    }
+
+    void clear()
+    {
+      std::vector<int> allVertices = getAllVertices();
+      for (int v : allVertices)
+      {
+        removeVertex(v);
+      }
+    }
+
+    bool isEmpty() const
+    {
+      return adjList_.getSize() == 0;
+    }
+
+    void printGraph() const
+    {
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        int v = it->first;
+        const auto& neighbors = it->second;
+        for (int neighbor : neighbors)
+        {
+          if (v < neighbor)
+          {
+          }
+        }
+      }
+    }
+
+    size_t getDegree(int v) const
+    {
+      if (adjList_.has(v))
+      {
+        return adjList_.get(v).size();
+      }
+      return 0;
+    }
+
+    void addWeightedEdge(int u, int v, int weight)
+    {
+      addVertex(u);
+      addVertex(v);
+      auto& neighborsU = adjList_.get(u);
+      neighborsU.push_back(v);
+      auto& neighborsV = adjList_.get(v);
+      neighborsV.push_back(u);
+    }
   };
 }
 
