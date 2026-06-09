@@ -205,7 +205,7 @@ namespace petrov
       return 0;
     }
 
-    void addWeightedEdge(int u, int v, int weight)
+    void addWeightedEdge(int u, int v, int )
     {
       addVertex(u);
       addVertex(v);
