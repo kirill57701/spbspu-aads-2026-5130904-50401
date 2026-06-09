@@ -2,15 +2,14 @@
 #define GRAPH_HPP
 
 #include "common/HashTable.hpp"
-#include <vector>
-#include <algorithm>
+#include "list.hpp"
 
 namespace petrov
 {
   class Graph
   {
   private:
-    HashTable<int, std::vector<int>> adjList_;
+    HashTable<int, List<int>> adjList_;
 
   public:
     Graph() = default;
@@ -30,7 +29,7 @@ namespace petrov
     {
       if (!adjList_.has(v))
       {
-        adjList_.add(v, std::vector<int>());
+        adjList_.add(v, List<int>());
       }
     }
 
@@ -63,13 +62,11 @@ namespace petrov
       {
         if (it->first == u)
         {
-          auto& vec = it->second;
-          vec.erase(std::remove(vec.begin(), vec.end(), v), vec.end());
+          it->second.remove(v);
         }
         else if (it->first == v)
         {
-          auto& vec = it->second;
-          vec.erase(std::remove(vec.begin(), vec.end(), u), vec.end());
+          it->second.remove(u);
         }
       }
     }
@@ -93,8 +90,7 @@ namespace petrov
 
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        auto& neighbors = it->second;
-        neighbors.erase(std::remove(neighbors.begin(), neighbors.end(), v), neighbors.end());
+        it->second.remove(v);
       }
       adjList_.drop(v);
     }
@@ -132,21 +128,27 @@ namespace petrov
     struct EdgeTarget
     {
       int vertex;
-      std::vector<int> weights;
+      List<int> weights;
     };
 
-    std::vector<int> getNeighbors(int v) const
+    List<int> getNeighbors(int v) const
     {
       if (adjList_.has(v))
       {
-        return adjList_.get(v);
+        for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+        {
+          if (it->first == v)
+          {
+            return it->second;
+          }
+        }
       }
-      return std::vector<int>();
+      return List<int>();
     }
 
-    std::vector<int> getAllVertices() const
+    List<int> getAllVertices() const
     {
-      std::vector<int> vertices;
+      List<int> vertices;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         vertices.push_back(it->first);
@@ -161,7 +163,7 @@ namespace petrov
 
     void clear()
     {
-      std::vector<int> allVertices = getAllVertices();
+      List<int> allVertices = getAllVertices();
       for (int v : allVertices)
       {
         removeVertex(v);
@@ -192,7 +194,13 @@ namespace petrov
     {
       if (adjList_.has(v))
       {
-        return adjList_.get(v).size();
+        for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+        {
+          if (it->first == v)
+          {
+            return it->second.getSize();
+          }
+        }
       }
       return 0;
     }
@@ -201,20 +209,27 @@ namespace petrov
     {
       addVertex(u);
       addVertex(v);
-      auto& neighborsU = adjList_.get(u);
-      neighborsU.push_back(v);
-      auto& neighborsV = adjList_.get(v);
-      neighborsV.push_back(u);
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        if (it->first == u)
+        {
+          it->second.push_back(v);
+        }
+        else if (it->first == v)
+        {
+          it->second.push_back(u);
+        }
+      }
     }
 
-    std::vector<int> getOutbound(int v) const
+    List<int> getOutbound(int v) const
     {
       return getNeighbors(v);
     }
 
-    std::vector<int> getInbound(int v) const
+    List<int> getInbound(int v) const
     {
-      std::vector<int> inbound;
+      List<int> inbound;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         for (int neighbor : it->second)
