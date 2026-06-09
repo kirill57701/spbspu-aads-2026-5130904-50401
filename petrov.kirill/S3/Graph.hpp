@@ -1,8 +1,9 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
-#include "hash_table.hpp"
+#include "common/HashTable.hpp"
 #include <vector>
+#include <algorithm>
 
 namespace petrov
 {
@@ -13,6 +14,17 @@ namespace petrov
 
   public:
     Graph() = default;
+
+    Graph(const Graph& other) : adjList_(other.adjList_) {}
+
+    Graph& operator=(const Graph& other)
+    {
+      if (this != &other)
+      {
+        adjList_ = other.adjList_;
+      }
+      return *this;
+    }
 
     void addVertex(int v)
     {
@@ -26,17 +38,45 @@ namespace petrov
     {
       addVertex(u);
       addVertex(v);
-      for (auto &pair : adjList_)
+
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        if (pair.first == u)
+        if (it->first == u)
         {
-          pair.second.push_back(v);
+          it->second.push_back(v);
         }
-        if (pair.first == v)
+        else if (it->first == v)
         {
-          pair.second.push_back(u);
+          it->second.push_back(u);
         }
       }
+    }
+
+    void cut(int u, int v)
+    {
+      if (!adjList_.has(u) || !adjList_.has(v))
+      {
+        return;
+      }
+
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        if (it->first == u)
+        {
+          auto& vec = it->second;
+          vec.erase(std::remove(vec.begin(), vec.end(), v), vec.end());
+        }
+        else if (it->first == v)
+        {
+          auto& vec = it->second;
+          vec.erase(std::remove(vec.begin(), vec.end(), u), vec.end());
+        }
+      }
+    }
+
+    void swap(Graph& other) noexcept
+    {
+      adjList_.swap(other.adjList_);
     }
 
     bool hasVertex(int v) const
@@ -50,22 +90,43 @@ namespace petrov
       {
         return;
       }
-      for (auto &pair : adjList_)
+
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        auto &neighbors = pair.second;
-        for (auto it = neighbors.begin(); it != neighbors.end(); )
-        {
-          if (*it == v)
-          {
-            it = neighbors.erase(it);
-          }
-          else
-          {
-            ++it;
-          }
-        }
+        auto& neighbors = it->second;
+        neighbors.erase(std::remove(neighbors.begin(), neighbors.end(), v), neighbors.end());
       }
       adjList_.drop(v);
+    }
+
+    size_t getVertexCount() const
+    {
+      return adjList_.getSize();
+    }
+
+    bool hasEdge(int u, int v) const
+    {
+      if (!adjList_.has(u))
+      {
+        return 0;
+      }
+
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        if (it->first == u)
+        {
+          const auto& neighbors = it->second;
+          for (int neighbor : neighbors)
+          {
+            if (neighbor == v)
+            {
+              return 1;
+            }
+          }
+          return 0;
+        }
+      }
+      return 0;
     }
   };
 }
