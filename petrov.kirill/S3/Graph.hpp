@@ -1,8 +1,8 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
-#include "common/HashTable.hpp"
-#include "common/list.hpp"
+#include "../common/HashTable.hpp"
+#include "../common/list.hpp"
 
 namespace petrov
 {

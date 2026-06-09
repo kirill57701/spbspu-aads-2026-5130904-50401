@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "common/list.hpp"
-#include "common/HashTable.hpp"
+#include "../common/list.hpp"
+#include "../common/HashTable.hpp"
 #include "Graph.hpp"
 
 petrov::List<std::string> splitString(const std::string& str) {
