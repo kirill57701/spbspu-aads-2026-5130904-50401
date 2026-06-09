@@ -2,7 +2,7 @@
 #define GRAPH_HPP
 
 #include "common/HashTable.hpp"
-#include "list.hpp"
+#include "common/list.hpp"
 
 namespace petrov
 {
