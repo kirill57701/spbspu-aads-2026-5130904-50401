@@ -1,5 +1,5 @@
-#ifndef HASH_TABLE_HPP
-#define HASH_TABLE_HPP
+#ifndef HASHTABLE_HPP
+#define HASHTABLE_HPP
 
 #include <cstddef>
 #include <utility>
