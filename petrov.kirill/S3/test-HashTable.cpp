@@ -126,15 +126,15 @@ BOOST_AUTO_TEST_CASE(test_const_iterators)
 {
   HashTable<int, int> table;
   table.add(100, 1);
-  
+
   const HashTable<int, int>& constTable = table;
-  
+
   auto it = constTable.begin();
-  
+
   BOOST_CHECK(it != constTable.end());
   BOOST_TEST(it->first == 100);
   BOOST_TEST((*it).second == 1);
-  
+
   ++it;
   BOOST_CHECK(!(it != constTable.end()));
 }
