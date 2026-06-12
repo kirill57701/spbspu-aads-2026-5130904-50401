@@ -31,7 +31,7 @@ namespace petrov
     class ConstIterator;
 
     HashTable(size_t slots = 16):
-      buckets_(new Node*[slots]())
+      buckets_(new Node*[slots]()),
       bucketCount_(slots),
       size_(0),
       hasher_(HashFunc()),
@@ -47,7 +47,7 @@ namespace petrov
       delete[] buckets_;
     }
 
-    HashTable(const HashTable &other) :
+    HashTable(const HashTable &other):
       buckets_(new Node*[other.bucketCount_]()),
       bucketCount_(other.bucketCount_),
       size_(0),
