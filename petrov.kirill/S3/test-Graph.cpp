@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(test_cut_weighted_edge)
 {
   Graph graph;
   graph.addWeightedEdge(1, 2, 100);
-  
+
   graph.cut(1, 2, 50);
   BOOST_TEST(graph.getOutbound(1).getSize() == 1);
 
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(test_swap_graphs)
 {
   Graph graph1;
   graph1.addVertex(1);
-  
+
   Graph graph2;
   graph2.addVertex(2);
   graph2.addVertex(3);
