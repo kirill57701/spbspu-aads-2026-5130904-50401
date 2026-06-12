@@ -1,7 +1,8 @@
+#define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE HashTableTest
 #include <boost/test/unit_test.hpp>
 #include <string>
-#include "HashTable.hpp"
+#include "../common/HashTable.hpp"
 
 using namespace petrov;
 
@@ -125,14 +126,15 @@ BOOST_AUTO_TEST_CASE(test_const_iterators)
 {
   HashTable<int, int> table;
   table.add(100, 1);
-
+  
   const HashTable<int, int>& constTable = table;
-
+  
   auto it = constTable.begin();
-  BOOST_TEST(it != constTable.end());
+  
+  BOOST_CHECK(it != constTable.end());
   BOOST_TEST(it->first == 100);
   BOOST_TEST((*it).second == 1);
-
+  
   ++it;
-  BOOST_TEST(it == constTable.end());
+  BOOST_CHECK(!(it != constTable.end()));
 }
