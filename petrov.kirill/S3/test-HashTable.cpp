@@ -1,6 +1,6 @@
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE HashTableTest
-#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 #include <string>
 #include "../common/HashTable.hpp"
 
