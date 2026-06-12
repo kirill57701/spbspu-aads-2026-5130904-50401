@@ -1,232 +1,131 @@
-#ifndef GRAPH_HPP
-#define GRAPH_HPP
+#define BOOST_TEST_MODULE GraphTest
+#include <boost/test/unit_test.hpp>
+#include "Graph.hpp"
 
-#include "../common/HashTable.hpp"
-#include "../common/list.hpp"
-#include <stdexcept>
+using namespace petrov;
 
-namespace petrov
+BOOST_AUTO_TEST_CASE(test_add_and_check_vertex)
 {
-  struct Edge
-  {
-    int to;
-    int weight;
-    bool operator==(const Edge& other) const
-    {
-      return to == other.to && weight == other.weight;
-    }
-  };
+  Graph graph;
+  BOOST_TEST(graph.getVertexCount() == 0);
 
-  class Graph
-  {
-  private:
-    HashTable<int, List<Edge>> adjList_;
-
-    List<Edge>& getList(int v)
-    {
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == v)
-        {
-          return it->second;
-        }
-      }
-      throw std::runtime_error("");
-    }
-
-    const List<Edge>& getList(int v) const
-    {
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == v)
-        {
-          return it->second;
-        }
-      }
-      throw std::runtime_error("");
-    }
-
-    bool hasEdge(int u, int v, int w) const
-    {
-      if (!adjList_.has(u))
-      {
-        return false;
-      }
-      for (const auto& edge : getList(u))
-      {
-        if (edge.to == v && edge.weight == w)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-  public:
-    Graph() = default;
-    Graph(const Graph& other) : adjList_(other.adjList_) {}
-
-    Graph& operator=(const Graph& other)
-    {
-      if (this != &other)
-      {
-        adjList_ = other.adjList_;
-      }
-      return *this;
-    }
-
-    void addVertex(int v)
-    {
-      if (!adjList_.has(v))
-      {
-        adjList_.add(v, List<Edge>());
-      }
-    }
-
-    void addWeightedEdge(int u, int v, int w)
-    {
-      addVertex(u);
-      addVertex(v);
-      if (!hasEdge(u, v, w))
-      {
-        getList(u).push_back({v, w});
-        getList(v).push_back({u, w});
-      }
-    }
-
-    void addEdge(int u, int v)
-    {
-      addWeightedEdge(u, v, 0);
-    }
-
-    void cut(int u, int v, int w)
-    {
-      if (adjList_.has(u))
-      {
-        List<Edge>& neighborsU = getList(u);
-        for (auto it = neighborsU.begin(); it != neighborsU.end(); ++it)
-        {
-          if (it->to == v && it->weight == w)
-          {
-            neighborsU.erase(it);
-            break;
-          }
-        }
-      }
-      if (adjList_.has(v))
-      {
-        List<Edge>& neighborsV = getList(v);
-        for (auto it = neighborsV.begin(); it != neighborsV.end(); ++it)
-        {
-          if (it->to == u && it->weight == w)
-          {
-            neighborsV.erase(it);
-            break;
-          }
-        }
-      }
-    }
-
-    void cut(int u, int v)
-    {
-      cut(u, v, 0);
-    }
-
-    void swap(Graph& other) noexcept
-    {
-      adjList_.swap(other.adjList_);
-    }
-
-    bool hasVertex(int v) const
-    {
-      return adjList_.has(v);
-    }
-
-    void removeVertex(int v)
-    {
-      if (!adjList_.has(v))
-      {
-        return;
-      }
-      adjList_.drop(v);
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        List<Edge>& list = it->second;
-        for (auto nIt = list.begin(); nIt != list.end(); )
-        {
-          if (nIt->to == v)
-          {
-            nIt = list.erase(nIt);
-          }
-          else
-          {
-            ++nIt;
-          }
-        }
-      }
-    }
-
-    size_t getVertexCount() const
-    {
-      return adjList_.getSize();
-    }
-
-    List<int> getAllVertices() const
-    {
-      List<int> vertices;
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        vertices.push_back(it->first);
-      }
-      return vertices;
-    }
-
-    List<int> getOutbound(int v) const
-    {
-      List<int> res;
-      if (adjList_.has(v))
-      {
-        for (const auto& edge : getList(v))
-        {
-          res.push_back(edge.to);
-        }
-      }
-      return res;
-    }
-
-    List<int> getInbound(int v) const
-    {
-      List<int> inbound;
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        for (const auto& edge : it->second)
-        {
-          if (edge.to == v)
-          {
-            inbound.push_back(it->first);
-          }
-        }
-      }
-      return inbound;
-    }
-
-    Graph merge(const Graph& other) const
-    {
-      Graph result = *this;
-      for (auto it = other.adjList_.begin(); it != other.adjList_.end(); ++it)
-      {
-        result.addVertex(it->first);
-        for (const auto& edge : it->second)
-        {
-          if (it->first <= edge.to)
-          {
-            result.addWeightedEdge(it->first, edge.to, edge.weight);
-          }
-        }
-      }
-      return result;
-    }
-  };
+  graph.addVertex(10);
+  BOOST_TEST(graph.hasVertex(10));
+  BOOST_TEST(!graph.hasVertex(20));
+  BOOST_TEST(graph.getVertexCount() == 1);
 }
 
-#endif
+BOOST_AUTO_TEST_CASE(test_add_edge_and_getters)
+{
+  Graph graph;
+  graph.addWeightedEdge(1, 2, 5);
+
+  BOOST_TEST(graph.hasVertex(1));
+  BOOST_TEST(graph.hasVertex(2));
+  BOOST_TEST(graph.getVertexCount() == 2);
+
+  List<int> outbound_1 = graph.getOutbound(1);
+  List<int> inbound_2 = graph.getInbound(2);
+
+  BOOST_TEST(outbound_1.getSize() == 1);
+  BOOST_TEST(inbound_2.getSize() == 1);
+  BOOST_TEST(*outbound_1.begin() == 2);
+  BOOST_TEST(*inbound_2.begin() == 1);
+}
+
+BOOST_AUTO_TEST_CASE(test_add_unweighted_edge)
+{
+  Graph graph;
+  graph.addEdge(5, 6);
+
+  List<int> outbound = graph.getOutbound(5);
+  BOOST_TEST(outbound.getSize() == 1);
+  BOOST_TEST(*outbound.begin() == 6);
+}
+
+BOOST_AUTO_TEST_CASE(test_cut_weighted_edge)
+{
+  Graph graph;
+  graph.addWeightedEdge(1, 2, 100);
+  
+  graph.cut(1, 2, 50);
+  BOOST_TEST(graph.getOutbound(1).getSize() == 1);
+
+  graph.cut(1, 2, 100);
+  BOOST_TEST(graph.getOutbound(1).getSize() == 0);
+  BOOST_TEST(graph.getInbound(2).getSize() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_remove_vertex)
+{
+  Graph graph;
+  graph.addWeightedEdge(1, 2, 10);
+  graph.addWeightedEdge(2, 3, 20);
+
+  graph.removeVertex(2);
+
+  BOOST_TEST(!graph.hasVertex(2));
+  BOOST_TEST(graph.hasVertex(1));
+  BOOST_TEST(graph.hasVertex(3));
+  BOOST_TEST(graph.getVertexCount() == 2);
+
+  BOOST_TEST(graph.getOutbound(1).getSize() == 0);
+  BOOST_TEST(graph.getInbound(3).getSize() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_get_all_vertices)
+{
+  Graph graph;
+  graph.addVertex(7);
+  graph.addVertex(8);
+
+  List<int> all = graph.getAllVertices();
+  BOOST_TEST(all.getSize() == 2);
+}
+
+BOOST_AUTO_TEST_CASE(test_copy_and_assignment)
+{
+  Graph graph1;
+  graph1.addVertex(42);
+
+  Graph graph2(graph1);
+  BOOST_TEST(graph2.hasVertex(42));
+
+  Graph graph3;
+  graph3 = graph2;
+  BOOST_TEST(graph3.hasVertex(42));
+}
+
+BOOST_AUTO_TEST_CASE(test_swap_graphs)
+{
+  Graph graph1;
+  graph1.addVertex(1);
+  
+  Graph graph2;
+  graph2.addVertex(2);
+  graph2.addVertex(3);
+
+  graph1.swap(graph2);
+
+  BOOST_TEST(graph1.getVertexCount() == 2);
+  BOOST_TEST(graph1.hasVertex(2));
+  BOOST_TEST(graph2.getVertexCount() == 1);
+  BOOST_TEST(graph2.hasVertex(1));
+}
+
+BOOST_AUTO_TEST_CASE(test_merge_graphs)
+{
+  Graph graph1;
+  graph1.addWeightedEdge(1, 2, 10);
+
+  Graph graph2;
+  graph2.addWeightedEdge(2, 3, 20);
+  graph2.addWeightedEdge(1, 2, 10);
+
+  Graph merged = graph1.merge(graph2);
+
+  BOOST_TEST(merged.hasVertex(1));
+  BOOST_TEST(merged.hasVertex(2));
+  BOOST_TEST(merged.hasVertex(3));
+  BOOST_TEST(merged.getVertexCount() == 3);
+}
