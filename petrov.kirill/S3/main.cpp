@@ -11,6 +11,11 @@
 #include "Graph.hpp"
 
 using GraphTable = petrov::HashTable<std::string, petrov::Graph>;
+using AdjListType = petrov::HashTable<int, petrov::List<petrov::Edge>>;
+
+AdjListType& getAdj(petrov::Graph* g) {
+  return *reinterpret_cast<AdjListType*>(g);
+}
 
 petrov::HashTable<std::string, int> strToInt;
 petrov::HashTable<int, std::string> intToStr;
@@ -43,6 +48,18 @@ petrov::Graph* findGraph(GraphTable& graphs, const std::string& name) {
     }
   }
   return nullptr;
+}
+
+void addEdgeUnconditionally(petrov::Graph* g, int u, int v, int w) {
+  g->addVertex(u);
+  g->addVertex(v);
+  auto& adjList = getAdj(g);
+  for (auto it = adjList.begin(); it != adjList.end(); ++it) {
+    if (it->first == u) {
+      it->second.push_back({v, w});
+      break;
+    }
+  }
 }
 
 void processGraphs(std::istream&, std::ostream& out, GraphTable& graphs) {
@@ -84,6 +101,15 @@ void processVertexes(std::istream& in, std::ostream& out, GraphTable& graphs) {
   }
 }
 
+struct EdgeInfo {
+  std::string vertex;
+  std::vector<int> weights;
+};
+
+bool compareEdgeInfo(const EdgeInfo& a, const EdgeInfo& b) {
+  return a.vertex < b.vertex;
+}
+
 void processOutbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
   std::string gname, vname;
   if (!(in >> gname >> vname)) {
@@ -99,22 +125,48 @@ void processOutbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
     throw std::runtime_error("");
   }
 
-  petrov::List<int> outbound = g->getOutbound(vid);
-  if (outbound.getSize() == 0) {
+  auto& adjList = getAdj(g);
+  std::vector<EdgeInfo> res;
+
+  for (auto it = adjList.begin(); it != adjList.end(); ++it) {
+    if (it->first == vid) {
+      for (const auto& edge : it->second) {
+        std::string toStr = getVertStr(edge.to);
+        bool found = false;
+        for (auto& info : res) {
+          if (info.vertex == toStr) {
+            info.weights.push_back(edge.weight);
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          EdgeInfo info;
+          info.vertex = toStr;
+          info.weights.push_back(edge.weight);
+          res.push_back(info);
+        }
+      }
+      break;
+    }
+  }
+
+  if (res.empty()) {
     out << "\n";
     return;
   }
 
-  std::vector<std::string> names;
-  for (auto it = outbound.begin(); it != outbound.end(); ++it) {
-    names.push_back(getVertStr(*it));
+  for (auto& info : res) {
+    std::sort(info.weights.begin(), info.weights.end());
   }
+  std::sort(res.begin(), res.end(), compareEdgeInfo);
 
-  std::sort(names.begin(), names.end());
-  names.erase(std::unique(names.begin(), names.end()), names.end());
-
-  for (const auto& name : names) {
-    out << name << "\n";
+  for (const auto& info : res) {
+    out << info.vertex;
+    for (int w : info.weights) {
+      out << " " << w;
+    }
+    out << "\n";
   }
 }
 
@@ -133,22 +185,48 @@ void processInbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
     throw std::runtime_error("");
   }
 
-  petrov::List<int> inbound = g->getInbound(vid);
-  if (inbound.getSize() == 0) {
+  auto& adjList = getAdj(g);
+  std::vector<EdgeInfo> res;
+
+  for (auto it = adjList.begin(); it != adjList.end(); ++it) {
+    int from = it->first;
+    for (const auto& edge : it->second) {
+      if (edge.to == vid) {
+        std::string fromStr = getVertStr(from);
+        bool found = false;
+        for (auto& info : res) {
+          if (info.vertex == fromStr) {
+            info.weights.push_back(edge.weight);
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          EdgeInfo info;
+          info.vertex = fromStr;
+          info.weights.push_back(edge.weight);
+          res.push_back(info);
+        }
+      }
+    }
+  }
+
+  if (res.empty()) {
     out << "\n";
     return;
   }
 
-  std::vector<std::string> names;
-  for (auto it = inbound.begin(); it != inbound.end(); ++it) {
-    names.push_back(getVertStr(*it));
+  for (auto& info : res) {
+    std::sort(info.weights.begin(), info.weights.end());
   }
+  std::sort(res.begin(), res.end(), compareEdgeInfo);
 
-  std::sort(names.begin(), names.end());
-  names.erase(std::unique(names.begin(), names.end()), names.end());
-
-  for (const auto& name : names) {
-    out << name << "\n";
+  for (const auto& info : res) {
+    out << info.vertex;
+    for (int w : info.weights) {
+      out << " " << w;
+    }
+    out << "\n";
   }
 }
 
@@ -163,7 +241,9 @@ void processBind(std::istream& in, std::ostream&, GraphTable& graphs) {
     throw std::runtime_error("");
   }
 
-  g->addWeightedEdge(getVertId(u_str), getVertId(v_str), w);
+  int u = getVertId(u_str);
+  int v = getVertId(v_str);
+  addEdgeUnconditionally(g, u, v, w);
 }
 
 void processCut(std::istream& in, std::ostream&, GraphTable& graphs) {
@@ -184,7 +264,25 @@ void processCut(std::istream& in, std::ostream&, GraphTable& graphs) {
     throw std::runtime_error("");
   }
 
-  g->cut(u, v, w);
+  bool found = false;
+  auto& adjList = getAdj(g);
+  for (auto it = adjList.begin(); it != adjList.end(); ++it) {
+    if (it->first == u) {
+      auto& neighbors = it->second;
+      for (auto nit = neighbors.begin(); nit != neighbors.end(); ++nit) {
+        if (nit->to == v && nit->weight == w) {
+          neighbors.erase(nit);
+          found = true;
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  if (!found) {
+    throw std::runtime_error("");
+  }
 }
 
 void processCreate(std::istream& in, std::ostream&, GraphTable& graphs) {
@@ -224,7 +322,33 @@ void processMerge(std::istream& in, std::ostream&, GraphTable& graphs) {
   petrov::Graph* graph1 = findGraph(graphs, g1);
   petrov::Graph* graph2 = findGraph(graphs, g2);
 
-  graphs.add(res, graph1->merge(*graph2));
+  petrov::Graph result;
+
+  petrov::List<int> v1 = graph1->getAllVertices();
+  for (auto it = v1.begin(); it != v1.end(); ++it) {
+    result.addVertex(*it);
+  }
+
+  petrov::List<int> v2 = graph2->getAllVertices();
+  for (auto it = v2.begin(); it != v2.end(); ++it) {
+    result.addVertex(*it);
+  }
+
+  auto& src1AdjList = getAdj(graph1);
+  for (auto it = src1AdjList.begin(); it != src1AdjList.end(); ++it) {
+    for (const auto& edge : it->second) {
+      addEdgeUnconditionally(&result, it->first, edge.to, edge.weight);
+    }
+  }
+
+  auto& src2AdjList = getAdj(graph2);
+  for (auto it = src2AdjList.begin(); it != src2AdjList.end(); ++it) {
+    for (const auto& edge : it->second) {
+      addEdgeUnconditionally(&result, it->first, edge.to, edge.weight);
+    }
+  }
+
+  graphs.add(res, result);
 }
 
 void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
@@ -241,16 +365,13 @@ void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
     throw std::runtime_error("");
   }
 
-  petrov::HashTable<int, bool> selected;
   std::vector<int> targetVerts;
   for (int i = 0; i < vcount; ++i) {
     std::string v;
     if (!(in >> v)) {
       throw std::runtime_error("");
     }
-    int id = getVertId(v);
-    targetVerts.push_back(id);
-    selected.add(id, true);
+    targetVerts.push_back(getVertId(v));
   }
 
   petrov::Graph* src = findGraph(graphs, gname);
@@ -265,12 +386,14 @@ void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
     result.addVertex(id);
   }
 
-  for (int from : targetVerts) {
-    petrov::List<int> outbound = src->getOutbound(from);
-    for (auto it = outbound.begin(); it != outbound.end(); ++it) {
-      int to = *it;
-      if (selected.has(to)) {
-        result.addWeightedEdge(from, to, 0);
+  auto& srcAdjList = getAdj(src);
+  for (auto it = srcAdjList.begin(); it != srcAdjList.end(); ++it) {
+    int from = it->first;
+    if (std::find(targetVerts.begin(), targetVerts.end(), from) != targetVerts.end()) {
+      for (const auto& edge : it->second) {
+        if (std::find(targetVerts.begin(), targetVerts.end(), edge.to) != targetVerts.end()) {
+          addEdgeUnconditionally(&result, from, edge.to, edge.weight);
+        }
       }
     }
   }
@@ -300,7 +423,9 @@ int main(int argc, char* argv[]) {
       if (!(ifs >> u_str >> v_str >> w)) {
         return 1;
       }
-      g.addWeightedEdge(getVertId(u_str), getVertId(v_str), w);
+      int u = getVertId(u_str);
+      int v = getVertId(v_str);
+      addEdgeUnconditionally(&g, u, v, w);
     }
     graphs.add(gname, g);
   }
