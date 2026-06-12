@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(test_get_all_vertices)
   BOOST_TEST(all.getSize() == 2);
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_and_assignment)
+BOOST_AUTO_TEST_CASE(test_graph_copy_and_assignment)
 {
   Graph graph1;
   graph1.addVertex(42);

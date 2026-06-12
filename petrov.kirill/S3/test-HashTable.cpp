@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_clear)
   BOOST_TEST(!table.has(1));
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_and_assignment)
+BOOST_AUTO_TEST_CASE(test_hash_copy_and_assignment)
 {
   HashTable<int, int> table1;
   table1.add(5, 50);
