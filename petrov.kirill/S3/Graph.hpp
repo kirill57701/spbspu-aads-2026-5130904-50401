@@ -11,9 +11,9 @@ namespace petrov
   {
     int to;
     int weight;
-    bool operator==(const Edge& other) const 
-    { 
-      return to == other.to && weight == other.weight; 
+    bool operator==(const Edge& other) const
+    {
+      return to == other.to && weight == other.weight;
     }
   };
 
@@ -48,13 +48,13 @@ namespace petrov
 
     bool hasEdge(int u, int v, int w) const
     {
-      if (!adjList_.has(u)) 
+      if (!adjList_.has(u))
       {
         return false;
       }
       for (const auto& edge : getList(u))
       {
-        if (edge.to == v && edge.weight == w) 
+        if (edge.to == v && edge.weight == w)
         {
           return true;
         }
@@ -144,7 +144,7 @@ namespace petrov
 
     void removeVertex(int v)
     {
-      if (!adjList_.has(v)) 
+      if (!adjList_.has(v))
       {
         return;
       }
@@ -154,11 +154,11 @@ namespace petrov
         List<Edge>& list = it->second;
         for (auto nIt = list.begin(); nIt != list.end(); )
         {
-          if (nIt->to == v) 
+          if (nIt->to == v)
           {
             nIt = list.erase(nIt);
           }
-          else 
+          else
           {
             ++nIt;
           }
