@@ -3,6 +3,7 @@
 
 #include "../common/HashTable.hpp"
 #include "../common/list.hpp"
+#include <stdexcept>
 
 namespace petrov
 {
@@ -10,13 +11,56 @@ namespace petrov
   {
     int to;
     int weight;
-    bool operator==(const Edge& other) const { return to == other.to && weight == other.weight; }
+    bool operator==(const Edge& other) const 
+    { 
+      return to == other.to && weight == other.weight; 
+    }
   };
 
   class Graph
   {
   private:
     HashTable<int, List<Edge>> adjList_;
+
+    List<Edge>& getList(int v)
+    {
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        if (it->first == v)
+        {
+          return it->second;
+        }
+      }
+      throw std::runtime_error("");
+    }
+
+    const List<Edge>& getList(int v) const
+    {
+      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      {
+        if (it->first == v)
+        {
+          return it->second;
+        }
+      }
+      throw std::runtime_error("");
+    }
+
+    bool hasEdge(int u, int v, int w) const
+    {
+      if (!adjList_.has(u)) 
+      {
+        return false;
+      }
+      for (const auto& edge : getList(u))
+      {
+        if (edge.to == v && edge.weight == w) 
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
   public:
     Graph() = default;
@@ -43,8 +87,11 @@ namespace petrov
     {
       addVertex(u);
       addVertex(v);
-      adjList_.get(u).push_back({v, w});
-      adjList_.get(v).push_back({u, w});
+      if (!hasEdge(u, v, w))
+      {
+        getList(u).push_back({v, w});
+        getList(v).push_back({u, w});
+      }
     }
 
     void addEdge(int u, int v)
@@ -54,16 +101,35 @@ namespace petrov
 
     void cut(int u, int v, int w)
     {
-      if (!adjList_.has(u)) return;
-      List<Edge>& neighbors = adjList_.get(u);
-      for (auto it = neighbors.begin(); it != neighbors.end(); ++it)
+      if (adjList_.has(u))
       {
-        if (it->to == v && it->weight == w)
+        List<Edge>& neighborsU = getList(u);
+        for (auto it = neighborsU.begin(); it != neighborsU.end(); ++it)
         {
-          neighbors.erase(it);
-          break;
+          if (it->to == v && it->weight == w)
+          {
+            neighborsU.erase(it);
+            break;
+          }
         }
       }
+      if (adjList_.has(v))
+      {
+        List<Edge>& neighborsV = getList(v);
+        for (auto it = neighborsV.begin(); it != neighborsV.end(); ++it)
+        {
+          if (it->to == u && it->weight == w)
+          {
+            neighborsV.erase(it);
+            break;
+          }
+        }
+      }
+    }
+
+    void cut(int u, int v)
+    {
+      cut(u, v, 0);
     }
 
     void swap(Graph& other) noexcept
@@ -78,15 +144,24 @@ namespace petrov
 
     void removeVertex(int v)
     {
-      if (!adjList_.has(v)) return;
+      if (!adjList_.has(v)) 
+      {
+        return;
+      }
       adjList_.drop(v);
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         List<Edge>& list = it->second;
         for (auto nIt = list.begin(); nIt != list.end(); )
         {
-          if (nIt->to == v) nIt = list.erase(nIt);
-          else ++nIt;
+          if (nIt->to == v) 
+          {
+            nIt = list.erase(nIt);
+          }
+          else 
+          {
+            ++nIt;
+          }
         }
       }
     }
@@ -98,7 +173,7 @@ namespace petrov
 
     List<int> getAllVertices() const
     {
-du      List<int> vertices;
+      List<int> vertices;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         vertices.push_back(it->first);
@@ -111,7 +186,7 @@ du      List<int> vertices;
       List<int> res;
       if (adjList_.has(v))
       {
-        for (const auto& edge : adjList_.get(v))
+        for (const auto& edge : getList(v))
         {
           res.push_back(edge.to);
         }
@@ -143,7 +218,10 @@ du      List<int> vertices;
         result.addVertex(it->first);
         for (const auto& edge : it->second)
         {
-          result.addWeightedEdge(it->first, edge.to, edge.weight);
+          if (it->first <= edge.to)
+          {
+            result.addWeightedEdge(it->first, edge.to, edge.weight);
+          }
         }
       }
       return result;
