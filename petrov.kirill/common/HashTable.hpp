@@ -30,12 +30,16 @@ namespace petrov
     class Iterator;
     class ConstIterator;
 
-    HashTable(size_t slots = 16) :
-      buckets_(new Node*[slots]()),
+    HashTable(size_t slots = 16):
+      buckets_(new Node*[slots]())
       bucketCount_(slots),
       size_(0),
+      hasher_(HashFunc()),
+      equal_(Equal()),
       maxLoadFactor_(0.75)
-    {}
+    {
+      for (size_t i = 0; i < bucketCount_; ++i) buckets_[i] = nullptr;
+    }
 
     ~HashTable()
     {

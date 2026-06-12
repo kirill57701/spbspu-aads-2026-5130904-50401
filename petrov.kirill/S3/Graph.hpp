@@ -6,14 +6,20 @@
 
 namespace petrov
 {
+  struct Edge
+  {
+    int to;
+    int weight;
+    bool operator==(const Edge& other) const { return to == other.to && weight == other.weight; }
+  };
+
   class Graph
   {
   private:
-    HashTable<int, List<int>> adjList_;
+    HashTable<int, List<Edge>> adjList_;
 
   public:
     Graph() = default;
-
     Graph(const Graph& other) : adjList_(other.adjList_) {}
 
     Graph& operator=(const Graph& other)
@@ -29,44 +35,33 @@ namespace petrov
     {
       if (!adjList_.has(v))
       {
-        adjList_.add(v, List<int>());
+        adjList_.add(v, List<Edge>());
       }
+    }
+
+    void addWeightedEdge(int u, int v, int w)
+    {
+      addVertex(u);
+      addVertex(v);
+      adjList_.get(u).push_back({v, w});
+      adjList_.get(v).push_back({u, w});
     }
 
     void addEdge(int u, int v)
     {
-      addVertex(u);
-      addVertex(v);
-
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == u)
-        {
-          it->second.push_back(v);
-        }
-        else if (it->first == v)
-        {
-          it->second.push_back(u);
-        }
-      }
+      addWeightedEdge(u, v, 0);
     }
 
-    void cut(int u, int v)
+    void cut(int u, int v, int w)
     {
-      if (!adjList_.has(u) || !adjList_.has(v))
+      if (!adjList_.has(u)) return;
+      List<Edge>& neighbors = adjList_.get(u);
+      for (auto it = neighbors.begin(); it != neighbors.end(); ++it)
       {
-        return;
-      }
-
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == u)
+        if (it->to == v && it->weight == w)
         {
-          it->second.remove(v);
-        }
-        else if (it->first == v)
-        {
-          it->second.remove(u);
+          neighbors.erase(it);
+          break;
         }
       }
     }
@@ -83,16 +78,17 @@ namespace petrov
 
     void removeVertex(int v)
     {
-      if (!adjList_.has(v))
-      {
-        return;
-      }
-
+      if (!adjList_.has(v)) return;
+      adjList_.drop(v);
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        it->second.remove(v);
+        List<Edge>& list = it->second;
+        for (auto nIt = list.begin(); nIt != list.end(); )
+        {
+          if (nIt->to == v) nIt = list.erase(nIt);
+          else ++nIt;
+        }
       }
-      adjList_.drop(v);
     }
 
     size_t getVertexCount() const
@@ -100,55 +96,9 @@ namespace petrov
       return adjList_.getSize();
     }
 
-    bool hasEdge(int u, int v) const
-    {
-      if (!adjList_.has(u))
-      {
-        return 0;
-      }
-
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == u)
-        {
-          const auto& neighbors = it->second;
-          for (int neighbor : neighbors)
-          {
-            if (neighbor == v)
-            {
-              return 1;
-            }
-          }
-          return 0;
-        }
-      }
-      return 0;
-    }
-
-    struct EdgeTarget
-    {
-      int vertex;
-      List<int> weights;
-    };
-
-    List<int> getNeighbors(int v) const
-    {
-      if (adjList_.has(v))
-      {
-        for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-        {
-          if (it->first == v)
-          {
-            return it->second;
-          }
-        }
-      }
-      return List<int>();
-    }
-
     List<int> getAllVertices() const
     {
-      List<int> vertices;
+du      List<int> vertices;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         vertices.push_back(it->first);
@@ -156,75 +106,17 @@ namespace petrov
       return vertices;
     }
 
-    bool isConnected(int u, int v) const
-    {
-      return hasEdge(u, v);
-    }
-
-    void clear()
-    {
-      List<int> allVertices = getAllVertices();
-      for (int v : allVertices)
-      {
-        removeVertex(v);
-      }
-    }
-
-    bool isEmpty() const
-    {
-      return adjList_.getSize() == 0;
-    }
-
-    void printGraph() const
-    {
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        int v = it->first;
-        const auto& neighbors = it->second;
-        for (int neighbor : neighbors)
-        {
-          if (v < neighbor)
-          {
-          }
-        }
-      }
-    }
-
-    size_t getDegree(int v) const
-    {
-      if (adjList_.has(v))
-      {
-        for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-        {
-          if (it->first == v)
-          {
-            return it->second.getSize();
-          }
-        }
-      }
-      return 0;
-    }
-
-    void addWeightedEdge(int u, int v, int )
-    {
-      addVertex(u);
-      addVertex(v);
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
-      {
-        if (it->first == u)
-        {
-          it->second.push_back(v);
-        }
-        else if (it->first == v)
-        {
-          it->second.push_back(u);
-        }
-      }
-    }
-
     List<int> getOutbound(int v) const
     {
-      return getNeighbors(v);
+      List<int> res;
+      if (adjList_.has(v))
+      {
+        for (const auto& edge : adjList_.get(v))
+        {
+          res.push_back(edge.to);
+        }
+      }
+      return res;
     }
 
     List<int> getInbound(int v) const
@@ -232,9 +124,9 @@ namespace petrov
       List<int> inbound;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        for (int neighbor : it->second)
+        for (const auto& edge : it->second)
         {
-          if (neighbor == v)
+          if (edge.to == v)
           {
             inbound.push_back(it->first);
           }
@@ -249,9 +141,9 @@ namespace petrov
       for (auto it = other.adjList_.begin(); it != other.adjList_.end(); ++it)
       {
         result.addVertex(it->first);
-        for (int neighbor : it->second)
+        for (const auto& edge : it->second)
         {
-          result.addEdge(it->first, neighbor);
+          result.addWeightedEdge(it->first, edge.to, edge.weight);
         }
       }
       return result;

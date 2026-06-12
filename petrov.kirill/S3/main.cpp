@@ -1,41 +1,112 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <limits>
+#include <stdexcept>
 #include "../common/list.hpp"
 #include "../common/HashTable.hpp"
 #include "Graph.hpp"
 
-petrov::List<std::string> splitString(const std::string& str) {
-  petrov::List<std::string> res;
-  std::string cur;
-  for (char c : str) {
-    if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
-      if (!cur.empty()) { res.push_back(cur); cur.clear(); }
-    } else {
-      cur += c;
-    }
-  }
-  if (!cur.empty()) res.push_back(cur);
-  return res;
-}
+using GraphTable = petrov::HashTable<std::string, petrov::Graph>;
 
-void printError() {
-  std::cout << "<INVALID COMMAND>\n";
-}
-
-petrov::Graph* findGraph(petrov::HashTable<std::string, petrov::Graph>& graphs, const std::string& name) {
+petrov::Graph* findGraph(GraphTable& graphs, const std::string& name) {
   for (auto it = graphs.begin(); it != graphs.end(); ++it) {
-    if (it->first == name) return &it->second;
+    if (it->first == name) {
+      return &it->second;
+    }
   }
   return nullptr;
 }
 
-int main(int argc, char* argv[]) {
-  if (argc < 2) return 1;
-  std::ifstream ifs(argv[1]);
-  if (!ifs.is_open()) return 1;
+void processGraphs(std::istream&, std::ostream& out, GraphTable& graphs) {
+  for (auto it = graphs.begin(); it != graphs.end(); ++it) {
+    out << it->first << "\n";
+  }
+}
 
-  petrov::HashTable<std::string, petrov::Graph> graphs;
+void processVertexes(std::istream& in, std::ostream& out, GraphTable& graphs) {
+  std::string gname;
+  if (!(in >> gname)) {
+    throw std::runtime_error("");
+  }
+  petrov::Graph* g = findGraph(graphs, gname);
+  if (!g) {
+    throw std::runtime_error("");
+  }
+  petrov::List<int> verts = g->getAllVertices();
+  for (auto it = verts.begin(); it != verts.end(); ++it) {
+    out << *it << "\n";
+  }
+}
+
+void processOutbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
+  std::string gname;
+  int v;
+  if (!(in >> gname >> v)) {
+    throw std::runtime_error("");
+  }
+  petrov::Graph* g = findGraph(graphs, gname);
+  if (!g || !g->hasVertex(v)) {
+    throw std::runtime_error("");
+  }
+  petrov::List<int> res = g->getOutbound(v);
+  for (auto it = res.begin(); it != res.end(); ++it) {
+    out << *it << "\n";
+  }
+}
+
+void processInbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
+  std::string gname;
+  int v;
+  if (!(in >> gname >> v)) {
+    throw std::runtime_error("");
+  }
+  petrov::Graph* g = findGraph(graphs, gname);
+  if (!g || !g->hasVertex(v)) {
+    throw std::runtime_error("");
+  }
+  petrov::List<int> res = g->getInbound(v);
+  for (auto it = res.begin(); it != res.end(); ++it) {
+    out << *it << "\n";
+  }
+}
+
+void processBind(std::istream& in, std::ostream&, GraphTable& graphs) {
+  std::string gname;
+  int u, v;
+  if (!(in >> gname >> u >> v)) {
+    throw std::runtime_error("");
+  }
+  petrov::Graph* g = findGraph(graphs, gname);
+  if (!g) {
+    throw std::runtime_error("");
+  }
+  g->addEdge(u, v);
+}
+
+void processCut(std::istream& in, std::ostream&, GraphTable& graphs) {
+  std::string gname;
+  int u, v;
+  if (!(in >> gname >> u >> v)) {
+    throw std::runtime_error("");
+  }
+  petrov::Graph* g = findGraph(graphs, gname);
+  if (!g) {
+    throw std::runtime_error("");
+  }
+  g->cut(u, v);
+}
+
+int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    return 1;
+  }
+  std::ifstream ifs(argv[1]);
+  if (!ifs.is_open()) {
+    return 1;
+  }
+
+  GraphTable graphs;
   std::string gname;
   int ecount;
   while (ifs >> gname >> ecount) {
@@ -48,45 +119,28 @@ int main(int argc, char* argv[]) {
     graphs.add(gname, g);
   }
 
-  std::string line;
-  while (std::getline(std::cin, line)) {
-    petrov::List<std::string> tokens = splitString(line);
-    if (tokens.IsEmpty()) continue;
-
-    auto it = tokens.begin();
-    std::string cmd = *it;
-
+  std::string cmd;
+  while (std::cin >> cmd) {
     try {
       if (cmd == "graphs") {
-        for (auto graphIt = graphs.begin(); graphIt != graphs.end(); ++graphIt) {
-          std::cout << graphIt->first << "\n";
-        }
+        processGraphs(std::cin, std::cout, graphs);
       } else if (cmd == "vertexes") {
-        if (tokens.getSize() != 2) { printError(); continue; }
-        petrov::Graph* g = findGraph(graphs, *(++it));
-        if (!g) { printError(); continue; }
-        petrov::List<int> verts = g->getAllVertices();
-        for (auto vIt = verts.begin(); vIt != verts.end(); ++vIt) std::cout << *vIt << "\n";
-      } else if (cmd == "outbound" || cmd == "inbound") {
-        if (tokens.getSize() != 3) { printError(); continue; }
-        petrov::Graph* g = findGraph(graphs, *(++it));
-        int v = std::stoi(*(++it));
-        if (!g || !g->hasVertex(v)) { printError(); continue; }
-        petrov::List<int> res = (cmd == "outbound") ? g->getOutbound(v) : g->getInbound(v);
-        for (auto rIt = res.begin(); rIt != res.end(); ++rIt) std::cout << *rIt << "\n";
-      } else if (cmd == "bind" || cmd == "cut") {
-        if (tokens.getSize() != 4) { printError(); continue; }
-        petrov::Graph* g = findGraph(graphs, *(++it));
-        int u = std::stoi(*(++it));
-        int v = std::stoi(*(++it));
-        if (!g) { printError(); continue; }
-        if (cmd == "bind") g->addEdge(u, v);
-        else g->cut(u, v);
+        processVertexes(std::cin, std::cout, graphs);
+      } else if (cmd == "outbound") {
+        processOutbound(std::cin, std::cout, graphs);
+      } else if (cmd == "inbound") {
+        processInbound(std::cin, std::cout, graphs);
+      } else if (cmd == "bind") {
+        processBind(std::cin, std::cout, graphs);
+      } else if (cmd == "cut") {
+        processCut(std::cin, std::cout, graphs);
       } else {
-        printError();
+        throw std::runtime_error("");
       }
     } catch (...) {
-      printError();
+      std::cout << "<INVALID COMMAND>\n";
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
   }
   return 0;
