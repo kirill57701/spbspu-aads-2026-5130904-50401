@@ -93,7 +93,7 @@ void processOutbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
   if (!g) {
     throw std::runtime_error("");
   }
-  
+
   int vid = getVertId(vname);
   if (!g->hasVertex(vid)) {
     throw std::runtime_error("");
@@ -109,7 +109,7 @@ void processOutbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
   for (auto it = outbound.begin(); it != outbound.end(); ++it) {
     names.push_back(getVertStr(*it));
   }
-  
+
   std::sort(names.begin(), names.end());
   names.erase(std::unique(names.begin(), names.end()), names.end());
 
@@ -127,7 +127,7 @@ void processInbound(std::istream& in, std::ostream& out, GraphTable& graphs) {
   if (!g) {
     throw std::runtime_error("");
   }
-  
+
   int vid = getVertId(vname);
   if (!g->hasVertex(vid)) {
     throw std::runtime_error("");
@@ -162,7 +162,7 @@ void processBind(std::istream& in, std::ostream&, GraphTable& graphs) {
   if (!g) {
     throw std::runtime_error("");
   }
-  
+
   g->addWeightedEdge(getVertId(u_str), getVertId(v_str), w);
 }
 
@@ -176,14 +176,14 @@ void processCut(std::istream& in, std::ostream&, GraphTable& graphs) {
   if (!g) {
     throw std::runtime_error("");
   }
-  
+
   int u = getVertId(u_str);
   int v = getVertId(v_str);
-  
+
   if (!g->hasVertex(u) || !g->hasVertex(v)) {
     throw std::runtime_error("");
   }
-  
+
   g->cut(u, v, w);
 }
 
@@ -195,12 +195,12 @@ void processCreate(std::istream& in, std::ostream&, GraphTable& graphs) {
   if (graphs.has(gname)) {
     throw std::runtime_error("");
   }
-  
+
   int vcount;
   if (!(in >> vcount)) {
     throw std::runtime_error("");
   }
-  
+
   petrov::Graph g;
   for (int i = 0; i < vcount; ++i) {
     std::string v;
@@ -220,10 +220,10 @@ void processMerge(std::istream& in, std::ostream&, GraphTable& graphs) {
   if (!graphs.has(g1) || !graphs.has(g2) || graphs.has(res)) {
     throw std::runtime_error("");
   }
-  
+
   petrov::Graph* graph1 = findGraph(graphs, g1);
   petrov::Graph* graph2 = findGraph(graphs, g2);
-  
+
   graphs.add(res, graph1->merge(*graph2));
 }
 
@@ -235,12 +235,12 @@ void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
   if (!graphs.has(gname) || graphs.has(res)) {
     throw std::runtime_error("");
   }
-  
+
   int vcount;
   if (!(in >> vcount)) {
     throw std::runtime_error("");
   }
-  
+
   petrov::HashTable<int, bool> selected;
   std::vector<int> targetVerts;
   for (int i = 0; i < vcount; ++i) {
@@ -252,19 +252,19 @@ void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
     targetVerts.push_back(id);
     selected.add(id, true);
   }
-  
+
   petrov::Graph* src = findGraph(graphs, gname);
   for (int id : targetVerts) {
     if (!src->hasVertex(id)) {
       throw std::runtime_error("");
     }
   }
-  
+
   petrov::Graph result;
   for (int id : targetVerts) {
     result.addVertex(id);
   }
-  
+
   for (int from : targetVerts) {
     petrov::List<int> outbound = src->getOutbound(from);
     for (auto it = outbound.begin(); it != outbound.end(); ++it) {
@@ -274,7 +274,7 @@ void processExtract(std::istream& in, std::ostream&, GraphTable& graphs) {
       }
     }
   }
-  
+
   graphs.add(res, result);
 }
 
@@ -291,7 +291,7 @@ int main(int argc, char* argv[]) {
   GraphTable graphs;
   std::string gname;
   int ecount;
-  
+
   while (ifs >> gname >> ecount) {
     petrov::Graph g;
     for (int i = 0; i < ecount; ++i) {
