@@ -1,6 +1,8 @@
 #ifndef LINEARREGRESSION_HPP
 #define LINEARREGRESSION_HPP
 #include "list.hpp"
+#include <fstream>
+#include <string>
 
 namespace petrov
 {
@@ -38,6 +40,31 @@ namespace petrov
         (*wi) -= a * (pred - g) * (*ii);
         ++wi;
       }
+    }
+    void save_predict(std::istream& in, double pred)
+    {
+      std::ofstream out;
+      std::string s;
+      in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".predict");
+      }
+      else
+      {
+        out.open(s);
+      }
+      out << pred;
+      out.close();
     }
   private:
     List<double> W;
