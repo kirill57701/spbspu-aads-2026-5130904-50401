@@ -120,6 +120,13 @@ namespace petrov
       }
       W.pop_back();
     }
+    void model_info(std::ostream& out)
+    {
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << ' ';
+      }
+    }
   private:
     List<double> W;
   };

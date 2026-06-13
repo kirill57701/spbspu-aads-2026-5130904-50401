@@ -18,4 +18,5 @@ int main()
   petrov::LinearRegression model2;
   model2.load_model(std::cin);
   std::cout << model2.model_predict(inp) << '\n';
+  model.model_info(std::cout);
 }
