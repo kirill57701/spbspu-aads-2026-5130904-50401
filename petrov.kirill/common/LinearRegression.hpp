@@ -68,7 +68,35 @@ namespace petrov
     }
     double model_score_mse(double pred, double goal)
     {
-      return (pred - goal)**2;
+      return (pred - goal)*(pred - goal);
+    }
+    void save_model(std::istream& in)
+    {
+      std::ofstream out;
+      std::string s;
+      in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".model");
+      }
+      else
+      {
+        out.open(s);
+      }
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << std::endl;
+      }
+      out.close();
     }
   private:
     List<double> W;

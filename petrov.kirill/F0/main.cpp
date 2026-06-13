@@ -12,5 +12,5 @@ int main()
   double a = 0.05;
   model.model_fit(inp, 1, pred, a);
   std::cout << model.model_predict(inp) << '\n';
-  model.save_predict(std::cin, pred);
+  model.save_model(std::cin);
 }
