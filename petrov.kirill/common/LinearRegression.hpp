@@ -66,6 +66,10 @@ namespace petrov
       out << pred;
       out.close();
     }
+    double model_score_mse(double pred, double goal)
+    {
+      return (pred - goal)**2;
+    }
   private:
     List<double> W;
   };
