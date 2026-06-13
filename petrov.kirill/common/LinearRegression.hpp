@@ -6,14 +6,26 @@ namespace petrov
 {
   struct LinearRegression
   {
-    List<double> W1;
-    double lr;
-    double predict(List<double> inp);
-    List<double> Adamar(List<double> a, List<double> b);
-    double sum_vec(List<double> a);
-    double mse(double pred, double goal);
+      LinearRegression()
+      {
+        W.push_back(0.1);
+      }
+      double predict(List<double> d)
+      {
+        double out = 0;
+        LIter<double> di = d.begin();
+        LIter<double> wi = W.begin();
+        while (di != d.end())
+        {
+          out += (*di) * (*wi);
+          ++di;
+          ++wi;
+        }
+        return out;
+      }
+    private:
+      List<double> W;
   };
-  void fit(double& mse, List<double> inp, LinearRegression& d, double g);
 }
 
 #endif
