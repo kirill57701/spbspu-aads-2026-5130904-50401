@@ -6,11 +6,13 @@ namespace petrov
 {
   struct LinearRegression
   {
-      LinearRegression()
-      {
-        W.push_back(0.1);
-      }
-      double predict(List<double> d)
+    LinearRegression()
+    {
+      W.push_back(0.1);
+    }
+    double model_predict(List<double> d)
+    {
+      if (d.getSize() == W.getSize())
       {
         double out = 0;
         LIter<double> di = d.begin();
@@ -23,8 +25,22 @@ namespace petrov
         }
         return out;
       }
-    private:
-      List<double> W;
+      else
+      {
+        throw std::logic_error("sizes dont equal");
+      }
+    }
+    void model_fit(List<double> inp, double g, double pred, double a)
+    {
+      LIter<double> wi = W.begin();
+      for (LIter<double> ii = inp.begin(); ii != inp.end(); ++ii)
+      {
+        (*wi) -= a * (pred - g) * (*ii);
+        ++wi;
+      }
+    }
+  private:
+    List<double> W;
   };
 }
 
