@@ -12,6 +12,10 @@ namespace petrov
     {
       W.push_back(0.1);
     }
+    void add_we(double we)
+    {
+      W.push_back(we);
+    }
     double model_predict(List<double> d)
     {
       if (d.getSize() == W.getSize())

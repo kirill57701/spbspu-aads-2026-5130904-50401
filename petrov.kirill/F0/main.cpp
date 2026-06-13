@@ -5,8 +5,10 @@
 int main()
 {
   petrov::LinearRegression model;
+  model.add_we(0.2);
   petrov::List<double> inp;
   inp.push_back(1);
+  inp.push_back(2);
   std::cout << model.model_predict(inp) << '\n';
   double pred = model.model_predict(inp);
   double a = 0.05;
