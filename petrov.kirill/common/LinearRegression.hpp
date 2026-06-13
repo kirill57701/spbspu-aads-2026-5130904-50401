@@ -127,6 +127,15 @@ namespace petrov
         out << (*wi) << ' ';
       }
     }
+    void show_predict(List<double> inp, std::ostream& out)
+    {
+      double ou = 0;
+      for (LIter<double> wi = W.begin(), ii = inp.begin(); wi != W.end(); ++wi, ++ii)
+      {
+        ou += (*wi) * (*ii);
+      }
+      out << ou;
+    }
   private:
     List<double> W;
   };
