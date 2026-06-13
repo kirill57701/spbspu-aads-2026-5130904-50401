@@ -15,4 +15,7 @@ int main()
   model.model_fit(inp, 1, pred, a);
   std::cout << model.model_predict(inp) << '\n';
   model.save_model(std::cin);
+  petrov::LinearRegression model2;
+  model2.load_model(std::cin);
+  std::cout << model2.model_predict(inp) << '\n';
 }

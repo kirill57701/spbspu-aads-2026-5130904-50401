@@ -102,6 +102,24 @@ namespace petrov
       }
       out.close();
     }
+    void load_model(std::istream& in)
+    {
+      std::ifstream i;
+      std::string s;
+      in >> s;
+      std::cout << s << std::endl;
+      i.open(s);
+      LIter<double> wi = W.begin();
+      i >> (*wi);
+      ++wi;
+      for (; !i.eof();)
+      {
+        double q;
+        i >> q;
+        W.push_back(q);
+      }
+      W.pop_back();
+    }
   private:
     List<double> W;
   };
