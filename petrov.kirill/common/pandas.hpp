@@ -58,14 +58,12 @@ namespace petrov
       if (i.is_open())
       {
         std::string q;
+        std::getline(i, q);
         c = how_c(q);
         size_t r1 = 0;
         while (std::getline(i, q))
         {
-          if (r1 > 0)
-          {
-            data.push_back(toma(q));
-          }
+          data.push_back(toma(q));
           r1++;
         }
         r = r1;
