@@ -19,7 +19,7 @@ namespace petrov
   {
     std::string s = "";
     List<std::string> d;
-    for (size_t j = 0; j < s.size(); ++j)
+    for (size_t j = 0; j < i.size(); ++j)
     {
       if (i[j] == ',')
       {
@@ -42,7 +42,7 @@ namespace petrov
       for (size_t i = 0; i < data.getSize() && i < n; ++i, ++d)
       {
         LIter<std::string> q = (*d).begin();
-        for (size_t j = 0; j < r; ++j, ++q)
+        for (size_t j = 0; j < c; ++j, ++q)
         {
           std::cout << (*q) << ' ';
         }
