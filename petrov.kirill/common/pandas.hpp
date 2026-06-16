@@ -36,6 +36,19 @@ namespace petrov
   }
   struct dataset
   {
+    void data_head(size_t n)
+    {
+      LIter<List<std::string>> d = data.begin();
+      for (size_t i = 0; i < data.getSize() && i < n; ++i, ++d)
+      {
+        LIter<std::string> q = (*d).begin();
+        for (size_t j = 0; j < r; ++j, ++q)
+        {
+          std::cout << (*q) << ' ';
+        }
+        std::cout << '\n';
+      }
+    }
     void read_dataset(std::istream& in)
     {
       std::string s;
@@ -51,7 +64,7 @@ namespace petrov
         {
           if (r1 > 0)
           {
-            data.push_back()
+            data.push_back(toma(q));
           }
           r1++;
         }
