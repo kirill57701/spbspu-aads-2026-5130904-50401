@@ -1,0 +1,11 @@
+alu_type,workload,work_time,is_it_correct
+intel_core_i9,0.6,10,1
+intel_core_i9,0.9,1000,0
+intel_core_i9,0.1,2,1
+intel_core_i9,0.01,0.2,1
+intel_core_i9,0.95,2000,0
+intel_core_i9,0.8,500,1
+intel_core_i9,0.4,10,1
+intel_core_i9,0.99,10000,0
+intel_core_i9,0.5,10,1
+intel_core_i9,0.2,5,1
