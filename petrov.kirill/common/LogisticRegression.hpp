@@ -95,6 +95,39 @@ namespace petrov
       }
       out.close();
     }
+    void load_model(std::istream& in)
+    {
+      std::ifstream i;
+      std::string s;
+      in >> s;
+      i.open(s);
+      LIter<double> wi = W.begin();
+      i >> (*wi);
+      ++wi;
+      for (; !i.eof();)
+      {
+        double q;
+        i >> q;
+        W.push_back(q);
+      }
+      W.pop_back();
+    }
+    void model_info(std::ostream& out)
+    {
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << ' ';
+      }
+    }
+    void show_predict(List<double> inp)
+    {
+      double ou = 0;
+      for (LIter<double> wi = W.begin(), ii = inp.begin(); wi != W.end(); ++wi, ++i)
+      {
+        ou += (*wi) * (*ii);
+      }
+      std::cout << ou;
+    }
     private:
       List<double> W;
   }

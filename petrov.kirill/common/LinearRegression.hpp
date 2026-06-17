@@ -107,7 +107,6 @@ namespace petrov
       std::ifstream i;
       std::string s;
       in >> s;
-      std::cout << s << std::endl;
       i.open(s);
       LIter<double> wi = W.begin();
       i >> (*wi);
@@ -127,14 +126,14 @@ namespace petrov
         out << (*wi) << ' ';
       }
     }
-    void show_predict(List<double> inp, std::ostream& out)
+    void show_predict(List<double> inp)
     {
       double ou = 0;
       for (LIter<double> wi = W.begin(), ii = inp.begin(); wi != W.end(); ++wi, ++ii)
       {
         ou += (*wi) * (*ii);
       }
-      out << ou;
+      std::cout << ou;
     }
   private:
     List<double> W;
