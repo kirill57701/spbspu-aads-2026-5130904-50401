@@ -122,6 +122,41 @@ namespace petrov
         out << '\n';
       }
     }
+    void feature_del(std::string s)
+    {
+      List<std::string> f;
+      std::string d = "";
+      for (size_t i = 0; i < noname.size(); ++i)
+      {
+        if (noname[i] == ',')
+        {
+          f.push_back(d);
+          d = "";
+        }
+        else
+        {
+          d += noname[i];
+        }
+      }
+      f.push_back(d);
+      size_t n_r = 0, n = 0;
+      for (LIter<std::string> fi = f.begin(); fi != f.end(); ++fi, ++n_r)
+      {
+        if (*fi == s)
+        {
+          n = 1;
+          break;
+        }
+      }
+      if (!n)
+      {
+        throw std::logic_error("err\n");
+      }
+      else
+      {
+        while ()
+      }
+    }
     private:
       size_t c, r;
       std::string noname, name_data;
