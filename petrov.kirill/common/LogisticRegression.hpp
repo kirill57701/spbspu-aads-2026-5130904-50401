@@ -132,6 +132,14 @@ namespace petrov
       }
       std::cout << ou;
     }
+    void model_fit(List<double> inp, double g, double pred, double a)
+    {
+      LIter<double> wi = W.begin();
+      for (LIter<double> ii = inp.begin(); ii != inp.end(); ++ii, ++wi)
+      {
+        (*wi) -= a * (pred - g) * (*ii);
+      }
+    }
     private:
       List<double> W;
   };
