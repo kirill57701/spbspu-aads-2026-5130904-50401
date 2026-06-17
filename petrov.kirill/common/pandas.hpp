@@ -44,7 +44,7 @@ namespace petrov
         LIter<std::string> q = (*d).begin();
         for (size_t j = 0; j < c; ++j, ++q)
         {
-          std::cout << (*q) << ' ';
+          std::cout << ' ' << (*q) << ' ';
         }
         std::cout << '\n';
       }
