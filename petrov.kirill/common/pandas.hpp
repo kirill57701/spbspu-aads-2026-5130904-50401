@@ -126,7 +126,6 @@ namespace petrov
     {
       List<std::string> f;
       std::string d = "";
-      std::cout << noname;
       for (size_t i = 0; i < noname.size(); ++i)
       {
         if (noname[i] == ',')
@@ -161,14 +160,15 @@ namespace petrov
         {
           List<std::string> add;
           LIter<std::string> qi = (*di).begin();
-          for (size_t j = 0; j < r; ++j, ++qi)
+          for (size_t j = 0; j < r && qi != (*di).end(); ++j, ++qi)
           {
             if (j != n_r)
             {
               add.push_back(*qi);
             }
           }
-          }
+          datan.push_back(add);
+        }
         data = datan;
         std::string l = "";
         LIter<std::string> fi = f.begin();
