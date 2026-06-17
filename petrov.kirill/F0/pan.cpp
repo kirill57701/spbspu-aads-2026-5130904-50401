@@ -7,4 +7,6 @@ int main()
   d.read_dataset(std::cin);
   d.data_head(3);
   d.save_data(std::cin);
+  d.feature_del("alu_type");
+  d.data_head(3);
 }
