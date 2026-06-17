@@ -32,6 +32,10 @@ namespace petrov
         }
         return 1/(1 + exp(-out));
       }
+      else
+      {
+        throw std::logic_error("err\n");
+      }
     }
     void model_fit(List<double> inp, double g, double pred, double a)
     {
