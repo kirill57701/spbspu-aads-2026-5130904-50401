@@ -98,7 +98,7 @@ namespace petrov
       }
       for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
       {
-        out << (*wi) << std::endl;
+        out << (*wi) << '\n';
       }
       out.close();
     }

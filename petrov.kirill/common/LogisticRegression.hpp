@@ -30,8 +30,70 @@ namespace petrov
           ++di;
           ++wi;
         }
-        return 1/(1 + exp(out));
+        return 1/(1 + exp(-out));
       }
+    }
+    void model_fit(List<double> inp, double g, double pred, double a)
+    {
+      LIter<double> wi = W.begin();
+      for (LIter<double> ii = inp.begin(); ii != inp.end(); ++i)
+      {
+        (*wi) -= a * (pred - g) * (*ii);
+        ++wi;
+      }
+    }
+    void save_predict(std::istream& in, double pred)
+    {
+      std::ofstream out;
+      std::string s;
+      in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".predict");
+      }
+      else
+      {
+        out.open(s);
+      }
+      out << pred;
+      out.close();
+    }
+    void save_model(std::istream& in)
+    {
+      std::ofstream out;
+      std::string s;
+      in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".model");
+      }
+      else
+      {
+        out.open(s);
+      }
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << '\n';
+      }
+      out.close();
     }
     private:
       List<double> W;
