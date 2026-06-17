@@ -36,7 +36,7 @@ namespace petrov
     void model_fit(List<double> inp, double g, double pred, double a)
     {
       LIter<double> wi = W.begin();
-      for (LIter<double> ii = inp.begin(); ii != inp.end(); ++i)
+      for (LIter<double> ii = inp.begin(); ii != inp.end(); ++ii)
       {
         (*wi) -= a * (pred - g) * (*ii);
         ++wi;
@@ -122,7 +122,7 @@ namespace petrov
     void show_predict(List<double> inp)
     {
       double ou = 0;
-      for (LIter<double> wi = W.begin(), ii = inp.begin(); wi != W.end(); ++wi, ++i)
+      for (LIter<double> wi = W.begin(), ii = inp.begin(); wi != W.end(); ++wi, ++ii)
       {
         ou += (*wi) * (*ii);
       }
@@ -130,7 +130,7 @@ namespace petrov
     }
     private:
       List<double> W;
-  }
+  };
 }
 
 #endif
