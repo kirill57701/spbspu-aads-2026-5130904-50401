@@ -118,10 +118,19 @@ namespace petrov
     {
       size_t i = 0;
       std::cout << ' ';
-      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii)
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++i)
       {
-        std::cout << (sum(l, 0))
+        size_t j = 0;
+        double sumZnam = 0, sumChisl = 0;
+        for (LIter<double> lij = (*li).begin(); lij != (*li).end(); ++lij, ++j)
+        {
+          sumZnam += (*lii - getSr(l, i)) * (*lij - getSr(l, j));
+          double k1 = (*lii - getSr(l, i), k2 = (*lij - getSr(l, j));
+          sumChisl += k1*k1*k2*k2; 
+        }
+        std::cout << sumZnam/sqrt(sumChisl) << ' ';
       }
+      std::cout << '\n';
     }
   }
   double getMiC(List<List<double>> l, size_t j)
