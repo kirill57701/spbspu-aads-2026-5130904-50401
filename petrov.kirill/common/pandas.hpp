@@ -49,7 +49,7 @@ namespace petrov
     for (LIter<List<std::string>> i = l.begin(); i != l.end(); ++i)
     {
       List<double> r1;
-      for (LIter<std::string> li = (*i).begin(); li != (*i).begin(); ++li)
+      for (LIter<std::string> li = (*i).begin(); li != (*i).end(); ++li)
       {
         r1.push_back(stod(*li));
       }

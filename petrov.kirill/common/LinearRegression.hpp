@@ -39,7 +39,7 @@ namespace petrov
     List<double> model_predict(List<List<double>> inp)
     {
       List<double> pred;
-      for (LIter<List<double>> ii = inp.end(); ii != inp.end(); ++ii)
+      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii)
       {
         LIter<double> wi = W.begin();
         double ou = 0;
@@ -68,7 +68,7 @@ namespace petrov
         LIter<double> wi = W.begin();
         for (LIter<double> i1 = (*ii).begin(); i1 != (*ii).end(); ++i1, ++wi)
         {
-          *wi -= a * (*pi - *gi) * (*i1);
+          (*wi) -= a * ((*pi) - (*gi)) * (*i1);
         }
       }
     }
