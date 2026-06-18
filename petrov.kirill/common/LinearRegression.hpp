@@ -36,16 +36,16 @@ namespace petrov
         throw std::logic_error("sizes dont equal");
       }
     }
-    List<double> model_predict(List<List<double> inp)
+    List<double> model_predict(List<List<double>> inp)
     {
       List<double> pred;
-      for (LIter<List<double>> ii = inp.end(); ii != in.end(); ++ii)
+      for (LIter<List<double>> ii = inp.end(); ii != inp.end(); ++ii)
       {
         LIter<double> wi = W.begin();
         double ou = 0;
-        for (LIter<double> i1 = *ii.begin(); i1 != *ii.end(); ++i1, ++wi)
+        for (LIter<double> i1 = (*ii).begin(); i1 != (*ii).end(); ++i1, ++wi)
         {
-          ou += *i1 * *wi;
+          ou += (*i1) * (*wi);
         }
         pred.push_back(ou);
       }
@@ -63,10 +63,10 @@ namespace petrov
     void model_fit(List<List<double>> inp, List<double> g, List<double> pred, double a)
     {
       LIter<double> gi = g.begin(), pi = pred.begin();
-      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii, ++wi, ++pi)
+      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii, ++gi, ++pi)
       {
         LIter<double> wi = W.begin();
-        for (LIter<double> i1 = (*ii).begin(); i1 != (*i1).end(); ++i1, ++wi)
+        for (LIter<double> i1 = (*ii).begin(); i1 != (*ii).end(); ++i1, ++wi)
         {
           *wi -= a * (*pi - *gi) * (*i1);
         }
