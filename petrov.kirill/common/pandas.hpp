@@ -43,6 +43,29 @@ namespace petrov
     }
     return r;
   }
+  std::pair<List<List<double>>, List<double>> data_train_test_split(List<List<double>> inp, size_t i)
+  {
+    List<List<double>> l1;
+    List<double> l2;
+    for (LIter<List<double>> li = inp.begin(); li != inp.end(); ++li)
+    {
+      size_t n = 0;
+      List<double> l12;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++n)
+      {
+        if (n != i)
+        {
+          l12.push_back(*lii);
+        }
+        else
+        {
+          l2.push_back(*lii);
+        }
+      }
+      l1.push_back(l12);
+    }
+    return {l1, l2};
+  }
   struct dataset
   {
     void data_head(size_t n)

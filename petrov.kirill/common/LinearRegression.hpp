@@ -45,6 +45,18 @@ namespace petrov
         ++wi;
       }
     }
+    void model_fit(List<List<double>> inp, List<double> g, List<double> pred, double a)
+    {
+      LIter<double> gi = g.begin(), pi = pred.begin();
+      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii, ++wi, ++pi)
+      {
+        LIter<double> wi = W.begin();
+        for (LIter<double> i1 = (*ii).begin(); i1 != (*i1).end(); ++i1, ++wi)
+        {
+          *wi -= a * (*pi - *gi) * (*i1);
+        }
+      }
+    }
     void save_predict(std::istream& in, double pred)
     {
       std::ofstream out;
