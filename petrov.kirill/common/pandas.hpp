@@ -183,6 +183,31 @@ namespace petrov
         c--;
       }
     }
+    std::pair<List<List<std::string>>, List<List<std::string>>> data_split(double t_siz)
+    {
+      if (r > 1)
+      {
+        List<List<std::string>> l1, l2;
+        size_t j = 1;
+        l1.push_back(*data.begin());
+        LIter<List<std::string>> i = data.begin();
+        ++i;
+        l2.push_back(*i);
+        ++i;
+        for (; i != data.end() && j < t_siz*r; ++i, ++j)
+        {
+          l1.push_back(*i);
+        }
+        for (; i != data.end(); ++i)
+        {
+          l2.push_back(*i);
+        }
+      }
+      else
+      {
+        throw std::logic_error("malo tensorov");
+      }
+    }
     private:
       size_t c, r;
       std::string noname, name_data;
