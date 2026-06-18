@@ -114,7 +114,8 @@ namespace petrov
   }
   void data_corr(List<List<double>> l)
   {
-    for (LIter<Liter<double>> li = l.begin(); li != l.end(); ++li)
+    std::cout << '\n';
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li)
     {
       size_t i = 0;
       std::cout << ' ';
@@ -125,8 +126,9 @@ namespace petrov
         for (LIter<double> lij = (*li).begin(); lij != (*li).end(); ++lij, ++j)
         {
           sumZnam += (*lii - getSr(l, i)) * (*lij - getSr(l, j));
-          double k1 = (*lii - getSr(l, i), k2 = (*lij - getSr(l, j));
-          sumChisl += k1*k1*k2*k2; 
+          double k1 = (*lii - getSr(l, i));
+          double k2 = (*lij - getSr(l, j));
+          sumChisl += k1*k1*k2*k2;
         }
         std::cout << sumZnam/sqrt(sumChisl) << ' ';
       }

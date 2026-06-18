@@ -23,4 +23,5 @@ int main()
   model.model_fit(train.first, train.second, model.model_predict(train.first), a);
   model.model_info(std::cout);
   train.first = petrov::norm(train.first, 0);
+  petrov::data_corr(train.first);
 }
