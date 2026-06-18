@@ -56,7 +56,7 @@ namespace petrov
   {
     size_t i = 0;
     double ma = 0;
-    for (LIter<List<double>> li = l.begin(); li != l.end(); ++lii, ++i)
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li, ++i)
     {
       size_t w = 0;
       for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
@@ -79,11 +79,56 @@ namespace petrov
     }
     return ma;
   }
+  double getSr(List<List<double>> l, size_t j)
+  {
+    double i = 0;
+    double sum = 0;
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li, ++i)
+    {
+      size_t w = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
+      {
+        if (w == j)
+        {
+          sum += *lii;
+        }
+      }
+    }
+    return sum/i;
+  }
+  double sumSt(List<List<double>> l, size_t j)
+  {
+    double sum = 0;
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li)
+    {
+      size_t w = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
+      {
+        if (w == j)
+        {
+          sum += *lii;
+        }
+      }
+    }
+    return sum;
+  }
+  void data_corr(List<List<double>> l)
+  {
+    for (LIter<Liter<double>> li = l.begin(); li != l.end(); ++li)
+    {
+      size_t i = 0;
+      std::cout << ' ';
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii)
+      {
+        std::cout << (sum(l, 0))
+      }
+    }
+  }
   double getMiC(List<List<double>> l, size_t j)
   {
     size_t i = 0;
     double mi = 0;
-    for (LIter<List<double>> li = l.begin(); li != l.end(); ++lii, ++i)
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li, ++i)
     {
       size_t w = 0;
       for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
