@@ -3,6 +3,7 @@
 #include "list.hpp"
 #include <string>
 #include <fstream>
+#include <cmath>
 
 namespace petrov
 {
@@ -42,6 +43,83 @@ namespace petrov
       r.push_back(std::stod(*i));
     }
     return r;
+  }
+  List<double> log1p(List<double> l)
+  {
+    for (LIter<double> li = l.begin(); li != l.end(); ++li)
+    {
+      (*li) = log10(*li);
+    }
+    return l;
+  }
+  double getMaC(List<List<double>> l, size_t j)
+  {
+    size_t i = 0;
+    double ma = 0;
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++lii, ++i)
+    {
+      size_t w = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
+      {
+        if (w == j)
+        {
+          if (i == 0)
+          {
+            ma = *lii;
+          }
+          else
+          {
+            if (*lii > ma)
+            {
+              ma = *lii;
+            }
+          }
+        }
+      }
+    }
+    return ma;
+  }
+  double getMiC(List<List<double>> l, size_t j)
+  {
+    size_t i = 0;
+    double mi = 0;
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++lii, ++i)
+    {
+      size_t w = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++w)
+      {
+        if (w == j)
+        {
+          if (i == 0)
+          {
+            mi = *lii;
+          }
+          else
+          {
+            if (*lii < mi)
+            {
+              mi = *lii;
+            }
+          }
+        }
+      }
+    }
+    return mi;
+  }
+  List<List<double>> norm(List<List<double>> l, size_t j)
+  {
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li)
+    {
+      size_t i = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).begin(); ++lii, ++i)
+      {
+        if (i == j)
+        {
+          *lii = (*lii - getMiC(l, j))/(getMaC(l, j) - getMiC(l, j));
+        }
+      }
+    }
+    return l;
   }
   List<List<double>> convert(List<List<std::string>> l)
   {
