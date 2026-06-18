@@ -36,6 +36,21 @@ namespace petrov
         throw std::logic_error("sizes dont equal");
       }
     }
+    List<double> model_predict(List<List<double> inp)
+    {
+      List<double> pred;
+      for (LIter<List<double>> ii = inp.end(); ii != in.end(); ++ii)
+      {
+        LIter<double> wi = W.begin();
+        double ou = 0;
+        for (LIter<double> i1 = *ii.begin(); i1 != *ii.end(); ++i1, ++wi)
+        {
+          ou += *i1 * *wi;
+        }
+        pred.push_back(ou);
+      }
+      return pred;
+    }
     void model_fit(List<double> inp, double g, double pred, double a)
     {
       LIter<double> wi = W.begin();
