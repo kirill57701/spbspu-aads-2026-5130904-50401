@@ -34,6 +34,15 @@ namespace petrov
     d.push_back(s);
     return d;
   }
+  List<double> convert(List<std::string> l)
+  {
+    List<double> r;
+    for (LIter<std::string> i = l.begin(); i != l.end(); ++i)
+    {
+      r.push_back(std::stod(*i));
+    }
+    return r;
+  }
   struct dataset
   {
     void data_head(size_t n)
@@ -202,6 +211,7 @@ namespace petrov
         {
           l2.push_back(*i);
         }
+        return {l1, l2};
       }
       else
       {
