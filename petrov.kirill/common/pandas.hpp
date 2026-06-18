@@ -43,6 +43,20 @@ namespace petrov
     }
     return r;
   }
+  List<List<double>> convert(List<List<std::string>> l)
+  {
+    List<List<double>> r;
+    for (LIter<List<std::string>> i = l.begin(); i != l.end(); ++i)
+    {
+      List<double> r1;
+      for (LIter<std::string> li = (*i).begin(); li != (*i).begin(); ++li)
+      {
+        r1.push_back(stod(*li));
+      }
+      r.push_back(r1);
+    }
+    return r;
+  }
   std::pair<List<List<double>>, List<double>> data_train_test_split(List<List<double>> inp, size_t i)
   {
     List<List<double>> l1;
@@ -240,6 +254,14 @@ namespace petrov
       {
         throw std::logic_error("malo tensorov");
       }
+    }
+    size_t getC()
+    {
+      return c;
+    }
+    size_t getR()
+    {
+      return r;
     }
     private:
       size_t c, r;

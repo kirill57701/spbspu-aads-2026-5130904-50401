@@ -162,6 +162,10 @@ namespace petrov
       }
       std::cout << ou;
     }
+    size_t getWsize()
+    {
+      return W.getSize();
+    }
   private:
     List<double> W;
   };
