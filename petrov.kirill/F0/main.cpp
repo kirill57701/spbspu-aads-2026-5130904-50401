@@ -104,6 +104,15 @@ int main()
       }
       std::cout << "<Successfuly readed>\n";
     }
+    else if (comm == "Save_data")
+    {
+      data.save_data(std::cin);
+      std::cout << "<Data Succefully saved>\n";
+    }
+    else if (comm == "Model_fit")
+    {
+      std::cout << "dodelat\n";
+    }
     else
     {
       std::cout << "<INVALID COMMAND>\n";
