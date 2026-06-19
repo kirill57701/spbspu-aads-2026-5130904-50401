@@ -49,7 +49,7 @@ int main()
   petrov::dataset data;
   petrov::List<petrov::List<double>> train, test;
   petrov::List<double> tr_goal, tr_pred, te_goal, te_pred;
-  double a = 0.05;
+  double a = 0.0005;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
     if (s.empty())
@@ -136,18 +136,30 @@ int main()
         std::cout << "err, dataset not filled\n";
         continue;
       }
-      std::cout << "<Model initialazed correctly\n>";
+      std::cout << "<Model initialazed correctly>\n";
     }
     else if (comm == "Model_linear_fit")
     {
-      modeli.model_fit(train, tr_goal, tr_pred, a);
+      size_t k;
+      std::cout << "how much iterations of fitting you need?\n";
+      std::cin >> k;
+      for (size_t i = 0; i < k; ++i)
+      {
+        modeli.model_fit(train, tr_goal, tr_pred, a);
+      }
       std::cout << "<Model fitted successfuly>\n";
     }
     else if (comm == "Model_logistic_fit")
     {
       if (train.getSize())
       {
-        modelo.model_fit(train, tr_goal, tr_pred, a);
+        size_t k;
+        std::cout << "how much iterations of fitting you need?\n";
+        std::cin >> k;
+        for (size_t i = 0; i < k; ++i)
+        {
+          modelo.model_fit(train, tr_goal, tr_pred, a);
+        }
         std::cout << "<Model fitted succesfuly>\n";
       }
       else
@@ -236,23 +248,42 @@ int main()
       }
       std::cout << "<Feature deleted successfuly>\n";
     }
-    else if (comm == "Make_double")
+    else if (comm == "Data_train_test_split")
     {
       double c;
-      std::cout << "enter % of test_size\n";
+      std::cout << "enter % of train_size\n";
       std::cin >> c;
       std::pair<petrov::List<petrov::List<std::string>>, petrov::List<petrov::List<std::string>>> datp;
       datp = data.data_split(c);
       petrov::List<petrov::List<double>> dat1p = convert(datp.first), dat2p = petrov::convert(datp.second);
+      train = dat1p;
+      test = dat2p;
+      std::cout << "<Splitted_successfull>\n";
+    }
+    else if (comm == "Data_split")
+    {
       size_t k;
-      std::cout << "enter number of feature\n";
+      std::cout << "Enter number of feature\n";
       std::cin >> k;
-      std::pair<petrov::List<petrov::List<double>>, petrov::List<double>> tra = data_train_test_split(dat1p, k), tes = data_train_test_split(dat2p, k);
+      std::pair<petrov::List<petrov::List<double>>, petrov::List<double>> tra = data_train_test_split(train, k), tes = data_train_test_split(test, k);
       te_goal = tes.second;
       tr_goal = tra.second;
       train = tra.first;
       test = tes.first;
-      std::cout << "<Maked_successfull>\n";
+      std::cout << "<Splitted_successfull>\n";
+    }
+    else if (comm == "Feature_scale")
+    {
+      size_t i;
+      std::cout << "select dimension to scale\n";
+      std::cin >> i;
+      train = petrov::norm(train, i);
+      test = petrov::norm(test, i);
+      std::cout << "<Features scaled succesfully>\n";
+    }
+    else if (comm == "Data_corr")
+    {
+      petrov::data_corr(train);
     }
     else
     {
