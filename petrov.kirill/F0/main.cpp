@@ -47,6 +47,10 @@ int main()
   petrov::LogisticRegression modelo;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
+    if (s.empty())
+    {
+      continue;
+    }
     s = parsing(s);
     std::string comm = whatAcomm(s);
     if (comm == "Load_model_linear")
@@ -61,7 +65,6 @@ int main()
         continue;
       }
       std::cout << "Successful load\n";
-      continue;
     }
     else
     {
