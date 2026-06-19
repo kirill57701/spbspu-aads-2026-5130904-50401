@@ -2,6 +2,7 @@
 #include "../common/LinearRegression.hpp"
 #include "../common/LogisticRegression.hpp"
 #include "../common/list.hpp"
+#include "../common/pandas.hpp"
 
 std::string parsing(std::string s)
 {
@@ -45,6 +46,7 @@ int main()
   std::string s;
   petrov::LinearRegression modeli;
   petrov::LogisticRegression modelo;
+  petrov::dataset data;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
     if (s.empty())
@@ -65,6 +67,42 @@ int main()
         continue;
       }
       std::cout << "Successful load\n";
+    }
+    else if (comm == "Load_model_logistic")
+    {
+      try
+      {
+        modelo.load_model(std::cin);
+      }
+      catch (...)
+      {
+        std::cout << "err, model not found\n";
+        continue;
+      }
+      std::cout << "Successful load\n";
+    }
+    else if (comm == "Save_model_linear")
+    {
+      modeli.save_model(std::cin);
+      std::cout << "<Successfuly saved>\n";
+    }
+    else if (comm == "Save_model_logistic")
+    {
+      modelo.save_model(std::cin);
+      std::cout << "<Succesfuly saved>\n";
+    }
+    else if (comm == "Read_dataset")
+    {
+      try
+      {
+        data.read_dataset(std::cin);
+      }
+      catch (...)
+      {
+        std::cout << "<Unsuccessfuly readed, dataset not found>\n";
+        continue;
+      }
+      std::cout << "<Successfuly readed>\n";
     }
     else
     {
