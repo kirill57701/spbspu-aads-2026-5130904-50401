@@ -252,7 +252,6 @@ namespace petrov
         std::getline(i, q);
         c = how_c(q);
         noname = q;
-        std::cout << noname << std::endl;
         name_data = s;
         size_t r1 = 0;
         while (std::getline(i, q))
