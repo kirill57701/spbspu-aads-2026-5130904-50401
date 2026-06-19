@@ -17,4 +17,8 @@ int main()
   {
     std::cout << (*ki) << '\n';
   }
+  d.dims();
+  std::string s1 = "workload", s2 = "work";
+  d.rename(s1, s2);
+  d.dims();
 }

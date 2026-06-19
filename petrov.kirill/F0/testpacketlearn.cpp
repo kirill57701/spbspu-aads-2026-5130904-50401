@@ -12,7 +12,7 @@ int main()
   std::pair<petrov::List<petrov::List<double>>, petrov::List<double>> train = petrov::data_train_test_split(convert(da.first), 1);
   petrov::LinearRegression model;
   double w = 0.1;
-  while(model.getWsize() < d.getC())
+  while(model.getWsize() < d.getC() - 1)
   {
     model.add_we(w);
     w += 0.2;

@@ -7,6 +7,17 @@
 
 namespace petrov
 {
+  bool iseq(std::string s1, std::string s2)
+  {
+    for (size_t i = 0; i < s1.size(); ++i)
+    {
+      if (s1[i] != s2[i])
+      {
+        return 0;
+      }
+    }
+    return 1;
+  }
   size_t how_c(std::string i)
   {
     size_t s = 0;
@@ -241,6 +252,7 @@ namespace petrov
         std::getline(i, q);
         c = how_c(q);
         noname = q;
+        std::cout << noname << std::endl;
         name_data = s;
         size_t r1 = 0;
         while (std::getline(i, q))
@@ -352,11 +364,17 @@ namespace petrov
         data = datan;
         std::string l = "";
         LIter<std::string> fi = f.begin();
+        size_t howmuch = 0;
         for (size_t i = 0; fi != f.end(); ++i, ++fi)
         {
           if (i != n_r)
           {
+            if (howmuch)
+            {
+              l += ',';
+            }
             l += *fi;
+            howmuch++;
           }
         }
         noname = l;
@@ -396,6 +414,61 @@ namespace petrov
     size_t getR()
     {
       return r;
+    }
+    void dims()
+    {
+      std::string s = "";
+      std::cout << ' ';
+      for (size_t i = 0; i < noname.size(); ++i)
+      {
+        if (noname[i] != ',')
+        {
+          s += noname[i];
+        }
+        else
+        {
+          s += ' ';
+        }
+      }
+      std::cout << s << '\n';
+    }
+    void rename(std::string dim, std::string dim_to)
+    {
+      std::cout << ' ' << noname << '\n';
+      std::string s = "", q = "";
+      size_t change = 0;
+      for (size_t i = 0; i < noname.size(); ++i)
+      {
+        if (noname[i] == ',')
+        {
+          std::cout << q << ' ' << dim << '\n';
+          if (q == dim)
+          {
+            s += dim_to;
+            s += ",";
+            change++;
+          }
+          else
+          {
+            s += q;
+            s += ",";
+          }
+          q = "";
+        }
+        else
+        {
+          q += noname[i];
+        }
+      }
+      if (q == dim)
+      {
+        s += dim_to;
+      }
+      if (!change)
+      {
+        throw std::logic_error("dim not found\n");
+      }
+      noname = s;
     }
     private:
       size_t c, r;
