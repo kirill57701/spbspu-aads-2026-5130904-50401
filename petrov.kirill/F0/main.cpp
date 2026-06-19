@@ -145,8 +145,15 @@ int main()
     }
     else if (comm == "Model_logistic_fit")
     {
-      modelo.model_fit(train, goal, pred, a);
-      std::cout << "<Model fitted succesfuly>\n";
+      if (train.getSize())
+      {
+        modelo.model_fit(train, goal, pred, a);
+        std::cout << "<Model fitted succesfuly>\n";
+      }
+      else
+      {
+        std::cout << "err train is empty\n";
+      }
     }
     else if (comm == "Change_a")
     {
@@ -157,7 +164,7 @@ int main()
     {
       try
       {
-        pred = model.model_predict(train);
+        pred = modeli.model_predict(train);
       }
       catch(...)
       {
@@ -165,6 +172,69 @@ int main()
         continue;
       }
       std::cout << "<train_predicted_succesfully>\n";
+    }
+    else if (comm == "Linear_model_predict_test")
+    {
+      try
+      {
+        pred = modeli.model_predict(test);
+      }
+      catch(...)
+      {
+        std::cout << "err, sizes not equal\n";
+        continue;
+      }
+      std::cout << "<test_predicted_succesfully>\n";
+    }
+    else if (comm == "Logistic_model_predict_train")
+    {
+      try
+      {
+        pred = modelo.model_predict(train);
+      }
+      catch(...)
+      {
+        std::cout << "err, sizes not equal\n";
+        continue;
+      }
+      std::cout << "<train_predicted_succesfully>\n";
+    }
+    else if (comm == "Logistic_model_predict_test")
+    {
+      try
+      {
+        pred = modelo.model_predict(test);
+      }
+      catch(...)
+      {
+        std::cout << "err, sizes not equal\n";
+        continue;
+      }
+      std::cout << "<test_predicted_succesfully>\n";
+    }
+    else if (comm == "Save_predict")
+    {
+      modeli.save_predict(std::cin, pred);
+      std::cout << "<Saved succesfully>\n";
+    }
+    else if (comm == "Model_linear_score")
+    {
+      std::cout << modeli.model_score_mse(pred, goal);
+    }
+    else if (comm == "Feature_del")
+    {
+      std::string s;
+      std::cin >> s;
+      try
+      {
+        dataset.feature_del(s);
+      }
+      catch(...)
+      {
+        std::cout << "err, feature not found\n";
+        continue;
+      }
+      std::cout << "<Feature deleted successfuly>\n";
     }
     else
     {

@@ -119,9 +119,47 @@ namespace petrov
       out << pred;
       out.close();
     }
+    void save_predict(std::istream& in, List<double> pred)
+    {
+      std::ofstream out;
+      std::string s;
+      in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".predict");
+      }
+      else
+      {
+        out.open(s);
+      }
+      for (LIter<double> pi = pred.begin(); pi != pred.end(); ++pi)
+      {
+        out << *pi << '\n';
+      }
+      out.close();
+    }
     double model_score_mse(double pred, double goal)
     {
       return (pred - goal)*(pred - goal);
+    }
+    double model_score_mse(List<double> pred, List<double> goal)
+    {
+      LIter<double> pi = pred.begin(), gi = goal.begin();
+      double s = 0;
+      for (; pi != pred.end(); ++pi, ++gi)
+      {
+        s += (model_score_mse(*pi, *gi));
+      }
+      return s;
     }
     void save_model(std::istream& in)
     {
