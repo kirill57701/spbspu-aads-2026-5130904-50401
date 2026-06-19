@@ -68,7 +68,7 @@ namespace petrov
         {
           ou += (*i1) * (*wi);
         }
-        pred.push_back(ou);
+        pred.push_back(1/(1 + exp(-ou)));
       }
       return pred;
     }

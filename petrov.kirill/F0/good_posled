@@ -1,0 +1,46 @@
+kirill@kirill:~/spbspu-aads-2026-5130904-50401/petrov.kirill/F0$ ./a.out 
+Read_dataset
+kursach.csv
+<Successfuly readed>
+Feature_del
+alu_type
+<Feature deleted successfuly>
+Data_train_test_split
+enter % of train_size
+0.8
+<Splitted_successfull>
+Data_split
+Enter number of feature
+2
+<Splitted_successfull>
+Log_loss_model_init
+<Model initialazed correctly>
+Feature_scale
+select dimension to scale
+0
+<Features scaled succesfully>
+Feature_scale
+select dimension to scale
+1
+<Features scaled succesfully>
+Change_a
+0.005
+<Changed succesfully>
+Logistic_model_predict_test
+<test_predicted_succesfully>
+Logistic_model_predict_train
+<train_predicted_succesfully>
+Save_predict
+prednew
+<Saved succesfully>
+Model_logistic_fit
+how much iterations of fitting you need?
+500
+<Model fitted succesfuly>
+Logistic_model_predict_test
+<test_predicted_succesfully>
+Logistic_model_predict_train
+<train_predicted_succesfully>
+Save_predict 
+plzgood.predict
+<Saved succesfully>
