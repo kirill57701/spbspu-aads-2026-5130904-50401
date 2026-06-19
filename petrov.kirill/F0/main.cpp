@@ -48,7 +48,7 @@ int main()
   petrov::LogisticRegression modelo;
   petrov::dataset data;
   petrov::List<petrov::List<double>> train, test;
-  petrov::List<double> goal, pred;
+  petrov::List<double> tr_goal, tr_pred, te_goal, te_pred;
   double a = 0.05;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
@@ -140,14 +140,14 @@ int main()
     }
     else if (comm == "Model_linear_fit")
     {
-      modeli.model_fit(train, goal, pred, a);
+      modeli.model_fit(train, tr_goal, tr_pred, a);
       std::cout << "<Model fitted successfuly>\n";
     }
     else if (comm == "Model_logistic_fit")
     {
       if (train.getSize())
       {
-        modelo.model_fit(train, goal, pred, a);
+        modelo.model_fit(train, tr_goal, tr_pred, a);
         std::cout << "<Model fitted succesfuly>\n";
       }
       else
@@ -164,7 +164,7 @@ int main()
     {
       try
       {
-        pred = modeli.model_predict(train);
+        tr_pred = modeli.model_predict(train);
       }
       catch(...)
       {
@@ -177,7 +177,7 @@ int main()
     {
       try
       {
-        pred = modeli.model_predict(test);
+        te_pred = modeli.model_predict(test);
       }
       catch(...)
       {
@@ -190,7 +190,7 @@ int main()
     {
       try
       {
-        pred = modelo.model_predict(train);
+        tr_pred = modelo.model_predict(train);
       }
       catch(...)
       {
@@ -203,7 +203,7 @@ int main()
     {
       try
       {
-        pred = modelo.model_predict(test);
+        te_pred = modelo.model_predict(test);
       }
       catch(...)
       {
@@ -214,12 +214,12 @@ int main()
     }
     else if (comm == "Save_predict")
     {
-      modeli.save_predict(std::cin, pred);
+      modeli.save_predict(std::cin, te_pred);
       std::cout << "<Saved succesfully>\n";
     }
     else if (comm == "Model_linear_score")
     {
-      std::cout << modeli.model_score_mse(pred, goal);
+      std::cout << modeli.model_score_mse(te_pred, te_goal);
     }
     else if (comm == "Feature_del")
     {
@@ -235,6 +235,24 @@ int main()
         continue;
       }
       std::cout << "<Feature deleted successfuly>\n";
+    }
+    else if (comm == "Make_double")
+    {
+      double c;
+      std::cout << "enter % of test_size\n";
+      std::cin >> c;
+      std::pair<petrov::List<petrov::List<std::string>>, petrov::List<petrov::List<std::string>>> datp;
+      datp = data.data_split(c);
+      petrov::List<petrov::List<double>> dat1p = convert(datp.first), dat2p = petrov::convert(datp.second);
+      size_t k;
+      std::cout << "enter number of feature\n";
+      std::cin >> k;
+      std::pair<petrov::List<petrov::List<double>>, petrov::List<double>> tra = data_train_test_split(dat1p, k), tes = data_train_test_split(dat2p, k);
+      te_goal = tes.second;
+      tr_goal = tra.second;
+      train = tra.first;
+      test = tes.first;
+      std::cout << "<Maked_successfull>\n";
     }
     else
     {
