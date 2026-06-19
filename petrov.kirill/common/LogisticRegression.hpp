@@ -17,6 +17,26 @@ namespace petrov
     {
       W.push_back(we);
     }
+    void Log_loss_model_init(dataset data)
+    {
+      while (W.getSize())
+      {
+        W.pop_back();
+      }
+      if (data.getC())
+      {
+        double wd = 0.1;
+        while(W.getSize() != data.getC())
+        {
+          W.push_back(wd);
+          wd += 0.1;
+        }
+      }
+      else
+      {
+        throw std::logic_error("err");
+      }
+    }
     double model_predict(List<double> d)
     {
       if (d.getSize() == W.getSize())

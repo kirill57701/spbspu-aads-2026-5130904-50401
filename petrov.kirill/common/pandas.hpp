@@ -470,7 +470,7 @@ namespace petrov
       noname = s;
     }
     private:
-      size_t c, r;
+      size_t c = 0, r = 0;
       std::string noname, name_data;
       List<List<std::string>> data;
   };

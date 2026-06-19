@@ -109,9 +109,31 @@ int main()
       data.save_data(std::cin);
       std::cout << "<Data Succefully saved>\n";
     }
-    else if (comm == "Model_fit")
+    else if (comm == "Linear_model_init")
     {
-      std::cout << "dodelat\n";
+      try
+      {
+        modeli.Linear_model_init(data);
+      }
+      catch(...)
+      {
+        std::cout << "err, dataset not filled\n";
+        continue;
+      }
+      std::cout << "<Model initialazed correctly>\n";
+    }
+    else if (comm == "Log_loss_model_init")
+    {
+      try
+      {
+        modelo.Log_loss_model_init(data);
+      }
+      catch (...)
+      {
+        std::cout << "err, dataset not filled\n";
+        continue;
+      }
+      std::cout << "<Model initialazed correctly\n>";
     }
     else
     {

@@ -3,6 +3,7 @@
 #include "list.hpp"
 #include <fstream>
 #include <string>
+#include "pandas.hpp"
 
 namespace petrov
 {
@@ -15,6 +16,27 @@ namespace petrov
     void add_we(double we)
     {
       W.push_back(we);
+    }
+    void Linear_model_init(dataset data)
+    {
+      while (W.getSize())
+      {
+        W.pop_back();
+      }
+      if (data.getC())
+      {
+        double wd = 0.1;
+        while (W.getSize() < data.getC())
+        {
+          W.push_back(wd);
+          wd += 0.1;
+          std::cout << 1 << '\n';
+        }
+      }
+      else
+      {
+        throw std::logic_error("err");
+      }
     }
     double model_predict(List<double> d)
     {
