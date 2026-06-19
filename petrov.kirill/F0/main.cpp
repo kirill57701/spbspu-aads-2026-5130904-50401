@@ -47,6 +47,9 @@ int main()
   petrov::LinearRegression modeli;
   petrov::LogisticRegression modelo;
   petrov::dataset data;
+  petrov::List<petrov::List<double>> train, test;
+  petrov::List<double> goal, pred;
+  double a = 0.05;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
     if (s.empty())
@@ -134,6 +137,34 @@ int main()
         continue;
       }
       std::cout << "<Model initialazed correctly\n>";
+    }
+    else if (comm == "Model_linear_fit")
+    {
+      modeli.model_fit(train, goal, pred, a);
+      std::cout << "<Model fitted successfuly>\n";
+    }
+    else if (comm == "Model_logistic_fit")
+    {
+      modelo.model_fit(train, goal, pred, a);
+      std::cout << "<Model fitted succesfuly>\n";
+    }
+    else if (comm == "Change_a")
+    {
+      std::cin >> a;
+      std::cout << "<Changed succesfully>\n";
+    }
+    else if (comm == "Linear_model_predict_train")
+    {
+      try
+      {
+        pred = model.model_predict(train);
+      }
+      catch(...)
+      {
+        std::cout << "err, sizes not equal\n";
+        continue;
+      }
+      std::cout << "<train_predicted_succesfully>\n";
     }
     else
     {
