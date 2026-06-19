@@ -131,20 +131,27 @@ namespace petrov
     }
     void load_model(std::istream& in)
     {
-      std::ifstream i;
       std::string s;
       in >> s;
-      i.open(s);
-      LIter<double> wi = W.begin();
-      i >> (*wi);
-      ++wi;
-      for (; !i.eof();)
+      std::ifstream i;
+      try
       {
-        double q;
-        i >> q;
-        W.push_back(q);
+        i.open(s);
+        LIter<double> wi = W.begin();
+        i >> (*wi);
+        ++wi;
+        for (; !i.eof();)
+        {
+          double q;
+          i >> q;
+          W.push_back(q);
+        }
+        W.pop_back();
       }
-      W.pop_back();
+      catch (...)
+      {
+        throw std::logic_error("model not found\n");
+      }
     }
     void model_info(std::ostream& out)
     {
