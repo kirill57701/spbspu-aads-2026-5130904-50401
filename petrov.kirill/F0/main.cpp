@@ -227,7 +227,7 @@ int main()
       std::cin >> s;
       try
       {
-        dataset.feature_del(s);
+        data.feature_del(s);
       }
       catch(...)
       {
@@ -241,4 +241,5 @@ int main()
       std::cout << "<INVALID COMMAND>\n";
     }
   }
+  return 0;
 }
