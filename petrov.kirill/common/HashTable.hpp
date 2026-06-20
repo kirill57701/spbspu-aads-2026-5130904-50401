@@ -30,36 +30,6 @@ namespace petrov
     class Iterator;
     class ConstIterator;
 
-    Iterator find(const Key &k)
-    {
-      size_t idx = hasher_(k) % bucketCount_;
-      Node *curr = buckets_[idx];
-      while (curr)
-      {
-        if (equal_(curr->kv.first, k))
-        {
-          return Iterator(this, idx, curr);
-        }
-        curr = curr->next;
-      }
-      return end();
-    }
-
-    ConstIterator find(const Key &k) const
-    {
-      size_t idx = hasher_(k) % bucketCount_;
-      const Node *curr = buckets_[idx];
-      while (curr)
-      {
-        if (equal_(curr->kv.first, k))
-        {
-          return ConstIterator(this, idx, curr);
-        }
-        curr = curr->next;
-      }
-      return end();
-    }
-
     HashTable(size_t slots = 16):
       buckets_(new Node*[slots]()),
       bucketCount_(slots),
@@ -306,6 +276,35 @@ namespace petrov
     Iterator end() { return Iterator(this, bucketCount_, nullptr); }
     ConstIterator begin() const { return ConstIterator(this, 0, buckets_[0]); }
     ConstIterator end() const { return ConstIterator(this, bucketCount_, nullptr); }
+    Iterator find(const Key &k)
+    {
+      size_t idx = hasher_(k) % bucketCount_;
+      Node *curr = buckets_[idx];
+      while (curr)
+      {
+        if (equal_(curr->kv.first, k))
+        {
+          return Iterator(this, idx, curr);
+        }
+        curr = curr->next;
+      }
+      return end();
+    }
+
+    ConstIterator find(const Key &k) const
+    {
+      size_t idx = hasher_(k) % bucketCount_;
+      const Node *curr = buckets_[idx];
+      while (curr)
+      {
+        if (equal_(curr->kv.first, k))
+        {
+          return ConstIterator(this, idx, curr);
+        }
+        curr = curr->next;
+      }
+      return end();
+    }
   };
 }
 
