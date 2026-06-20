@@ -26,7 +26,7 @@ namespace petrov
       if (data.getC())
       {
         double wd = 0.1;
-        while(W.getSize() != data.getC())
+        while(W.getSize() < data.getC() - 1)
         {
           W.push_back(wd);
           wd += 0.1;
@@ -153,8 +153,10 @@ namespace petrov
       in >> s;
       i.open(s);
       LIter<double> wi = W.begin();
-      i >> (*wi);
-      ++wi;
+      for (; W.getSize(); ++wi)
+      {
+        W.pop_back();
+      }
       for (; !i.eof();)
       {
         double q;

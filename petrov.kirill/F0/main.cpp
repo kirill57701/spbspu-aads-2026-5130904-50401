@@ -286,6 +286,30 @@ int main()
     {
       petrov::data_corr(train);
     }
+    else if (comm == "Predict_Linear")
+    {
+      std::cout << "Enter " << data.getC() - 1 << " elems\n";
+      petrov::List<double> d;
+      for (size_t i = 0; i < data.getC() - 1; ++i)
+      {
+        double in;
+        std::cin >> in;
+        d.push_back(in);
+      }
+      std::cout << modeli.model_predict(d) << '\n';
+    }
+    else if (comm == "Predict_Logistic")
+    {
+      std::cout << "Enter " << data.getC() - 1 << " elems\n";
+      petrov::List<double> d;
+      for (size_t i = 0; i < data.getC() - 1; ++i)
+      {
+        double in;
+        std::cin >> in;
+        d.push_back(in);
+      }
+      std::cout << modelo.model_predict(d) << '\n';
+    }
     else
     {
       std::cout << "<INVALID COMMAND>\n";
