@@ -200,8 +200,10 @@ namespace petrov
         throw std::logic_error("err\n");
       }
       LIter<double> wi = W.begin();
-      i >> (*wi);
-      ++wi;
+      for (; W.getSize();)
+      {
+        W.pop_back();
+      }
       for (; !i.eof();)
       {
         double q;
