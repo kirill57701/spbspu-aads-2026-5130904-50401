@@ -7,6 +7,36 @@
 
 namespace petrov
 {
+  bool iseq(List<double> l1, List<double> l2)
+  {
+    if (l1.getSize() == l2.getSize())
+    {
+      for (LIter<double i1 = l1.begin(), i2 = l2.begin(); i1 != l1.end(); ++i1, ++i2)
+      {
+        if (i1 != i2)
+        {
+          return 0;
+        }
+      }
+      return 1;
+    }
+    return 0;
+  }
+  bool iseq(List<List<double>> l1, List<List<double>> l2)
+  {
+    if (l1.getSize() == l2.getSize())
+    {
+      for (LIter<List<double>> i1 = l1.begin(), i2 = l2.begin(); i1 != l1.end(); ++i1, ++i2)
+      {
+        if (!iseq(*i1, *i2))
+        {
+          return 0;
+        }
+      }
+      return 1;
+    }
+    return 0;
+  }
   bool iseq(std::string s1, std::string s2)
   {
     for (size_t i = 0; i < s1.size(); ++i)

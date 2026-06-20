@@ -234,6 +234,8 @@ namespace petrov
     }
   private:
     List<double> W;
+    HashTable<List<double>, double> h1;
+    HashTable<List<List<double>>, List<double>> h2;
   };
 }
 
