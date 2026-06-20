@@ -40,22 +40,29 @@ namespace petrov
     }
     double model_predict(List<double> d)
     {
-      if (d.getSize() == W.getSize())
+      if (h1.find(d, W) == h1.end())
       {
-        double out = 0;
-        LIter<double> di = d.begin();
-        LIter<double> wi = W.begin();
-        while (di != d.end())
+        if (d.getSize() == W.getSize())
         {
-          out += (*di) * (*wi);
-          ++di;
-          ++wi;
+          double out = 0;
+          LIter<double> di = d.begin();
+          LIter<double> wi = W.begin();
+          while (di != d.end())
+          {
+            out += (*di) * (*wi);
+            ++di;
+            ++wi;
+          }
+          return out;
         }
-        return out;
+        else
+        {
+          throw std::logic_error("sizes dont equal");
+        }
       }
       else
       {
-        throw std::logic_error("sizes dont equal");
+        return h1.find(d, W)->second;
       }
     }
     List<double> model_predict(List<List<double>> inp)
@@ -234,8 +241,8 @@ namespace petrov
     }
   private:
     List<double> W;
-    HashTable<List<double>, double> h1;
-    HashTable<List<List<double>>, List<double>> h2;
+    HashTable<std::pair<List<double>,List<double>>, double> h1;
+    HashTable<std::pair<List<List<double>>, List<List<double>>>, List<double>> h2;
   };
 }
 
