@@ -290,7 +290,6 @@ namespace petrov
       }
       return end();
     }
-
     ConstIterator find(const Key &k) const
     {
       size_t idx = hasher_(k) % bucketCount_;
