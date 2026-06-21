@@ -271,6 +271,7 @@ namespace petrov
       {
         throw std::logic_error("err\n");
       }
+
       for (; W.getSize();)
       {
         W.pop_back();
