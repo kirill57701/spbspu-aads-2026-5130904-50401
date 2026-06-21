@@ -4,9 +4,63 @@
 #include <fstream>
 #include <string>
 #include "pandas.hpp"
+#include "HashTable.hpp"
 
 namespace petrov
 {
+  struct ListPairHash
+  {
+    size_t operator()(const std::pair<List<double>, List<double>>& p) const
+    {
+      size_t hash = 0;
+      auto hash_comb = [&hash](double v)
+      {
+        hash ^= std::hash<double>{}(v) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      };
+      for (auto it = p.first.begin(); it != p.first.end(); ++it)
+      {
+        hash_comb(*it);
+      }
+      for (auto it = p.second.begin(); it != p.second.end(); ++it)
+      {
+        hash_comb(*it);
+      }
+      return hash;
+    }
+  };
+  struct ListPairEqual
+  {
+    bool operator()(const std::pair<List<double>, List<double>>& a, const std::pair<List<double>, List<double>>& b) const
+    {
+      return iseq(a.first, b.first) && iseq(a.second, b.second);
+    }
+  };
+  struct LLListPairHash
+  {
+    size_t operator()(const std::pair<List<double>, List<double>>& p) const
+    {
+      size_t hash = 0;
+      auto hash_comb = [&hash](double v)
+      {
+        hash ^= std::hash<double>{}(v) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      };
+      for (auto it = p.first.begin(); it != p.first.end(); ++it)
+      {
+        for (auto iit = p.second.begin(); iit != p.first.end(); ++iit)
+        {
+          hash_comb(*it);
+        }
+      }
+      return hash;
+    }
+  };
+  struct LLListPairEqual
+  {
+    bool operator()(const std::pair<List<List<double>>, List<double>>& a, const std::pair<List<List<double>>, List<double>>& b) const
+    {
+      return iseq(a.first, b.first) && iseq(a.first, b.first);
+    }
+  };
   struct LinearRegression
   {
     LinearRegression()
@@ -40,29 +94,31 @@ namespace petrov
     }
     double model_predict(List<double> d)
     {
-      if (h1.find(d, W) == h1.end())
+      if (h1.find({d, W}) != h1.end())
       {
-        if (d.getSize() == W.getSize())
+        return h1.find({d, W})->second;
+      }
+      if (h1.find({W, d}) != h1.end())
+      {
+        return h1.find({W, d})->second;
+      }
+      if (d.getSize() == W.getSize())
+      {
+        double out = 0;
+        LIter<double> di = d.begin();
+        LIter<double> wi = W.begin();
+        while (di != d.end())
         {
-          double out = 0;
-          LIter<double> di = d.begin();
-          LIter<double> wi = W.begin();
-          while (di != d.end())
-          {
-            out += (*di) * (*wi);
-            ++di;
-            ++wi;
-          }
-          return out;
+          out += (*di) * (*wi);
+          ++di;
+          ++wi;
         }
-        else
-        {
-          throw std::logic_error("sizes dont equal");
-        }
+        h1.add({d, W}, out);
+        return out;
       }
       else
       {
-        return h1.find(d, W)->second;
+        throw std::logic_error("sizes dont equal");
       }
     }
     List<double> model_predict(List<List<double>> inp)
@@ -241,8 +297,8 @@ namespace petrov
     }
   private:
     List<double> W;
-    HashTable<std::pair<List<double>,List<double>>, double> h1;
-    HashTable<std::pair<List<List<double>>, List<List<double>>>, List<double>> h2;
+    HashTable<std::pair<List<double>,List<double>>, double, ListPairHash, ListPairEqual> h1;
+    HashTable<std::pair<List<List<double>>, List<List<double>>>, List<double>, LLListPairHash, ListPairEqual> h2;
   };
 }
 

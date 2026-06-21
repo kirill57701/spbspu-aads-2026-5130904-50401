@@ -11,7 +11,8 @@ namespace petrov
   {
     if (l1.getSize() == l2.getSize())
     {
-      for (LIter<double i1 = l1.begin(), i2 = l2.begin(); i1 != l1.end(); ++i1, ++i2)
+      LIter<double> i2 = l2.begin();
+      for (LIter<double> i1 = l1.begin(); i1 != l1.end(); ++i1, ++i2)
       {
         if (i1 != i2)
         {
@@ -26,7 +27,8 @@ namespace petrov
   {
     if (l1.getSize() == l2.getSize())
     {
-      for (LIter<List<double>> i1 = l1.begin(), i2 = l2.begin(); i1 != l1.end(); ++i1, ++i2)
+      LIter<List<double>> i2 = l2.begin();
+      for (LIter<List<double>> i1 = l1.begin(); i1 != l1.end(); ++i1, ++i2)
       {
         if (!iseq(*i1, *i2))
         {
