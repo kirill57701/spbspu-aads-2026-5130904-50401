@@ -37,7 +37,7 @@ namespace petrov
   };
   struct LLListPairHash
   {
-    size_t operator()(const std::pair<List<double>, List<double>>& p) const
+    size_t operator()(const std::pair<List<List<double>>, List<double>>& p) const
     {
       size_t hash = 0;
       auto hash_comb = [&hash](double v)
@@ -46,10 +46,14 @@ namespace petrov
       };
       for (auto it = p.first.begin(); it != p.first.end(); ++it)
       {
-        for (auto iit = p.second.begin(); iit != p.first.end(); ++iit)
+        for (auto iit = (*it).begin(); iit != (*it).end(); ++iit)
         {
-          hash_comb(*it);
+          hash_comb(*iit);
         }
+      }
+      for (auto it = p.second.begin(); it != p.second.end(); ++it)
+      {
+        hash_comb(*it);
       }
       return hash;
     }
@@ -58,7 +62,7 @@ namespace petrov
   {
     bool operator()(const std::pair<List<List<double>>, List<double>>& a, const std::pair<List<List<double>>, List<double>>& b) const
     {
-      return iseq(a.first, b.first) && iseq(a.first, b.first);
+      return iseq(a.first, b.first) && iseq(a.second, b.second);
     }
   };
   struct LinearRegression
@@ -123,6 +127,10 @@ namespace petrov
     }
     List<double> model_predict(List<List<double>> inp)
     {
+      if (h2.find({inp, W}) != h2.end())
+      {
+        return h2.find({inp, W})->second;
+      }
       List<double> pred;
       for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii)
       {
@@ -134,6 +142,7 @@ namespace petrov
         }
         pred.push_back(ou);
       }
+      h2.add({inp, W}, pred);
       return pred;
     }
     void model_fit(List<double> inp, double g, double pred, double a)
@@ -298,7 +307,7 @@ namespace petrov
   private:
     List<double> W;
     HashTable<std::pair<List<double>,List<double>>, double, ListPairHash, ListPairEqual> h1;
-    HashTable<std::pair<List<List<double>>, List<List<double>>>, List<double>, LLListPairHash, ListPairEqual> h2;
+    HashTable<std::pair<List<List<double>>, List<double>>, List<double>, LLListPairHash, LLListPairEqual> h2;
   };
 }
 
