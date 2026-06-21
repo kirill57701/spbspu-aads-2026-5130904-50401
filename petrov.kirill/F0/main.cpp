@@ -4,6 +4,8 @@
 #include "../common/list.hpp"
 #include "../common/pandas.hpp"
 
+using namespace petrov;
+
 std::string parsing(std::string s)
 {
   std::string r = "";
@@ -44,11 +46,11 @@ std::string whatAcomm(std::string s)
 int main()
 {
   std::string s;
-  petrov::LinearRegression modeli;
-  petrov::LogisticRegression modelo;
-  petrov::dataset data;
-  petrov::List<petrov::List<double>> train, test;
-  petrov::List<double> tr_goal, tr_pred, te_goal, te_pred;
+  LinearRegression modeli;
+  LogisticRegression modelo;
+  dataset data;
+  List<List<double>> train, test;
+  List<double> tr_goal, tr_pred, te_goal, te_pred;
   double a = 0.0005;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
@@ -254,9 +256,9 @@ int main()
       double c;
       std::cout << "enter % of train_size\n";
       std::cin >> c;
-      std::pair<petrov::List<petrov::List<std::string>>, petrov::List<petrov::List<std::string>>> datp;
+      std::pair<List<List<std::string>>, List<List<std::string>>> datp;
       datp = data.data_split(c);
-      petrov::List<petrov::List<double>> dat1p = convert(datp.first), dat2p = petrov::convert(datp.second);
+      List<List<double>> dat1p = convert(datp.first), dat2p = convert(datp.second);
       train = dat1p;
       test = dat2p;
       std::cout << "<Splitted_successfull>\n";
@@ -266,7 +268,8 @@ int main()
       size_t k;
       std::cout << "Enter number of feature\n";
       std::cin >> k;
-      std::pair<petrov::List<petrov::List<double>>, petrov::List<double>> tra = data_train_test_split(train, k), tes = data_train_test_split(test, k);
+      std::pair<List<List<double>>, List<double>> tra = data_train_test_split(train, k);
+      std::pair<List<List<double>>, List<double>> tes = data_train_test_split(test, k);
       te_goal = tes.second;
       tr_goal = tra.second;
       train = tra.first;
@@ -278,18 +281,18 @@ int main()
       size_t i;
       std::cout << "select dimension to scale\n";
       std::cin >> i;
-      train = petrov::norm(train, i);
-      test = petrov::norm(test, i);
+      train = norm(train, i);
+      test = norm(test, i);
       std::cout << "<Features scaled succesfully>\n";
     }
     else if (comm == "Data_corr")
     {
-      petrov::data_corr(train);
+      data_corr(train);
     }
     else if (comm == "Predict_Linear")
     {
       std::cout << "Enter " << data.getC() - 1 << " elems\n";
-      petrov::List<double> d;
+      List<double> d;
       for (size_t i = 0; i < data.getC() - 1; ++i)
       {
         double in;
@@ -301,7 +304,7 @@ int main()
     else if (comm == "Predict_Logistic")
     {
       std::cout << "Enter " << data.getC() - 1 << " elems\n";
-      petrov::List<double> d;
+      List<double> d;
       for (size_t i = 0; i < data.getC() - 1; ++i)
       {
         double in;
