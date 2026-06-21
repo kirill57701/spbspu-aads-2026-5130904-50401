@@ -4,9 +4,63 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include "HashTable.hpp"
 
 namespace petrov
 {
+    struct ListPairHash
+  {
+    size_t operator()(const std::pair<List<double>, List<double>>& p) const
+    {
+      size_t hash = 0;
+      auto hash_comb = [&hash](double v)
+      {
+        hash ^= std::hash<double>{}(v) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      };
+      for (auto it = p.first.begin(); it != p.first.end(); ++it)
+      {
+        hash_comb(*it);
+      }
+      for (auto it = p.second.begin(); it != p.second.end(); ++it)
+      {
+        hash_comb(*it);
+      }
+      return hash;
+    }
+  };
+  struct ListPairEqual
+  {
+    bool operator()(const std::pair<List<double>, List<double>>& a, const std::pair<List<double>, List<double>>& b) const
+    {
+      return iseq(a.first, b.first) && iseq(a.second, b.second);
+    }
+  };
+  struct LLListPairHash
+  {
+    size_t operator()(const std::pair<List<double>, List<double>>& p) const
+    {
+      size_t hash = 0;
+      auto hash_comb = [&hash](double v)
+      {
+        hash ^= std::hash<double>{}(v) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      };
+      for (auto it = p.first.begin(); it != p.first.end(); ++it)
+      {
+        for (auto iit = p.second.begin(); iit != p.first.end(); ++iit)
+        {
+          hash_comb(*it);
+        }
+      }
+      return hash;
+    }
+  };
+  struct LLListPairEqual
+  {
+    bool operator()(const std::pair<List<List<double>>, List<double>>& a, const std::pair<List<List<double>>, List<double>>& b) const
+    {
+      return iseq(a.first, b.first) && iseq(a.first, b.first);
+    }
+  };
   struct LogisticRegression
   {
     LogisticRegression()
@@ -187,6 +241,8 @@ namespace petrov
     }
     private:
       List<double> W;
+      HashTable<std::pair<List<double>, List<double>>, double, ListPairHash, ListPairEqual> h1;
+      HashTable<std::pair<List<List<double>>, List<List<double>>>, List<double>, LLListPairHash, ListPairEqual> h2;
   };
 }
 
