@@ -12,14 +12,17 @@ namespace petrov
   class HashTable
   {
   private:
-    struct Node
+    struct Bucket
     {
       std::pair<Key, Value> kv;
-      Node *next;
-      Node(const Key &k, const Value &v, Node *n) : kv(k, v), next(n) {}
+      size_t psl;
+      bool occupied;
+
+      Bucket() : psl(0), occupied(false) {}
+      Bucket(const Key &k, const Value &v, size_t p) : kv(k, v), psl(p), occupied(true) {}
     };
 
-    Node **buckets_;
+    Bucket *buckets_;
     size_t bucketCount_;
     size_t size_;
     HashFunc hasher_;
@@ -31,38 +34,31 @@ namespace petrov
     class ConstIterator;
 
     HashTable(size_t slots = 16):
-      buckets_(new Node*[slots]()),
+      buckets_(new Bucket[slots]()),
       bucketCount_(slots),
       size_(0),
       hasher_(HashFunc()),
       equal_(Equal()),
       maxLoadFactor_(0.75)
     {
-      for (size_t i = 0; i < bucketCount_; ++i) buckets_[i] = nullptr;
     }
 
     ~HashTable()
     {
-      clear();
       delete[] buckets_;
     }
 
     HashTable(const HashTable &other):
-      buckets_(new Node*[other.bucketCount_]()),
+      buckets_(new Bucket[other.bucketCount_]()),
       bucketCount_(other.bucketCount_),
-      size_(0),
+      size_(other.size_),
       hasher_(other.hasher_),
       equal_(other.equal_),
       maxLoadFactor_(other.maxLoadFactor_)
     {
       for (size_t i = 0; i < bucketCount_; ++i)
       {
-        Node *curr = other.buckets_[i];
-        while (curr)
-        {
-          add(curr->kv.first, curr->kv.second);
-          curr = curr->next;
-        }
+        buckets_[i] = other.buckets_[i];
       }
     }
 
@@ -90,29 +86,59 @@ namespace petrov
     {
       if (has(k)) return;
       checkRehash();
+
+      Bucket curr(k, v, 0);
       size_t idx = hasher_(k) % bucketCount_;
-      buckets_[idx] = new Node(k, v, buckets_[idx]);
-      ++size_;
+
+      while (true)
+      {
+        if (!buckets_[idx].occupied)
+        {
+          buckets_[idx] = curr;
+          ++size_;
+          return;
+        }
+        if (curr.psl > buckets_[idx].psl)
+        {
+          std::swap(curr, buckets_[idx]);
+        }
+        curr.psl++;
+        idx = (idx + 1) % bucketCount_;
+      }
     }
 
     bool drop(const Key &key)
     {
       size_t idx = hasher_(key) % bucketCount_;
-      Node *curr = buckets_[idx];
-      Node *prev = nullptr;
+      size_t dist = 0;
 
-      while (curr)
+      while (buckets_[idx].occupied)
       {
-        if (equal_(curr->kv.first, key))
+        if (equal_(buckets_[idx].kv.first, key))
         {
-          if (prev) prev->next = curr->next;
-          else buckets_[idx] = curr->next;
-          delete curr;
+          buckets_[idx].occupied = false;
           --size_;
+
+          size_t currIdx = idx;
+          size_t nextIdx = (currIdx + 1) % bucketCount_;
+
+          while (buckets_[nextIdx].occupied && buckets_[nextIdx].psl > 0)
+          {
+            buckets_[currIdx] = buckets_[nextIdx];
+            buckets_[currIdx].psl--;
+            buckets_[nextIdx].occupied = false;
+
+            currIdx = nextIdx;
+            nextIdx = (currIdx + 1) % bucketCount_;
+          }
           return true;
         }
-        prev = curr;
-        curr = curr->next;
+        if (dist > buckets_[idx].psl)
+        {
+          break;
+        }
+        dist++;
+        idx = (idx + 1) % bucketCount_;
       }
       return false;
     }
@@ -120,11 +146,14 @@ namespace petrov
     bool has(const Key &k) const
     {
       size_t idx = hasher_(k) % bucketCount_;
-      Node *curr = buckets_[idx];
-      while (curr)
+      size_t dist = 0;
+
+      while (buckets_[idx].occupied)
       {
-        if (equal_(curr->kv.first, k)) return true;
-        curr = curr->next;
+        if (equal_(buckets_[idx].kv.first, k)) return true;
+        if (dist > buckets_[idx].psl) break;
+        dist++;
+        idx = (idx + 1) % bucketCount_;
       }
       return false;
     }
@@ -153,14 +182,7 @@ namespace petrov
     {
       for (size_t i = 0; i < bucketCount_; ++i)
       {
-        Node *curr = buckets_[i];
-        while (curr)
-        {
-          Node *next = curr->next;
-          delete curr;
-          curr = next;
-        }
-        buckets_[i] = nullptr;
+        buckets_[i].occupied = false;
       }
       size_ = 0;
     }
@@ -168,22 +190,21 @@ namespace petrov
     void rehash(size_t slots)
     {
       if (slots == 0) slots = 1;
-      Node **newBuckets = new Node*[slots]();
-      for (size_t i = 0; i < bucketCount_; ++i)
+      Bucket *oldBuckets = buckets_;
+      size_t oldCapacity = bucketCount_;
+
+      buckets_ = new Bucket[slots]();
+      bucketCount_ = slots;
+      size_ = 0;
+
+      for (size_t i = 0; i < oldCapacity; ++i)
       {
-        Node *curr = buckets_[i];
-        while (curr)
+        if (oldBuckets[i].occupied)
         {
-          Node *next = curr->next;
-          size_t newIdx = hasher_(curr->kv.first) % slots;
-          curr->next = newBuckets[newIdx];
-          newBuckets[newIdx] = curr;
-          curr = next;
+          add(oldBuckets[i].kv.first, oldBuckets[i].kv.second);
         }
       }
-      delete[] buckets_;
-      buckets_ = newBuckets;
-      bucketCount_ = slots;
+      delete[] oldBuckets;
     }
 
     size_t getSize() const { return size_; }
@@ -202,36 +223,35 @@ namespace petrov
     {
       friend class HashTable;
       HashTable *table_;
-      size_t bucketIdx_;
-      Node *node_;
+      size_t idx_;
 
-      Iterator(HashTable *t, size_t b, Node *n) : table_(t), bucketIdx_(b), node_(n)
+      Iterator(HashTable *t, size_t i) : table_(t), idx_(i)
       {
-        if (!node_ && table_) advance();
+        if (table_ && idx_ < table_->bucketCount_ && !table_->buckets_[idx_].occupied)
+        {
+          advance();
+        }
       }
 
     public:
-      Iterator() : table_(nullptr), bucketIdx_(0), node_(nullptr) {}
-      std::pair<Key, Value> &operator*() { return node_->kv; }
-      std::pair<Key, Value> *operator->() { return &node_->kv; }
-      bool operator!=(const Iterator &rhs) const { return node_ != rhs.node_; }
+      Iterator() : table_(nullptr), idx_(0) {}
+      std::pair<Key, Value> &operator*() { return table_->buckets_[idx_].kv; }
+      std::pair<Key, Value> *operator->() { return &table_->buckets_[idx_].kv; }
+      bool operator!=(const Iterator &rhs) const { return idx_ != rhs.idx_; }
       Iterator &operator++()
       {
-        if (node_->next) node_ = node_->next;
-        else
-        {
-          bucketIdx_++;
-          advance();
-        }
+        idx_++;
+        advance();
         return *this;
       }
 
     private:
       void advance()
       {
-        while (bucketIdx_ < table_->bucketCount_ && !table_->buckets_[bucketIdx_])
-          bucketIdx_++;
-        node_ = (bucketIdx_ < table_->bucketCount_) ? table_->buckets_[bucketIdx_] : nullptr;
+        while (idx_ < table_->bucketCount_ && !table_->buckets_[idx_].occupied)
+        {
+          idx_++;
+        }
       }
     };
 
@@ -239,54 +259,60 @@ namespace petrov
     {
       friend class HashTable;
       const HashTable *table_;
-      size_t bucketIdx_;
-      const Node *node_;
+      size_t idx_;
 
-      ConstIterator(const HashTable *t, size_t b, const Node *n) : table_(t), bucketIdx_(b), node_(n)
+      ConstIterator(const HashTable *t, size_t i) : table_(t), idx_(i)
       {
-        if (!node_ && table_) advance();
+        if (table_ && idx_ < table_->bucketCount_ && !table_->buckets_[idx_].occupied)
+        {
+          advance();
+        }
       }
 
     public:
-      ConstIterator() : table_(nullptr), bucketIdx_(0), node_(nullptr) {}
-      const std::pair<Key, Value> &operator*() const { return node_->kv; }
-      const std::pair<Key, Value> *operator->() const { return &node_->kv; }
-      bool operator!=(const ConstIterator &rhs) const { return node_ != rhs.node_; }
+      ConstIterator() : table_(nullptr), idx_(0) {}
+      const std::pair<Key, Value> &operator*() const { return table_->buckets_[idx_].kv; }
+      const std::pair<Key, Value> *operator->() const { return &table_->buckets_[idx_].kv; }
+      bool operator!=(const ConstIterator &rhs) const { return idx_ != rhs.idx_; }
       ConstIterator &operator++()
       {
-        if (node_->next) node_ = node_->next;
-        else
-        {
-          bucketIdx_++;
-          advance();
-        }
+        idx_++;
+        advance();
         return *this;
       }
 
     private:
       void advance()
       {
-        while (bucketIdx_ < table_->bucketCount_ && !table_->buckets_[bucketIdx_])
-          bucketIdx_++;
-        node_ = (bucketIdx_ < table_->bucketCount_) ? table_->buckets_[bucketIdx_] : nullptr;
+        while (idx_ < table_->bucketCount_ && !table_->buckets_[idx_].occupied)
+        {
+          idx_++;
+        }
       }
     };
 
-    Iterator begin() { return Iterator(this, 0, buckets_[0]); }
-    Iterator end() { return Iterator(this, bucketCount_, nullptr); }
-    ConstIterator begin() const { return ConstIterator(this, 0, buckets_[0]); }
-    ConstIterator end() const { return ConstIterator(this, bucketCount_, nullptr); }
+    Iterator begin() { return Iterator(this, 0); }
+    Iterator end() { return Iterator(this, bucketCount_); }
+    ConstIterator begin() const { return ConstIterator(this, 0); }
+    ConstIterator end() const { return ConstIterator(this, bucketCount_); }
+
     Iterator find(const Key &k)
     {
       size_t idx = hasher_(k) % bucketCount_;
-      Node *curr = buckets_[idx];
-      while (curr)
+      size_t dist = 0;
+
+      while (buckets_[idx].occupied)
       {
-        if (equal_(curr->kv.first, k))
+        if (equal_(buckets_[idx].kv.first, k))
         {
-          return Iterator(this, idx, curr);
+          return Iterator(this, idx);
         }
-        curr = curr->next;
+        if (dist > buckets_[idx].psl)
+        {
+          break;
+        }
+        dist++;
+        idx = (idx + 1) % bucketCount_;
       }
       return end();
     }
@@ -294,14 +320,20 @@ namespace petrov
     ConstIterator find(const Key &k) const
     {
       size_t idx = hasher_(k) % bucketCount_;
-      const Node *curr = buckets_[idx];
-      while (curr)
+      size_t dist = 0;
+
+      while (buckets_[idx].occupied)
       {
-        if (equal_(curr->kv.first, k))
+        if (equal_(buckets_[idx].kv.first, k))
         {
-          return ConstIterator(this, idx, curr);
+          return ConstIterator(this, idx);
         }
-        curr = curr->next;
+        if (dist > buckets_[idx].psl)
+        {
+          break;
+        }
+        dist++;
+        idx = (idx + 1) % bucketCount_;
       }
       return end();
     }

@@ -84,7 +84,7 @@ namespace petrov
       if (data.getC())
       {
         double wd = 0.1;
-        while (W.getSize() < data.getC())
+        while (W.getSize() < data.getC() - 1)
         {
           W.push_back(wd);
           wd += 0.1;

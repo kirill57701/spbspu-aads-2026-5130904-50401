@@ -211,7 +211,7 @@ namespace petrov
     for (LIter<List<double>> li = l.begin(); li != l.end(); ++li)
     {
       size_t i = 0;
-      for (LIter<double> lii = (*li).begin(); lii != (*li).begin(); ++lii, ++i)
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++i)
       {
         if (i == j)
         {
@@ -380,7 +380,7 @@ namespace petrov
       {
         List<List<std::string>> datan;
         LIter<List<std::string>> di = data.begin();
-        for (size_t i = 0; i < c; ++i, ++di)
+        for (size_t i = 0; i < r; ++i, ++di)
         {
           List<std::string> add;
           LIter<std::string> qi = (*di).begin();
