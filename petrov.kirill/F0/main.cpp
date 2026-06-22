@@ -16,7 +16,7 @@ petrov::List<std::string> parsing(std::string s)
     {
       if (r.size() != 0)
       {
-        q.push_back(r);        
+        q.push_back(r);
       }
       r = "";
     }
