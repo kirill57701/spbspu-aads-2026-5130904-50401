@@ -145,24 +145,24 @@ namespace petrov
       h2.add({inp, W}, pred);
       return pred;
     }
-    void model_fit(List<double> inp, double g, double pred, double a)
+    void model_fit(List<double> inp, double g, double a)
     {
       LIter<double> wi = W.begin();
       for (LIter<double> ii = inp.begin(); ii != inp.end(); ++ii)
       {
-        (*wi) -= a * (pred - g) * (*ii);
+        (*wi) -= a * ((*ii) * (*wi) - g) * (*ii);
         ++wi;
       }
     }
-    void model_fit(List<List<double>> inp, List<double> g, List<double> pred, double a)
+    void model_fit(List<List<double>> inp, List<double> g, double a)
     {
-      LIter<double> gi = g.begin(), pi = pred.begin();
-      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii, ++gi, ++pi)
+      LIter<double> gi = g.begin();
+      for (LIter<List<double>> ii = inp.begin(); ii != inp.end(); ++ii, ++gi)
       {
         LIter<double> wi = W.begin();
         for (LIter<double> i1 = (*ii).begin(); i1 != (*ii).end(); ++i1, ++wi)
         {
-          (*wi) -= a * ((*pi) - (*gi)) * (*i1);
+          (*wi) -= a * ((*i1) * (*wi) - (*gi)) * (*i1);
         }
       }
     }

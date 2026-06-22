@@ -147,7 +147,7 @@ int main()
       std::cin >> k;
       for (size_t i = 0; i < k; ++i)
       {
-        modeli.model_fit(train, tr_goal, tr_pred, a);
+        modeli.model_fit(train, tr_goal, a);
       }
       std::cout << "<Model fitted successfuly>\n";
     }
@@ -160,7 +160,7 @@ int main()
         std::cin >> k;
         for (size_t i = 0; i < k; ++i)
         {
-          modelo.model_fit(train, tr_goal, tr_pred, a);
+          modelo.model_fit(train, tr_goal, a);
           tr_pred = modelo.model_predict(train);
         }
         std::cout << "<Model fitted succesfuly>\n";
