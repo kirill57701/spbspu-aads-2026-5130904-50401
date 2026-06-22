@@ -285,6 +285,15 @@ int main()
       test = norm(test, i);
       std::cout << "<Features scaled succesfully>\n";
     }
+    else if (comm == "Log1p")
+    {
+      size_t i;
+      std::cout << "select dimension to log1p\n";
+      std::cin >> i;
+      train = log1p(train, i);
+      test = log1p(test, i);
+      std::cout << "<Features log1ped succesfully>\n";
+    }
     else if (comm == "Data_corr")
     {
       data_corr(train);

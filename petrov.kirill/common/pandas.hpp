@@ -96,6 +96,21 @@ namespace petrov
     }
     return l;
   }
+  List<List<double>> log1p(List<List<double>> l, size_t j)
+  {
+    for (LIter<List<double>> li = l.begin(); li != l.end(); ++li)
+    {
+      size_t i = 0;
+      for (LIter<double> lii = (*li).begin(); lii != (*li).end(); ++lii, ++i)
+      {
+        if (i == j)
+        {
+          *lii = log10(*lii);
+        }
+      }
+    }
+    return l;
+  }
   double getMaC(List<List<double>> l, size_t j)
   {
     size_t i = 0;
