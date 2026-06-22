@@ -95,21 +95,48 @@ int main()
     }
     else if (comm == "Load_model_logistic")
     {
-      try
+      if (comms.getSize() == 1)
       {
-        modelo.load_model(std::cin);
+        try
+        {
+          modelo.load_model(std::cin);
+        }
+        catch (...)
+        {
+          std::cout << "err, model not found\n";
+          continue;
+        }
+        std::cout << "Successful load\n";
       }
-      catch (...)
+      else
       {
-        std::cout << "err, model not found\n";
-        continue;
+        try
+        {
+          LIter<std::string> i = comms.begin();
+          ++i;
+          modelo.load_model(*i);
+        }
+        catch (...)
+        {
+          std::cout << "err, model not found\n";
+          continue;
+        }
+        std::cout << "Successful load\n";
       }
-      std::cout << "Successful load\n";
     }
     else if (comm == "Save_model_linear")
     {
-      modeli.save_model(std::cin);
-      std::cout << "<Successfuly saved>\n";
+      if (comms.getSize() < 3)
+      {
+        modeli.save_model(std::cin);
+        std::cout << "<Successfuly saved>\n";
+      }
+      else
+      {
+        LIter<std::string> i = comms.begin();
+        ++i;
+        modeli.save_model(*i);
+      }
     }
     else if (comm == "Save_model_logistic")
     {

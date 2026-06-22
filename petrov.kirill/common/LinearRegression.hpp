@@ -191,6 +191,29 @@ namespace petrov
       out << pred;
       out.close();
     }
+    void save_predict(std::string s, double pred)
+    {
+      std::ofstream out;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".predict");
+      }
+      else
+      {
+        out.open(s);
+      }
+      out << pred;
+      out.close();
+    }
     void save_predict(std::istream& in, List<double> pred)
     {
       std::ofstream out;
@@ -238,6 +261,32 @@ namespace petrov
       std::ofstream out;
       std::string s;
       in >> s;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".model");
+      }
+      else
+      {
+        out.open(s);
+      }
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << '\n';
+      }
+      out.close();
+    }
+    void save_model(std::string s)
+    {
+      std::ofstream out;
       bool isnorm = 0;
       for (size_t i = 0; i < s.size(); ++i)
       {
