@@ -219,6 +219,32 @@ namespace petrov
       }
       out.close();
     }
+    void save_model(std::string s)
+    {
+      std::ofstream out;
+      bool isnorm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          isnorm = 1;
+          break;
+        }
+      }
+      if (!isnorm)
+      {
+        out.open(s + ".model");
+      }
+      else
+      {
+        out.open(s);
+      }
+      for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
+      {
+        out << (*wi) << '\n';
+      }
+      out.close();
+    }
     void load_model(std::istream& in)
     {
       std::ifstream i;

@@ -25,6 +25,7 @@ petrov::List<std::string> parsing(std::string s)
       r += s[i];
     }
   }
+  q.push_back(r);
   return q;
 }
 
@@ -140,26 +141,59 @@ int main()
     }
     else if (comm == "Save_model_logistic")
     {
-      modelo.save_model(std::cin);
-      std::cout << "<Succesfuly saved>\n";
+      if (comms.getSize() == 1)
+      {
+        modelo.save_model(std::cin);
+        std::cout << "<Succesfuly saved>\n";
+      }
+      else
+      {
+        LIter<std::string> i = comms.begin();
+        ++i;
+        modelo.save_model(*i);
+      }
     }
     else if (comm == "Read_dataset")
     {
-      try
+      if (comms.getSize() == 1)
       {
-        data.read_dataset(std::cin);
+        try
+        {
+          data.read_dataset(std::cin);
+        }
+        catch (...)
+        {
+          std::cout << "<Unsuccessfuly readed, dataset not found>\n";
+          continue;
+        }
+        std::cout << "<Successfuly readed>\n";
       }
-      catch (...)
+      else
       {
-        std::cout << "<Unsuccessfuly readed, dataset not found>\n";
-        continue;
+        try
+        {
+          data.read_dataset(*(++comms.begin()));
+        }
+        catch (...)
+        {
+          std::cout << "<Unsuccessfuly readed, dataset not found>\n";
+          continue;
+        }
+        std::cout << "<Successfuly readed>\n";
       }
-      std::cout << "<Successfuly readed>\n";
     }
     else if (comm == "Save_data")
     {
-      data.save_data(std::cin);
-      std::cout << "<Data Succefully saved>\n";
+      if (comms.getSize() == 1)
+      {
+        data.save_data(std::cin);
+        std::cout << "<Data Succefully saved>\n";
+      }
+      else
+      {
+        data.save_data(*(++comms.begin()));
+        std::cout << "<Data Succefully saved>\n";
+      }
     }
     else if (comm == "Linear_model_init")
     {
@@ -219,8 +253,16 @@ int main()
     }
     else if (comm == "Change_a")
     {
-      std::cin >> a;
-      std::cout << "<Changed succesfully>\n";
+      if (comms.getSize() == 1)
+      {
+        std::cin >> a;
+        std::cout << "<Changed succesfully>\n";
+      }
+      else
+      {
+        a = stod(*(++comms.begin()));
+        std::cout << "<Changed succesfully>\n";
+      }
     }
     else if (comm == "Linear_model_predict_train")
     {
@@ -285,18 +327,34 @@ int main()
     }
     else if (comm == "Feature_del")
     {
-      std::string s;
-      std::cin >> s;
-      try
+      if (comms.getSize() == 1)
       {
-        data.feature_del(s);
+        std::string s;
+        std::cin >> s;
+        try
+        {
+          data.feature_del(s);
+        }
+        catch(...)
+        {
+          std::cout << "err, feature not found\n";
+          continue;
+        }
+        std::cout << "<Feature deleted successfuly>\n";
       }
-      catch(...)
+      else
       {
-        std::cout << "err, feature not found\n";
-        continue;
+        try
+        {
+          data.feature_del(*(++comms.begin()));
+        }
+        catch(...)
+        {
+          std::cout << "err, feature not found\n";
+          continue;
+        }
+        std::cout << "<Feature deleted successfuly>\n";
       }
-      std::cout << "<Feature deleted successfuly>\n";
     }
     else if (comm == "Data_train_test_split")
     {

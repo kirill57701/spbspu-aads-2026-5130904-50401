@@ -314,10 +314,79 @@ namespace petrov
         throw std::logic_error("err\n");
       }
     }
+    void read_dataset(std::string s)
+    {
+      std::ifstream i;
+      i.open(s);
+      if (i.is_open())
+      {
+        std::string q;
+        std::getline(i, q);
+        c = how_c(q);
+        noname = q;
+        name_data = s;
+        size_t r1 = 0;
+        while (std::getline(i, q))
+        {
+          data.push_back(toma(q));
+          r1++;
+        }
+        r = r1;
+      }
+      else
+      {
+        throw std::logic_error("err\n");
+      }
+    }
     void save_data(std::istream& in)
     {
       std::string s;
       in >> s;
+      bool norm = 0;
+      for (size_t i = 0; i < s.size(); ++i)
+      {
+        if (s[i] == '.')
+        {
+          norm = 1;
+          break;
+        }
+      }
+      if (!norm)
+      {
+        s += ".data";
+      }
+      std::ofstream out;
+      out.open(s);
+      std::string wh = "";
+      for (size_t i = 0; i < noname.size(); ++i)
+      {
+        if (noname[i] == ',')
+        {
+          out << wh << ',';
+          wh = "";
+        }
+        else
+        {
+          wh += noname[i];
+        }
+      }
+      out << wh;
+      for (LIter<List<std::string>> d = data.begin(); d != data.end(); ++d)
+      {
+        for (LIter<std::string> q = (*d).begin(); q != (*d).end(); ++q)
+        {
+          out << (*q);
+          if ((++q) != ((*d).end()))
+          {
+            out << ',';
+          }
+          --q;
+        }
+        out << '\n';
+      }
+    }
+    void save_data(std::string s)
+    {
       bool norm = 0;
       for (size_t i = 0; i < s.size(); ++i)
       {
