@@ -6,24 +6,26 @@
 
 using namespace petrov;
 
-std::string parsing(std::string s)
+petrov::List<std::string> parsing(std::string s)
 {
+  petrov::List<std::string> q;
   std::string r = "";
   for (size_t i = 0; i < s.size(); ++i)
   {
-    if (s[i] != ' ')
+    if (s[i] == ' ')
     {
-      r += s[i];
+      if (r.size() != 0)
+      {
+        q.push_back(r);        
+      }
+      r = "";
     }
     else
     {
-      if (r[r.size() - 1] != ' ')
-      {
-        r += s[i];
-      }
+      r += s[i];
     }
   }
-  return r;
+  return q;
 }
 
 std::string whatAcomm(std::string s)
@@ -54,24 +56,42 @@ int main()
   double a = 0.0005;
   while (std::getline(std::cin, s) && !std::cin.eof())
   {
+    petrov::List<std::string> comms = parsing(s);
     if (s.empty())
     {
       continue;
     }
-    s = parsing(s);
     std::string comm = whatAcomm(s);
     if (comm == "Load_model_linear")
     {
-      try
+      if (comms.getSize() == 1)
       {
-        modeli.load_model(std::cin);
+        try
+        {
+          modeli.load_model(std::cin);
+        }
+        catch (...)
+        {
+          std::cout << "err, model not found\n";
+          continue;
+        }
+        std::cout << "Successful load\n";
       }
-      catch (...)
+      else
       {
-        std::cout << "err, model not found\n";
-        continue;
+        try
+        {
+          LIter<std::string> i = comms.begin();
+          ++i;
+          modeli.load_model(*i);
+        }
+        catch (...)
+        {
+          std::cout << "err, model not found\n";
+          continue;
+        }
+        std::cout << "Successful load\n";
       }
-      std::cout << "Successful load\n";
     }
     else if (comm == "Load_model_logistic")
     {

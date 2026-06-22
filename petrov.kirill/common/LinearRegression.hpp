@@ -284,6 +284,27 @@ namespace petrov
       }
       W.pop_back();
     }
+    void load_model(std::string s)
+    {
+      std::ifstream i;
+      i.open(s);
+      if (!i)
+      {
+        throw std::logic_error("err\n");
+      }
+
+      for (; W.getSize();)
+      {
+        W.pop_back();
+      }
+      for (; !i.eof();)
+      {
+        double q;
+        i >> q;
+        W.push_back(q);
+      }
+      W.pop_back();
+    }
     void model_info(std::ostream& out)
     {
       for (LIter<double> wi = W.begin(); wi != W.end(); ++wi)
