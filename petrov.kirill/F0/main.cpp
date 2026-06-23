@@ -251,6 +251,14 @@ int main()
         std::cout << "err train is empty\n";
       }
     }
+    else if (comm == "Model_linear_info")
+    {
+      modeli.model_info(std::cout);
+    }
+    else if (comm == "Model_logistic_info")
+    {
+      modelo.model_info(std::cout);
+    }
     else if (comm == "Change_a")
     {
       if (comms.getSize() == 1)
@@ -263,6 +271,13 @@ int main()
         a = stod(*(++comms.begin()));
         std::cout << "<Changed succesfully>\n";
       }
+    }
+    else if (comm == "Data_head")
+    {
+      std::cout << "Enter num of rows\n";
+      size_t n;
+      std::cin >> n;
+      data.data_head(n);
     }
     else if (comm == "Linear_model_predict_train")
     {
