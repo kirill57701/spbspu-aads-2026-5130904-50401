@@ -12,7 +12,7 @@ namespace petrov
   template < typename Key, typename Value >
   struct HashTableNode
   {
-    std::pair< Key, Value > kv;
+    std::pair< const Key, Value > kv;
     HashTableNode *next;
 
     HashTableNode(const Key &k, const Value &v, HashTableNode *n):
@@ -42,10 +42,12 @@ namespace petrov
   public:
     HashTableIterator();
 
-    std::pair< Key, Value > &operator*();
-    std::pair< Key, Value > *operator->();
+    std::pair< const Key, Value > &operator*();
+    std::pair< const Key, Value > *operator->();
     bool operator!=(const HashTableIterator &rhs) const;
+    bool operator==(const HashTableIterator &rhs) const;
     HashTableIterator &operator++();
+    HashTableIterator operator++(int);
   };
 
   template < typename Key, typename Value, typename HashFunc = std::hash< Key >, typename Equal = std::equal_to< Key > >
@@ -65,10 +67,12 @@ namespace petrov
   public:
     HashTableConstIterator();
 
-    const std::pair< Key, Value > &operator*() const;
-    const std::pair< Key, Value > *operator->() const;
+    const std::pair< const Key, Value > &operator*() const;
+    const std::pair< const Key, Value > *operator->() const;
     bool operator!=(const HashTableConstIterator &rhs) const;
+    bool operator==(const HashTableConstIterator &rhs) const;
     HashTableConstIterator &operator++();
+    HashTableConstIterator operator++(int);
   };
 
   template < typename Key, typename Value, typename HashFunc = std::hash< Key >, typename Equal = std::equal_to< Key > >
@@ -93,9 +97,11 @@ namespace petrov
   public:
     explicit HashTable(size_t slots = 16);
     HashTable(const HashTable &other);
+    HashTable(HashTable &&other) noexcept;
     ~HashTable();
 
     HashTable &operator=(const HashTable &other);
+    HashTable &operator=(HashTable &&other) noexcept;
 
     void setMaxLoadFactor(double maxLoad);
     void add(const Key &k, const Value &v);
@@ -131,6 +137,11 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   void HashTableIterator< Key, Value, HashFunc, Equal >::advance()
   {
+    if (!table_ || !table_->buckets_)
+    {
+      node_ = nullptr;
+      return;
+    }
     while (bucketIdx_ < table_->bucketCount_ && !table_->buckets_[bucketIdx_])
     {
       bucketIdx_++;
@@ -147,13 +158,13 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
-  std::pair< Key, Value > &HashTableIterator< Key, Value, HashFunc, Equal >::operator*()
+  std::pair< const Key, Value > &HashTableIterator< Key, Value, HashFunc, Equal >::operator*()
   {
     return node_->kv;
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
-  std::pair< Key, Value > *HashTableIterator< Key, Value, HashFunc, Equal >::operator->()
+  std::pair< const Key, Value > *HashTableIterator< Key, Value, HashFunc, Equal >::operator->()
   {
     return &node_->kv;
   }
@@ -162,6 +173,12 @@ namespace petrov
   bool HashTableIterator< Key, Value, HashFunc, Equal >::operator!=(const HashTableIterator &rhs) const
   {
     return node_ != rhs.node_;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
+  bool HashTableIterator< Key, Value, HashFunc, Equal >::operator==(const HashTableIterator &rhs) const
+  {
+    return node_ == rhs.node_;
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
@@ -180,6 +197,14 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
+  HashTableIterator< Key, Value, HashFunc, Equal > HashTableIterator< Key, Value, HashFunc, Equal >::operator++(int)
+  {
+    HashTableIterator temp = *this;
+    ++(*this);
+    return temp;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTableConstIterator< Key, Value, HashFunc, Equal >::HashTableConstIterator(const HashTable< Key, Value, HashFunc, Equal > *t, size_t b, const HashTableNode< Key, Value > *n):
     table_(t),
     bucketIdx_(b),
@@ -194,6 +219,11 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   void HashTableConstIterator< Key, Value, HashFunc, Equal >::advance()
   {
+    if (!table_ || !table_->buckets_)
+    {
+      node_ = nullptr;
+      return;
+    }
     while (bucketIdx_ < table_->bucketCount_ && !table_->buckets_[bucketIdx_])
     {
       bucketIdx_++;
@@ -210,13 +240,13 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
-  const std::pair< Key, Value > &HashTableConstIterator< Key, Value, HashFunc, Equal >::operator*() const
+  const std::pair< const Key, Value > &HashTableConstIterator< Key, Value, HashFunc, Equal >::operator*() const
   {
     return node_->kv;
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
-  const std::pair< Key, Value > *HashTableConstIterator< Key, Value, HashFunc, Equal >::operator->() const
+  const std::pair< const Key, Value > *HashTableConstIterator< Key, Value, HashFunc, Equal >::operator->() const
   {
     return &node_->kv;
   }
@@ -225,6 +255,12 @@ namespace petrov
   bool HashTableConstIterator< Key, Value, HashFunc, Equal >::operator!=(const HashTableConstIterator &rhs) const
   {
     return node_ != rhs.node_;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
+  bool HashTableConstIterator< Key, Value, HashFunc, Equal >::operator==(const HashTableConstIterator &rhs) const
+  {
+    return node_ == rhs.node_;
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
@@ -243,23 +279,27 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
+  HashTableConstIterator< Key, Value, HashFunc, Equal > HashTableConstIterator< Key, Value, HashFunc, Equal >::operator++(int)
+  {
+    HashTableConstIterator temp = *this;
+    ++(*this);
+    return temp;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTable< Key, Value, HashFunc, Equal >::HashTable(size_t slots):
-    buckets_(new Node*[slots]()),
+    buckets_(slots > 0 ? new Node*[slots]() : nullptr),
     bucketCount_(slots),
     size_(0),
     hasher_(HashFunc()),
     equal_(Equal()),
     maxLoadFactor_(0.75)
   {
-    for (size_t i = 0; i < bucketCount_; ++i)
-    {
-      buckets_[i] = nullptr;
-    }
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTable< Key, Value, HashFunc, Equal >::HashTable(const HashTable &other):
-    buckets_(new Node*[other.bucketCount_]()),
+    buckets_(other.bucketCount_ > 0 ? new Node*[other.bucketCount_]() : nullptr),
     bucketCount_(other.bucketCount_),
     size_(0),
     hasher_(other.hasher_),
@@ -287,6 +327,20 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
+  HashTable< Key, Value, HashFunc, Equal >::HashTable(HashTable &&other) noexcept:
+    buckets_(other.buckets_),
+    bucketCount_(other.bucketCount_),
+    size_(other.size_),
+    hasher_(std::move(other.hasher_)),
+    equal_(std::move(other.equal_)),
+    maxLoadFactor_(other.maxLoadFactor_)
+  {
+    other.buckets_ = nullptr;
+    other.bucketCount_ = 0;
+    other.size_ = 0;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTable< Key, Value, HashFunc, Equal >::~HashTable()
   {
     clear();
@@ -305,6 +359,27 @@ namespace petrov
   }
 
   template < typename Key, typename Value, typename HashFunc, typename Equal >
+  HashTable< Key, Value, HashFunc, Equal > &HashTable< Key, Value, HashFunc, Equal >::operator=(HashTable &&other) noexcept
+  {
+    if (this != std::addressof(other))
+    {
+      clear();
+      delete[] buckets_;
+      buckets_ = other.buckets_;
+      bucketCount_ = other.bucketCount_;
+      size_ = other.size_;
+      hasher_ = std::move(other.hasher_);
+      equal_ = std::move(other.equal_);
+      maxLoadFactor_ = other.maxLoadFactor_;
+
+      other.buckets_ = nullptr;
+      other.bucketCount_ = 0;
+      other.size_ = 0;
+    }
+    return *this;
+  }
+
+  template < typename Key, typename Value, typename HashFunc, typename Equal >
   void HashTable< Key, Value, HashFunc, Equal >::setMaxLoadFactor(double maxLoad)
   {
     maxLoadFactor_ = maxLoad;
@@ -317,9 +392,9 @@ namespace petrov
     {
       return;
     }
-    if (static_cast< double >(size_ + 1) / bucketCount_ > maxLoadFactor_)
+    if (bucketCount_ == 0 || static_cast< double >(size_ + 1) / static_cast< double >(bucketCount_) > maxLoadFactor_)
     {
-      throw std::overflow_error("HashTable is full");
+      rehash(bucketCount_ == 0 ? 16 : bucketCount_ * 2);
     }
     size_t idx = hasher_(k) % bucketCount_;
     buckets_[idx] = new Node(k, v, buckets_[idx]);
@@ -329,6 +404,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   size_t HashTable< Key, Value, HashFunc, Equal >::erase(const Key &key)
   {
+    if (bucketCount_ == 0)
+    {
+      return 0;
+    }
     size_t idx = hasher_(key) % bucketCount_;
     Node *curr = buckets_[idx];
     Node *prev = nullptr;
@@ -358,6 +437,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   bool HashTable< Key, Value, HashFunc, Equal >::contains(const Key &k) const
   {
+    if (bucketCount_ == 0)
+    {
+      return false;
+    }
     size_t idx = hasher_(k) % bucketCount_;
     Node *curr = buckets_[idx];
     while (curr)
@@ -420,9 +503,9 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   void HashTable< Key, Value, HashFunc, Equal >::rehash(size_t slots)
   {
-    if (slots == 0)
+    if (slots <= bucketCount_)
     {
-      slots = 1;
+      return;
     }
     HashTable temp(slots);
     temp.maxLoadFactor_ = maxLoadFactor_;
@@ -431,7 +514,9 @@ namespace petrov
       Node *curr = buckets_[i];
       while (curr)
       {
-        temp.add(curr->kv.first, curr->kv.second);
+        size_t idx = temp.hasher_(curr->kv.first) % temp.bucketCount_;
+        temp.buckets_[idx] = new Node(curr->kv.first, curr->kv.second, temp.buckets_[idx]);
+        temp.size_++;
         curr = curr->next;
       }
     }
@@ -441,6 +526,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTableIterator< Key, Value, HashFunc, Equal > HashTable< Key, Value, HashFunc, Equal >::begin()
   {
+    if (bucketCount_ == 0)
+    {
+      return end();
+    }
     return Iterator(this, 0, buckets_[0]);
   }
 
@@ -453,6 +542,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTableConstIterator< Key, Value, HashFunc, Equal > HashTable< Key, Value, HashFunc, Equal >::begin() const
   {
+    if (bucketCount_ == 0)
+    {
+      return end();
+    }
     return ConstIterator(this, 0, buckets_[0]);
   }
 
@@ -465,6 +558,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTableIterator< Key, Value, HashFunc, Equal > HashTable< Key, Value, HashFunc, Equal >::find(const Key &k)
   {
+    if (bucketCount_ == 0)
+    {
+      return end();
+    }
     size_t idx = hasher_(k) % bucketCount_;
     Node *curr = buckets_[idx];
     while (curr)
@@ -481,6 +578,10 @@ namespace petrov
   template < typename Key, typename Value, typename HashFunc, typename Equal >
   HashTableConstIterator< Key, Value, HashFunc, Equal > HashTable< Key, Value, HashFunc, Equal >::find(const Key &k) const
   {
+    if (bucketCount_ == 0)
+    {
+      return end();
+    }
     size_t idx = hasher_(k) % bucketCount_;
     const Node *curr = buckets_[idx];
     while (curr)
