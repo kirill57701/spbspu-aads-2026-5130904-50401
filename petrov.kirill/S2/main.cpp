@@ -2,7 +2,7 @@
 #include <fstream>
 #include <exception>
 #include "utils.hpp"
-#include "../common/Stack.hpp"
+#include "Stack.hpp"
 
 int main(int argc, char* argv[])
 {

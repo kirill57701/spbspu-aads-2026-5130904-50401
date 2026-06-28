@@ -10,6 +10,6 @@ namespace petrov
     size_t prior(char s);
     long long int oper(long long int a, long long int b, char s);
   }
-  petrov::Stack<long long int> calcStream(std::istream& in);
+  Stack<long long int> calcStream(std::istream& in);
 }
 #endif
