@@ -1,11 +1,11 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
-#include "list.hpp"
 #include <cstddef>
 #include <stdexcept>
+#include "list.hpp"
 
 namespace petrov {
-  template<class T>
+  template <class T>
   class Queue
   {
     public:
@@ -32,60 +32,60 @@ namespace petrov {
       bool operator==(const Queue& a) const;
       bool operator!=(const Queue& a) const;
     private:
-      petrov::List<T> dat;
+      petrov::List<T> dat_;
   };
 }
 
-template<class T>
+template <class T>
 void petrov::Queue<T>::push(const T& a)
 {
-  dat.push_back(a);
+  dat_.push_back(a);
 }
 
-template<class T>
+template <class T>
 void petrov::Queue<T>::push(T&& a)
 {
-  dat.push_back(std::move(a));
+  dat_.push_back(std::move(a));
 }
 
-template<class T>
+template <class T>
 void petrov::Queue<T>::pop()
 {
-  dat.pop_front();
+  dat_.pop_front();
 }
 
-template<class T>
+template <class T>
 T& petrov::Queue<T>::front()
 {
-  if (dat.IsEmpty())
+  if (dat_.IsEmpty())
   {
     throw std::logic_error("err");
   }
-  return *dat.begin();
+  return *dat_.begin();
 }
 
-template<class T>
+template <class T>
 T& petrov::Queue<T>::back()
 {
-  if (dat.IsEmpty())
+  if (dat_.IsEmpty())
   {
     throw std::logic_error("err");
   }
-  return *dat.end();
+  return *dat_.end();
 }
 
-template<class T>
+template <class T>
 const T& petrov::Queue<T>::back() const
 {
-  if (dat.IsEmpty())
+  if (dat_.IsEmpty())
   {
     throw std::logic_error("err");
   }
-  petrov::LIter<T> i = dat.end();
+  petrov::LIter<T> i = dat_.end();
   return *i;
 }
 
-template<class T>
+template <class T>
 T petrov::Queue<T>::drop()
 {
   T c = std::move(front());
@@ -93,34 +93,34 @@ T petrov::Queue<T>::drop()
   return c;
 }
 
-template<class T>
+template <class T>
 bool petrov::Queue<T>::empty() const
 {
-  return dat.IsEmpty();
+  return dat_.IsEmpty();
 }
 
-template<class T>
+template <class T>
 size_t petrov::Queue<T>::size() const
 {
-  return dat.getSize();
+  return dat_.getSize();
 }
 
-template<class T>
+template <class T>
 void petrov::Queue<T>::clear()
 {
-  dat.clear();
+  dat_.clear();
 }
 
-template<class T>
+template <class T>
 bool petrov::Queue<T>::operator==(const Queue& a) const
 {
   if (size() != a.size())
   {
     return 0;
   }
-  petrov::LCIter<T> i1 = dat.begin();
-  petrov::LCIter<T> i2 = a.dat.begin();
-  while (i1 != dat.end())
+  petrov::LCIter<T> i1 = dat_.begin();
+  petrov::LCIter<T> i2 = a.dat_.begin();
+  while (i1 != dat_.end())
   {
     if (*i1 != *i2)
     {
@@ -132,7 +132,7 @@ bool petrov::Queue<T>::operator==(const Queue& a) const
   return 1;
 }
 
-template<class T>
+template <class T>
 bool petrov::Queue<T>::operator!=(const Queue& a) const
 {
   return !(*this == a);

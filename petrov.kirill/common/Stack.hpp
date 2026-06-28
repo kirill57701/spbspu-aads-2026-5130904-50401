@@ -4,7 +4,7 @@
 
 namespace petrov
 {
-  template<class T>
+  template <class T>
   class Stack
   {
     public:
@@ -13,40 +13,38 @@ namespace petrov
       Stack(const Stack& a) = default;
       ~Stack() = default;
 
-      void push(const T& rhs);
-      void push(T&& rhs);
-      void pop();
-      T drop();
-
-      T& top();
-      const T& top() const;
-
-      bool empty() const;
-      size_t size() const;
-      void clear();
-
       Stack& operator=(const Stack& a);
       Stack& operator=(Stack&& a);
       bool operator==(const Stack& a) const;
       bool operator!=(const Stack& a) const;
 
+      void push(const T& rhs);
+      void push(T&& rhs);
+      void pop();
+      const T& top() const;
+      T drop();
+      T& top();
+
+      bool empty() const;
+      size_t size() const;
+      void clear();
     private:
       petrov::List<T> dat;
   };
 
-  template<class T>
+  template <class T>
   void Stack<T>::push(const T& rhs)
   {
     dat.push_front(rhs);
   }
 
-  template<class T>
+  template <class T>
   void Stack<T>::push(T&& val)
   {
-    dat.push_front(std::move(val));
+    dat.push_front(std::forward<T>(val));
   }
 
-  template<class T>
+  template <class T>
   void Stack<T>::pop()
   {
     if (dat.IsEmpty())
@@ -56,7 +54,7 @@ namespace petrov
     dat.pop_front();
   }
 
-  template<class T>
+  template <class T>
   T Stack<T>::drop()
   {
     T a = std::move(top());
@@ -64,7 +62,7 @@ namespace petrov
     return a;
   }
 
-  template<class T>
+  template <class T>
   T& Stack<T>::top()
   {
     if (dat.IsEmpty())
@@ -74,7 +72,7 @@ namespace petrov
     return *dat.begin();
   }
 
-  template<class T>
+  template <class T>
   const T& Stack<T>::top() const
   {
     if (dat.IsEmpty())
@@ -84,13 +82,13 @@ namespace petrov
     return *dat.begin();
   }
 
-  template<class T>
+  template <class T>
   bool Stack<T>::empty() const
   {
     return dat.IsEmpty();
   }
 
-  template<class T>
+  template <class T>
   size_t Stack<T>::size() const
   {
     size_t c = 0;
@@ -101,23 +99,23 @@ namespace petrov
     return c;
   }
 
-  template<class T>
+  template <class T>
   void Stack<T>::clear()
   {
     dat.clear();
   }
 
-  template<class T>
+  template <class T>
   Stack<T>& Stack<T>::operator=(const Stack& a)
   {
-    if (this != &a)
+    if (this != std::addressof(a))
     {
       dat = a.dat;
     }
     return *this;
   }
 
-  template<class T>
+  template <class T>
   Stack<T>& Stack<T>::operator=(Stack&& a)
   {
     if (this != &a)
@@ -127,7 +125,7 @@ namespace petrov
     return *this;
   }
 
-  template<class T>
+  template <class T>
   bool Stack<T>::operator==(const Stack& a) const
   {
     if (size() != a.size())
@@ -148,7 +146,7 @@ namespace petrov
     return 1;
   }
 
-  template<class T>
+  template <class T>
   bool Stack<T>::operator!=(const Stack& a) const
   {
     return !(*this == a);
