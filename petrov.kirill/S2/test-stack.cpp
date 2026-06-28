@@ -1,6 +1,6 @@
-#include "Stack.hpp"
 #include <boost/test/unit_test.hpp>
 #include <stdexcept>
+#include "Stack.hpp"
 
 BOOST_AUTO_TEST_CASE(base_comms)
 {

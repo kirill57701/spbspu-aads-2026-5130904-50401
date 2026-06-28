@@ -1,7 +1,7 @@
-#include "utils.hpp"
 #include <boost/test/unit_test.hpp>
 #include <sstream>
-#include "../common/Stack.hpp"
+#include "Stack.hpp"
+#include "utils.hpp"
 
 BOOST_AUTO_TEST_SUITE(UtilsTests)
 

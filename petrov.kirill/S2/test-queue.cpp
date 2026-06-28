@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
-#include "Queue.hpp"
 #include <string>
+#include "Queue.hpp"
 
 BOOST_AUTO_TEST_SUITE(QueTest)
 
