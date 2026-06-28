@@ -148,17 +148,7 @@ namespace petrov
         {
           if (s[i] != ' ')
           {
-            if (std::isdigit(s[i]))
-            {
-              std::string n = "";
-              while (i < s.size() && std::isdigit(s[i]))
-              {
-                n += s[i++];
-              }
-              post.push(n);
-              --i;
-            }
-            else if (s[i] == '(')
+            if (s[i] == '(')
             {
               c.push(s[i]);
             }
@@ -186,6 +176,16 @@ namespace petrov
               }
               c.push(s[i]);
             }
+            else
+            {
+              std::string n = "";
+              while (i < s.size() && s[i] != ' ' && s[i] != '(' && s[i] != ')' && !detail::isOp(s[i]))
+              {
+                n += s[i++];
+              }
+              post.push(n);
+              --i;
+            }
           }
         }
         while (!c.empty())
@@ -203,11 +203,7 @@ namespace petrov
         while (!post.empty())
         {
           std::string t = post.drop();
-          if (std::isdigit(t[0]))
-          {
-            b.push(std::stoll(t));
-          }
-          else
+          if (t.size() == 1 && detail::isOp(t[0]))
           {
             if (b.size() < 2)
             {
@@ -216,6 +212,10 @@ namespace petrov
             long long int b1 = b.drop();
             long long int a = b.drop();
             b.push(detail::oper(a, b1, t[0]));
+          }
+          else
+          {
+            b.push(std::stoll(t));
           }
         }
         if (b.size() != 1)
