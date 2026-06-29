@@ -128,6 +128,14 @@ template< class Key, class Value >
         v->parent = u->parent;
       }
     }
+    size_t heightInternal(BSTNode< Key, Value >* n) const {
+      if (n == nil_) {
+        return 0;
+      }
+      size_t l = heightInternal(n->left);
+      size_t r = heightInternal(n->right);
+      return 1 + (l > r ? l : r);
+    }
   public:
     BSTree() {
       init();
@@ -275,6 +283,13 @@ template< class Key, class Value >
       }
       delete z;
       return val;
+    }
+    size_t height(const_iterator it) const {
+      return heightInternal(it.node_);
+    }
+
+    size_t height() const {
+      return heightInternal(header_->left);
     }
   };
 }
