@@ -171,6 +171,59 @@ template< class Key, class Value >
       std::swap(nil_, other.nil_);
       return *this;
     }
+bool has(Key k) const {
+      BSTNode< Key, Value >* z = header_->left;
+      while (z != nil_) {
+        if (comp_(k, z->key)) {
+          z = z->left;
+        } else if (comp_(z->key, k)) {
+          z = z->right;
+        } else {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    void push(Key k, Value v) {
+      BSTNode< Key, Value >* z = new BSTNode< Key, Value >{k, v, nil_, nil_, nil_};
+      BSTNode< Key, Value >* y = header_;
+      BSTNode< Key, Value >* x = header_->left;
+      while (x != nil_) {
+        y = x;
+        if (comp_(k, x->key)) {
+          x = x->left;
+        } else if (comp_(x->key, k)) {
+          x = x->right;
+        } else {
+          x->value = v;
+          delete z;
+          return;
+        }
+      }
+      z->parent = y;
+      if (y == header_) {
+        header_->left = z;
+      } else if (comp_(z->key, y->key)) {
+        y->left = z;
+      } else {
+        y->right = z;
+      }
+    }
+
+    Value get(Key k) const {
+      BSTNode< Key, Value >* z = header_->left;
+      while (z != nil_) {
+        if (comp_(k, z->key)) {
+          z = z->left;
+        } else if (comp_(z->key, k)) {
+          z = z->right;
+        } else {
+          return z->value;
+        }
+      }
+      throw std::out_of_range("Key not found");
+    }
   };
 }
 
