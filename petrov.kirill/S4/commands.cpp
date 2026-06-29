@@ -25,3 +25,25 @@ bool petrov::loadDictionaries(const std::string& filename, DatasetStore& dataset
   }
   return 1;
 }
+
+void petrov::cmdPrint(std::istream& in, std::ostream& out, DatasetStore& datasets) {
+  std::string dict_name;
+  if (!(in >> dict_name)) {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+  if (!datasets.has(dict_name)) {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+  const SubTree& dict = datasets.get(dict_name);
+  if (dict.cbegin() == dict.cend()) {
+    out << "<EMPTY>\n";
+    return;
+  }
+  out << dict_name;
+  for (auto it = dict.cbegin(); it != dict.cend(); ++it) {
+    out << " " << it->key << " " << it->value;
+  }
+  out << "\n";
+}
