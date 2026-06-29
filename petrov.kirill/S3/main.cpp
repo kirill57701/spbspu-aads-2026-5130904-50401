@@ -6,8 +6,8 @@
 #include <vector>
 #include <algorithm>
 
-#include "../common/list.hpp"
-#include "../common/HashTable.hpp"
+#include "list.hpp"
+#include "HashTable.hpp"
 #include "Graph.hpp"
 
 using GraphTable = petrov::HashTable<std::string, petrov::Graph>;

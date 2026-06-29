@@ -1,8 +1,8 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
-#include "../common/HashTable.hpp"
-#include "../common/list.hpp"
+#include "HashTable.hpp"
+#include "list.hpp"
 #include <stdexcept>
 
 namespace petrov
@@ -11,7 +11,8 @@ namespace petrov
   {
     int to;
     int weight;
-    bool operator==(const Edge& other) const
+
+    bool operator==(const Edge &other) const
     {
       return to == other.to && weight == other.weight;
     }
@@ -20,39 +21,35 @@ namespace petrov
   class Graph
   {
   private:
-    HashTable<int, List<Edge>> adjList_;
+    HashTable< int, List< Edge > > adjList_;
 
-    List<Edge>& getList(int v)
+    List< Edge > &getList(int v)
     {
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      auto it = adjList_.find(v);
+      if (it == adjList_.end())
       {
-        if (it->first == v)
-        {
-          return it->second;
-        }
+        throw std::runtime_error("");
       }
-      throw std::runtime_error("");
+      return it->second;
     }
 
-    const List<Edge>& getList(int v) const
+    const List< Edge > &getList(int v) const
     {
-      for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
+      auto it = adjList_.find(v);
+      if (it == adjList_.end())
       {
-        if (it->first == v)
-        {
-          return it->second;
-        }
+        throw std::runtime_error("");
       }
-      throw std::runtime_error("");
+      return it->second;
     }
 
     bool hasEdge(int u, int v, int w) const
     {
-      if (!adjList_.has(u))
+      if (!adjList_.contains(u))
       {
         return false;
       }
-      for (const auto& edge : getList(u))
+      for (const auto &edge : getList(u))
       {
         if (edge.to == v && edge.weight == w)
         {
@@ -64,9 +61,9 @@ namespace petrov
 
   public:
     Graph() = default;
-    Graph(const Graph& other) : adjList_(other.adjList_) {}
+    Graph(const Graph &other) : adjList_(other.adjList_) {}
 
-    Graph& operator=(const Graph& other)
+    Graph &operator=(const Graph &other)
     {
       if (this != &other)
       {
@@ -77,9 +74,9 @@ namespace petrov
 
     void addVertex(int v)
     {
-      if (!adjList_.has(v))
+      if (!adjList_.contains(v))
       {
-        adjList_.add(v, List<Edge>());
+        adjList_.add(v, List< Edge >());
       }
     }
 
@@ -101,9 +98,9 @@ namespace petrov
 
     void cut(int u, int v, int w)
     {
-      if (adjList_.has(u))
+      if (adjList_.contains(u))
       {
-        List<Edge>& neighborsU = getList(u);
+        List< Edge > &neighborsU = getList(u);
         for (auto it = neighborsU.begin(); it != neighborsU.end(); ++it)
         {
           if (it->to == v && it->weight == w)
@@ -113,9 +110,9 @@ namespace petrov
           }
         }
       }
-      if (adjList_.has(v))
+      if (adjList_.contains(v))
       {
-        List<Edge>& neighborsV = getList(v);
+        List< Edge > &neighborsV = getList(v);
         for (auto it = neighborsV.begin(); it != neighborsV.end(); ++it)
         {
           if (it->to == u && it->weight == w)
@@ -132,26 +129,26 @@ namespace petrov
       cut(u, v, 0);
     }
 
-    void swap(Graph& other) noexcept
+    void swap(Graph &other) noexcept
     {
       adjList_.swap(other.adjList_);
     }
 
     bool hasVertex(int v) const
     {
-      return adjList_.has(v);
+      return adjList_.contains(v);
     }
 
     void removeVertex(int v)
     {
-      if (!adjList_.has(v))
+      if (!adjList_.contains(v))
       {
         return;
       }
-      adjList_.drop(v);
+      adjList_.erase(v);
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        List<Edge>& list = it->second;
+        List< Edge > &list = it->second;
         for (auto nIt = list.begin(); nIt != list.end(); )
         {
           if (nIt->to == v)
@@ -168,12 +165,12 @@ namespace petrov
 
     size_t getVertexCount() const
     {
-      return adjList_.getSize();
+      return adjList_.size();
     }
 
-    List<int> getAllVertices() const
+    List< int > getAllVertices() const
     {
-      List<int> vertices;
+      List< int > vertices;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
         vertices.push_back(it->first);
@@ -181,12 +178,12 @@ namespace petrov
       return vertices;
     }
 
-    List<int> getOutbound(int v) const
+    List< int > getOutbound(int v) const
     {
-      List<int> res;
-      if (adjList_.has(v))
+      List< int > res;
+      if (adjList_.contains(v))
       {
-        for (const auto& edge : getList(v))
+        for (const auto &edge : getList(v))
         {
           res.push_back(edge.to);
         }
@@ -194,12 +191,12 @@ namespace petrov
       return res;
     }
 
-    List<int> getInbound(int v) const
+    List< int > getInbound(int v) const
     {
-      List<int> inbound;
+      List< int > inbound;
       for (auto it = adjList_.begin(); it != adjList_.end(); ++it)
       {
-        for (const auto& edge : it->second)
+        for (const auto &edge : it->second)
         {
           if (edge.to == v)
           {
@@ -210,13 +207,13 @@ namespace petrov
       return inbound;
     }
 
-    Graph merge(const Graph& other) const
+    Graph merge(const Graph &other) const
     {
       Graph result = *this;
       for (auto it = other.adjList_.begin(); it != other.adjList_.end(); ++it)
       {
         result.addVertex(it->first);
-        for (const auto& edge : it->second)
+        for (const auto &edge : it->second)
         {
           if (it->first <= edge.to)
           {
