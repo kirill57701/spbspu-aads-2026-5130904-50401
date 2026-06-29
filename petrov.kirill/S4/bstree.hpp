@@ -15,6 +15,77 @@ namespace petrov {
     BSTNode* parent;
   };
 
+template< class Key, class Value >
+  class BSTConstIterator {
+  public:
+    BSTNode< Key, Value >* node_;
+    BSTNode< Key, Value >* nil_;
+    BSTNode< Key, Value >* header_;
+
+    BSTConstIterator(BSTNode< Key, Value >* n, BSTNode< Key, Value >* nil_ptr, BSTNode< Key, Value >* header_ptr):
+      node_(n),
+      nil_(nil_ptr),
+      header_(header_ptr)
+    {}
+
+    const BSTNode< Key, Value >* operator->() const {
+      return node_;
+    }
+
+    const BSTNode< Key, Value >& operator*() const {
+      return *node_;
+    }
+
+    BSTConstIterator& operator++() {
+      if (node_ == header_) {
+        return *this;
+      }
+      if (node_->right != nil_) {
+        node_ = node_->right;
+        while (node_->left != nil_) {
+          node_ = node_->left;
+        }
+      } else {
+        BSTNode< Key, Value >* p = node_->parent;
+        while (p != header_ && node_ == p->right) {
+          node_ = p;
+          p = p->parent;
+        }
+        node_ = p;
+      }
+      return *this;
+    }
+
+    bool operator!=(const BSTConstIterator& other) const {
+      return node_ != other.node_;
+    }
+
+    bool operator==(const BSTConstIterator& other) const {
+      return node_ == other.node_;
+    }
+  };
+
+  template< class Key, class Value >
+  class BSTIterator: public BSTConstIterator< Key, Value > {
+  public:
+    BSTIterator(BSTNode< Key, Value >* n, BSTNode< Key, Value >* nil_ptr, BSTNode< Key, Value >* header_ptr):
+      BSTConstIterator< Key, Value >(n, nil_ptr, header_ptr)
+    {}
+
+    BSTNode< Key, Value >* operator->() {
+      return this->node_;
+    }
+
+    BSTNode< Key, Value >& operator*() {
+      return *(this->node_);
+    }
+
+    BSTIterator& operator++() {
+      BSTConstIterator< Key, Value >::operator++();
+      return *this;
+    }
+  };
+
   template< class Key, class Value, class Compare = std::less< Key > >
   class BSTree {
   private:
