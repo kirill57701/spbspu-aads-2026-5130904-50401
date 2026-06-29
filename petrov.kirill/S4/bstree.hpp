@@ -107,6 +107,15 @@ template< class Key, class Value >
       }
     }
 
+    BSTNode< Key, Value >* copyTree(BSTNode< Key, Value >* other_node, BSTNode< Key, Value >* parent, BSTNode< Key, Value >* other_nil) {
+      if (other_node == other_nil) {
+        return nil_;
+      }
+      BSTNode< Key, Value >* new_node = new BSTNode< Key, Value >{other_node->key, other_node->value, nil_, nil_, parent};
+      new_node->left = copyTree(other_node->left, new_node, other_nil);
+      new_node->right = copyTree(other_node->right, new_node, other_nil);
+      return new_node;
+    }
   public:
     BSTree() {
       init();
@@ -120,6 +129,47 @@ template< class Key, class Value >
       if (nil_) {
         delete nil_;
       }
+    }
+
+    using const_iterator = BSTConstIterator< Key, Value >;
+    using iterator = BSTIterator< Key, Value >;
+
+    const_iterator cbegin() const {
+      BSTNode< Key, Value >* curr = header_->left;
+      if (curr == nil_) {
+        return const_iterator(header_, nil_, header_);
+      }
+      while (curr->left != nil_) {
+        curr = curr->left;
+      }
+      return const_iterator(curr, nil_, header_);
+    }
+
+    const_iterator cend() const {
+      return const_iterator(header_, nil_, header_);
+    }
+    BSTree(const BSTree& other):
+      comp_(other.comp_)
+    {
+      init();
+      if (other.header_->left != other.nil_) {
+        header_->left = copyTree(other.header_->left, header_, other.nil_);
+      }
+    }
+
+    BSTree(BSTree&& other) noexcept:
+      header_(other.header_),
+      nil_(other.nil_),
+      comp_(std::move(other.comp_))
+    {
+      other.init();
+    }
+
+    BSTree& operator=(BSTree other) {
+      std::swap(comp_, other.comp_);
+      std::swap(header_, other.header_);
+      std::swap(nil_, other.nil_);
+      return *this;
     }
   };
 }
