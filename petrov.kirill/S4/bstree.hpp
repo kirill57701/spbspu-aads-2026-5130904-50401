@@ -116,6 +116,18 @@ template< class Key, class Value >
       new_node->right = copyTree(other_node->right, new_node, other_nil);
       return new_node;
     }
+    void transplant(BSTNode< Key, Value >* u, BSTNode< Key, Value >* v) {
+      if (u->parent == header_) {
+        header_->left = v;
+      } else if (u == u->parent->left) {
+        u->parent->left = v;
+      } else {
+        u->parent->right = v;
+      }
+      if (v != nil_) {
+        v->parent = u->parent;
+      }
+    }
   public:
     BSTree() {
       init();
@@ -171,7 +183,7 @@ template< class Key, class Value >
       std::swap(nil_, other.nil_);
       return *this;
     }
-bool has(Key k) const {
+    bool has(Key k) const {
       BSTNode< Key, Value >* z = header_->left;
       while (z != nil_) {
         if (comp_(k, z->key)) {
@@ -223,6 +235,46 @@ bool has(Key k) const {
         }
       }
       throw std::out_of_range("Key not found");
+    }
+    Value drop(Key k) {
+      BSTNode< Key, Value >* z = header_->left;
+      while (z != nil_) {
+        if (comp_(k, z->key)) {
+          z = z->left;
+        } else if (comp_(z->key, k)) {
+          z = z->right;
+        } else {
+          break;
+        }
+      }
+      if (z == nil_) {
+        throw std::out_of_range("Key not found");
+      }
+      Value val = z->value;
+      if (z->left == nil_) {
+        transplant(z, z->right);
+      } else if (z->right == nil_) {
+        transplant(z, z->left);
+      } else {
+        BSTNode< Key, Value >* y = z->right;
+        while (y->left != nil_) {
+          y = y->left;
+        }
+        if (y->parent != z) {
+          transplant(y, y->right);
+          y->right = z->right;
+          if (y->right != nil_) {
+            y->right->parent = y;
+          }
+        }
+        transplant(z, y);
+        y->left = z->left;
+        if (y->left != nil_) {
+          y->left->parent = y;
+        }
+      }
+      delete z;
+      return val;
     }
   };
 }
