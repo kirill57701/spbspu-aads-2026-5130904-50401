@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(Iterators_Sequential_Traversal) {
   populate_basic_nodes();
 
   auto it = tree.cbegin();
-  BOOST_REQUIRE(it != tree.cend());
+  BOOST_REQUIRE((it != tree.cend()));
   BOOST_TEST(it->key == 50);
 
   ++it;
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(Iterators_Sequential_Traversal) {
   BOOST_TEST(it->key == 150);
 
   ++it;
-  BOOST_TEST(it == tree.cend());
+  BOOST_TEST((it == tree.cend()));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
