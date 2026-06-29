@@ -15,7 +15,7 @@ namespace petrov {
     BSTNode* parent;
   };
 
-template< class Key, class Value >
+  template< class Key, class Value >
   class BSTConstIterator {
   public:
     BSTNode< Key, Value >* node_;
@@ -116,6 +116,7 @@ template< class Key, class Value >
       new_node->right = copyTree(other_node->right, new_node, other_nil);
       return new_node;
     }
+
     void transplant(BSTNode< Key, Value >* u, BSTNode< Key, Value >* v) {
       if (u->parent == header_) {
         header_->left = v;
@@ -128,6 +129,7 @@ template< class Key, class Value >
         v->parent = u->parent;
       }
     }
+
     size_t heightInternal(BSTNode< Key, Value >* n) const {
       if (n == nil_) {
         return 0;
@@ -136,7 +138,11 @@ template< class Key, class Value >
       size_t r = heightInternal(n->right);
       return 1 + (l > r ? l : r);
     }
+
   public:
+    using const_iterator = BSTConstIterator< Key, Value >;
+    using iterator = BSTIterator< Key, Value >;
+
     BSTree() {
       init();
     }
@@ -151,23 +157,6 @@ template< class Key, class Value >
       }
     }
 
-    using const_iterator = BSTConstIterator< Key, Value >;
-    using iterator = BSTIterator< Key, Value >;
-
-    const_iterator cbegin() const {
-      BSTNode< Key, Value >* curr = header_->left;
-      if (curr == nil_) {
-        return const_iterator(header_, nil_, header_);
-      }
-      while (curr->left != nil_) {
-        curr = curr->left;
-      }
-      return const_iterator(curr, nil_, header_);
-    }
-
-    const_iterator cend() const {
-      return const_iterator(header_, nil_, header_);
-    }
     BSTree(const BSTree& other):
       comp_(other.comp_)
     {
@@ -191,6 +180,22 @@ template< class Key, class Value >
       std::swap(nil_, other.nil_);
       return *this;
     }
+
+    const_iterator cbegin() const {
+      BSTNode< Key, Value >* curr = header_->left;
+      if (curr == nil_) {
+        return const_iterator(header_, nil_, header_);
+      }
+      while (curr->left != nil_) {
+        curr = curr->left;
+      }
+      return const_iterator(curr, nil_, header_);
+    }
+
+    const_iterator cend() const {
+      return const_iterator(header_, nil_, header_);
+    }
+
     bool has(Key k) const {
       BSTNode< Key, Value >* z = header_->left;
       while (z != nil_) {
@@ -244,6 +249,7 @@ template< class Key, class Value >
       }
       throw std::out_of_range("Key not found");
     }
+
     Value drop(Key k) {
       BSTNode< Key, Value >* z = header_->left;
       while (z != nil_) {
@@ -284,6 +290,69 @@ template< class Key, class Value >
       delete z;
       return val;
     }
+
+    const_iterator rotateLeft(const_iterator it) {
+      BSTNode< Key, Value >* x = it.node_;
+      if (x == nil_ || x == header_) {
+        throw std::invalid_argument("Invalid node for rotation");
+      }
+      BSTNode< Key, Value >* p = x->parent;
+      if (p == header_ || p->right != x) {
+        throw std::invalid_argument("Invalid left rotation context");
+      }
+      p->right = x->left;
+      if (x->left != nil_) {
+        x->left->parent = p;
+      }
+      x->parent = p->parent;
+      if (p->parent == header_) {
+        header_->left = x;
+      } else if (p == p->parent->left) {
+        p->parent->left = x;
+      } else {
+        p->parent->right = x;
+      }
+      x->left = p;
+      p->parent = x;
+      return const_iterator(x, nil_, header_);
+    }
+
+    const_iterator rotateRight(const_iterator it) {
+      BSTNode< Key, Value >* x = it.node_;
+      if (x == nil_ || x == header_) {
+        throw std::invalid_argument("Invalid node for rotation");
+      }
+      BSTNode< Key, Value >* p = x->parent;
+      if (p == header_ || p->left != x) {
+        throw std::invalid_argument("Invalid right rotation context");
+      }
+      p->left = x->right;
+      if (x->right != nil_) {
+        x->right->parent = p;
+      }
+      x->parent = p->parent;
+      if (p->parent == header_) {
+        header_->left = x;
+      } else if (p == p->parent->right) {
+        p->parent->right = x;
+      } else {
+        p->parent->left = x;
+      }
+      x->right = p;
+      p->parent = x;
+      return const_iterator(x, nil_, header_);
+    }
+
+    const_iterator rotateLargeLeft(const_iterator it) {
+      rotateRight(it);
+      return rotateLeft(it);
+    }
+
+    const_iterator rotateLargeRight(const_iterator it) {
+      rotateLeft(it);
+      return rotateRight(it);
+    }
+
     size_t height(const_iterator it) const {
       return heightInternal(it.node_);
     }
