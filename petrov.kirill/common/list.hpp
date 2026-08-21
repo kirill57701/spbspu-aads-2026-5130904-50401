@@ -48,6 +48,8 @@ namespace petrov
     void pop_back();
     void pop_front();
     void clear();
+    void remove(const T& d);
+    LIter<T> erase(LIter<T> it);
   };
 
   template<class T>
@@ -255,6 +257,77 @@ namespace petrov
     h = h->prev;
     h->prev = nullptr;
     s++;
+  }
+
+  template<class T>
+  void List<T>::remove(const T& d)
+  {
+    node<T>* curr = h;
+    while (curr != nullptr)
+    {
+      if (curr->val == d)
+      {
+        node<T>* to_delete = curr;
+        if (curr->prev != nullptr)
+        {
+          curr->prev->next = curr->next;
+        }
+        else
+        {
+          h = curr->next;
+        }
+
+        if (curr->next != nullptr)
+        {
+          curr->next->prev = curr->prev;
+        }
+        else
+        {
+          t = curr->prev;
+        }
+
+        curr = curr->next;
+        delete to_delete;
+        s--;
+      }
+      else
+      {
+        curr = curr->next;
+      }
+    }
+  }
+
+  template<class T>
+  LIter<T> List<T>::erase(LIter<T> it)
+  {
+    if (it.cur == nullptr)
+    {
+      return end();
+    }
+    node<T>* to_delete = it.cur;
+    node<T>* next_node = to_delete->next;
+
+    if (to_delete->prev != nullptr)
+    {
+      to_delete->prev->next = to_delete->next;
+    }
+    else
+    {
+      h = to_delete->next;
+    }
+
+    if (to_delete->next != nullptr)
+    {
+      to_delete->next->prev = to_delete->prev;
+    }
+    else
+    {
+      t = to_delete->prev;
+    }
+
+    delete to_delete;
+    s--;
+    return LIter<T>(next_node);
   }
 
   template<class T>
