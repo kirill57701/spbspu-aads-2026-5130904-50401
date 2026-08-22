@@ -1,6 +1,6 @@
 Путь до курсовой - Микро-фреймворка на C++ для классического машинного обучения и обработки данных:
 
-переходим в ветку petrov.kirill/F0 -> petrov.kirill/F0
+переходим master -> petrov.kirill/F0
 
 файлы курсовой:
 common/LinearRegression.hpp
